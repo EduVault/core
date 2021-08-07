@@ -17,6 +17,7 @@ jobs:
         with:
           node-version: '14.x'
           cache: 'npm'
+        run: npm ci          
 
     - name: Make envfile
       uses: SpicyPizza/create-envfile@v1
