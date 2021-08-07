@@ -26,6 +26,8 @@ jobs:
 
       - name: Test application
         run: yarn test
+        env:
+          ENV_TEST: ${{ secrets.ENV_TEST }}
 
       - name: Build and start application
         run: yarn start

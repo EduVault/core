@@ -18,6 +18,9 @@ create DO ubuntu server
 give it flaoting ip
 link domain to floating ip
 
+copy over .env file
+change PROD_HOST to host e.g. eduvault.org
+
 ```bash
 ssh root@your_server_ip -i /path/to/keys
 adduser jacob

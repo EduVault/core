@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 const env = process.env;
-export const DOTENV_TEST = env.DOTENV_TEST;
+export const ENV_TEST = env.ENV_TEST;
 export const dev = env.NODE_ENV === 'development';
 export const unitTest = env.NODE_ENV === 'test';
 const PROD_HOST = env.PROD_HOST;
@@ -42,6 +42,6 @@ console.log({
   dev,
   // PORT_API,
   unitTest,
-  DOTENV_TEST,
+  ENV_TEST,
   PROD_HOST,
 });

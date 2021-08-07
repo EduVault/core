@@ -6,7 +6,7 @@ import http from 'https';
 
 import {
   // PORT_API,
-  DOTENV_TEST,
+  ENV_TEST,
   dev,
   unitTest,
   SSL_KEY,
@@ -19,7 +19,7 @@ app.use(cors());
 
 // Check dotenv Loads
 app.get('/dotenv-check', (req, res) => {
-  res.json({ DOTENV_TEST });
+  res.json({ ENV_TEST });
 });
 
 // Serve API

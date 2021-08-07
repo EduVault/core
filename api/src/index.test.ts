@@ -28,12 +28,6 @@ describe('Loads .env', () => {
     const res = await request().get('/dotenv-check').send();
     // console.log('ping test result', result);
     expect(res.status).toEqual(200);
-    expect(res.body.DOTENV_TEST).toEqual('working');
-  });
-  it('loads PORT', async () => {
-    const res = await request().get('/dotenv-check').send();
-    // console.log('ping test result', result);
-    expect(res.status).toEqual(200);
-    expect(res.body.PORT_API).toEqual(5555);
+    expect(res.body.ENV_TEST).toEqual('working');
   });
 });
