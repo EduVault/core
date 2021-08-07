@@ -26,9 +26,13 @@ const prodSSLCertPath = path.join(
   __dirname,
   `../../deploy/prod-certs/localhost.pem`
 );
-export const SSL_KEY = fs.readFileSync(dev ? devSSLKeyPath : prodSSLKeyPath);
+export const SSL_KEY = unitTest
+  ? null
+  : fs.readFileSync(dev ? devSSLKeyPath : prodSSLKeyPath);
 
-export const SSL_CERT = fs.readFileSync(dev ? devSSLCertPath : prodSSLCertPath);
+export const SSL_CERT = unitTest
+  ? null
+  : fs.readFileSync(dev ? devSSLCertPath : prodSSLCertPath);
 
 // export const PORT_API = Number(env.PORT_API) || 5555;
 
