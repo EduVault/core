@@ -18,10 +18,12 @@ jobs:
           node-version: '14.x'
           cache: 'npm'
 
-      - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1
+      - name: Create .env.production
+        uses: weyheyhey/create-dotenv-action@v1
         with:
-          envkey_ENV_TEST: 'working'
+          wildecard: '^'
+        env:
+          ^ENV_TEST: ${{ secrets.ENV_TEST }}
 
       - name: Install application
         run: npm i && npm run inst
