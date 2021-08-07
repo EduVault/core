@@ -31,7 +31,7 @@ const appPath = path.join(__dirname, '../../app/build');
 if (!dev && !unitTest) app.use(express.static(appPath));
 app.get('/app', (req, res) => {
   if (dev || unitTest) res.redirect('http://localhost:3000');
-  else res.sendFile(appPath + 'index.html');
+  else res.sendFile(appPath + '/index.html');
 });
 
 const httpRedirect = (server: Express) =>
