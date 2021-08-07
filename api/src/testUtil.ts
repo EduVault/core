@@ -1,4 +1,3 @@
-import { PORT_API } from './config';
 import { Express } from 'express';
 // import https from 'https';
 import supertest from 'supertest';

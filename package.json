@@ -12,7 +12,8 @@
     "build:api": "cd ./api && yarn build",
     "build:app": "cd ./app && yarn build",
     "start:api": "cd ./api && yarn start",
-    "start": "run-s build:app start:api"
+    "start": "run-s build:app start:api",
+    "dev-certs": "rm -rf deploy/dev-certs && mkdir deploy/dev-certs && cd deploy/dev-certs && mkcert localhost"
   },
   "repository": {
     "type": "git",

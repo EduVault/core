@@ -1,9 +1,11 @@
-import express from 'express';
+import express, { Express } from 'express';
 import cors from 'cors';
 import path from 'path';
 import https from 'https';
+import http from 'https';
+
 import {
-  PORT_API,
+  // PORT_API,
   DOTENV_TEST,
   dev,
   unitTest,
@@ -17,7 +19,7 @@ app.use(cors());
 
 // Check dotenv Loads
 app.get('/dotenv-check', (req, res) => {
-  res.json({ PORT_API, DOTENV_TEST });
+  res.json({ DOTENV_TEST });
 });
 
 // Serve API
@@ -32,12 +34,29 @@ app.get('/app', (req, res) => {
   else res.sendFile(appPath + 'index.html');
 });
 
-const onStart = () =>
-  console.log('app listening at http://localhost:' + PORT_API);
+const httpRedirect = (server: Express) =>
+  server.use((req, res, next) => {
+    if (req.secure) {
+      next();
+    } else {
+      res.redirect('https://' + req.headers.host + req.url);
+    }
+  });
+
+const onStart = () => console.log('app listening at http://localhost');
 
 const startServer = () => {
-  const server = https.createServer({ key: SSL_KEY, cert: SSL_CERT }, app);
-  server.listen(PORT_API, onStart);
+  const httpServer = express();
+  let server: https.Server | http.Server;
+  if (unitTest) {
+    server = http.createServer(app).listen(80);
+  } else {
+    httpRedirect(httpServer);
+    httpServer.listen(80);
+    server = https.createServer({ key: SSL_KEY, cert: SSL_CERT }, app);
+    server.listen(443, onStart);
+  }
+
   return server;
 };
 if (!unitTest) startServer();

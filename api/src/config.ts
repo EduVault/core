@@ -4,20 +4,40 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 const env = process.env;
-
 export const DOTENV_TEST = env.DOTENV_TEST;
-export const SSL_KEY = fs.readFileSync(path.join(__dirname, '../../key.pem')); // https://medium.com/@nitinpatel_20236/how-to-create-an-https-server-on-localhost-using-express-366435d61f28
-
-export const SSL_CERT = fs.readFileSync(path.join(__dirname, '../../cert.pem'));
 export const dev = env.NODE_ENV === 'development';
 export const unitTest = env.NODE_ENV === 'test';
-export const PORT_API = Number(env.PORT_API) || 5555;
+const PROD_HOST = env.PROD_HOST;
+export const HOST = dev ? 'localhost' : PROD_HOST;
+
+const devSSLKeyPath = path.join(
+  __dirname,
+  '../../deploy/dev-certs/localhost-key.pem'
+);
+const devSSLCertPath = path.join(
+  __dirname,
+  '../../deploy/dev-certs/localhost.pem'
+);
+const prodSSLKeyPath = path.join(
+  __dirname,
+  `../../deploy/prod-certs/localhost-key.pem`
+);
+const prodSSLCertPath = path.join(
+  __dirname,
+  `../../deploy/prod-certs/localhost.pem`
+);
+export const SSL_KEY = fs.readFileSync(dev ? devSSLKeyPath : prodSSLKeyPath);
+
+export const SSL_CERT = fs.readFileSync(dev ? devSSLCertPath : prodSSLCertPath);
+
+// export const PORT_API = Number(env.PORT_API) || 5555;
 
 console.log({
-  port: env.PORT_API,
+  // port: env.PORT_API,
   NODE_ENV: env.NODE_ENV,
   dev,
-  PORT_API,
+  // PORT_API,
   unitTest,
   DOTENV_TEST,
+  PROD_HOST,
 });
