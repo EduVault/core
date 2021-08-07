@@ -6,13 +6,13 @@
   "scripts": {
     "test:api": "cd ./api && npm run test",
     "test:app": "cd ./app && npm run test",
-    "test": "run-p test:*",
+    "test": "run-s test:*",
     "dev:api": "cd ./api && npm run dev",
     "dev:app": "cd ./app && npm run dev",
-    "dev": "run-p dev:*",
+    "dev": "run-s dev:*",
     "build:api": "cd ./api && npm run build",
     "build:app": "cd ./app && npm run build",
-    "build": "run-p build:*",
+    "build": "run-s build:*",
     "start:api": "cd ./api && npm run start",
     "start": "run-s build:app start:api",
     "dev-certs": "rm -rf deploy/dev-certs && mkdir deploy/dev-certs && cd deploy/dev-certs && mkcert localhost",
@@ -32,6 +32,7 @@
   },
   "homepage": "https://github.com/EduVault/server#readme",
   "devDependencies": {
+    "cypress": "^8.2.0",
     "npm-run-all": "^4.1.5"
   }
 }
