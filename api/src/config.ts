@@ -10,21 +10,12 @@ export const unitTest = env.NODE_ENV === 'test';
 const PROD_HOST = env.PROD_HOST;
 export const HOST = dev ? 'localhost' : PROD_HOST;
 
-const devSSLKeyPath = path.join(
-  __dirname,
-  '../../deploy/dev-certs/localhost-key.pem'
-);
-const devSSLCertPath = path.join(
-  __dirname,
-  '../../deploy/dev-certs/localhost.pem'
-);
-const prodSSLKeyPath = path.join(
-  __dirname,
-  `../../deploy/prod-certs/localhost-key.pem`
-);
+const devSSLKeyPath = path.join(__dirname, '../../deploy/dev-certs/key.pem');
+const devSSLCertPath = path.join(__dirname, '../../deploy/dev-certs/cert.pem');
+const prodSSLKeyPath = path.join(__dirname, `../../deploy/prod-certs/key.pem`);
 const prodSSLCertPath = path.join(
   __dirname,
-  `../../deploy/prod-certs/localhost.pem`
+  `../../deploy/prod-certs/cert.pem`
 );
 export const SSL_KEY = unitTest
   ? null
