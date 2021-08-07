@@ -76,4 +76,11 @@ sudo npm install pm2 -g
 # make change to runner so that it install and builds
 
 pm2 start --name eduvault npm -- start
+
+
+# monitor runner
+cat ~/actions-runner/.service
+# actions.runner.octo-org-octo-repo.runner01.service
+sudo journalctl -u <result>
+sudo journalctl -u actions.runner.EduVault-server.eduvault-staging.service
 ```
