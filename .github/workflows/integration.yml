@@ -25,9 +25,7 @@ jobs:
         run: yarn inst
 
       - name: Test application
-        run: yarn test
-        env:
-          ENV_TEST: ${{ secrets.ENV_TEST }}
+        run: ENV_TEST=${{ secrets.ENV_TEST }} yarn test
 
       - name: Build and start application
         run: yarn start
