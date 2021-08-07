@@ -16,18 +16,15 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14.x'
+          cache: 'npm'
 
-      - name: Install yarn
-        run: npm install -g yarn
-
-      - name: Install project dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
-        run: yarn inst
+    - name: Make envfile
+      uses: SpicyPizza/create-envfile@v1
+      with:
+        envkey_ENV_TEST: "working"
 
       - name: Test application
-        run: yarn test; echo ${{ secrets.ENV_TEST }}
-        env:
-          ENV_TEST: ${{ secrets.ENV_TEST }}
+        run: npm run test
 
       - name: Build and start application
-        run: yarn start
+        run: npm run start
