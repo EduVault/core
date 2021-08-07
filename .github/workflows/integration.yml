@@ -25,6 +25,9 @@ jobs:
       - name: Install application
         run: npm i && npm run inst
 
+      - name: Build application
+        run: npm run build
+
       - name: Test application
         run: npm run test
 
@@ -35,6 +38,3 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           start: npm run start
-
-      - name: Build application
-        run: npm run build
