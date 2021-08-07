@@ -18,6 +18,11 @@ jobs:
           node-version: '14.x'
           cache: 'npm'
 
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v1
+        with:
+          envkey_ENV_TEST: 'working'
+
       - name: Test application
         run: npm run test
 
