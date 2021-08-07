@@ -14,7 +14,7 @@
     "dev": "run-s dev:*",
     "build:api": "cd ./api && npm run build",
     "build:app": "cd ./app && npm run build",
-    "build": "run-s build:*",
+    "build": "npm run build:app && npm run build:api",
     "start:api": "cd ./api && npm run start",
     "start": "run-s build:app start:api",
     "dev-certs": "rm -rf deploy/dev-certs && mkdir deploy/dev-certs && cd deploy/dev-certs && mkcert localhost; rm -rf deploy/prod-certs && mkdir deploy/prod-certs && cd deploy/prod-certs && mkcert localhost",
