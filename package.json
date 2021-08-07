@@ -12,6 +12,7 @@
     "dev": "run-p dev:*",
     "build:api": "cd ./api && yarn build",
     "build:app": "cd ./app && yarn build",
+    "build": "run-p build:*",
     "start:api": "cd ./api && yarn start",
     "start": "run-s build:app start:api",
     "dev-certs": "rm -rf deploy/dev-certs && mkdir deploy/dev-certs && cd deploy/dev-certs && mkcert localhost",

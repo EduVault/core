@@ -17,8 +17,6 @@ send namecheap dns to digital ocean dns
 create DO ubuntu server
 give it flaoting ip
 link domain to floating ip
-ssh in
-from ubuntu server
 
 ```bash
 ssh root@your_server_ip -i /path/to/keys
@@ -48,13 +46,19 @@ git checkout origin/main -ft
 
 ```bash
 # Download and install the latest runner package.
-
+cd ~
 mkdir actions-runner && cd actions-runner
 curl -o actions-runner-linux-x64-2.278.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.278.0/actions-runner-linux-x64-2.278.0.tar.gz
 tar xzf ./actions-runner-linux-x64-2.278.0.tar.gz
+```
+
+Go to the Settings > Actions section of the GitHub repository, then click the Add runner button.
+copy the line with the token
+
+```bash
 # Configure the runner and start the runner as a Linux service.
 
-./config.sh --url https://github.com/username/repo_name --token <your_token>
+./config.sh --url https://github.com/EduVault/server --token <token>
 sudo ./svc.sh install
 sudo ./svc.sh start
 
@@ -66,6 +70,10 @@ sudo npm install pm2 -g
 
 # Log in to the Droplet via the terminal using the sudo user created earlier, navigate to the project root directory and start the application using the PM2 process manager.
 
-cd /actions-runner/_work/digitalocean-actions/digitalocean-actions
+# cd ./actions-runner/_work/digitalocean-actions/digitalocean-actions #doesnt do anything
+# actions-runner/run.sh says already running
+
+# make change to runner so that it install and builds
+
 pm2 start --name eduvault npm -- start
 ```
