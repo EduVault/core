@@ -6,6 +6,7 @@
   "scripts": {
     "test:api": "cd ./api && yarn test",
     "test:app": "cd ./app && yarn test",
+    "test": "run-p test:*",
     "dev:api": "cd ./api && yarn dev",
     "dev:app": "cd ./app && yarn dev",
     "dev": "run-p dev:*",
@@ -13,7 +14,10 @@
     "build:app": "cd ./app && yarn build",
     "start:api": "cd ./api && yarn start",
     "start": "run-s build:app start:api",
-    "dev-certs": "rm -rf deploy/dev-certs && mkdir deploy/dev-certs && cd deploy/dev-certs && mkcert localhost"
+    "dev-certs": "rm -rf deploy/dev-certs && mkdir deploy/dev-certs && cd deploy/dev-certs && mkcert localhost",
+    "inst:api": "cd ./api && yarn install",
+    "inst:app": "cd ./app && yarn install",
+    "inst": "yarn install && yarn inst:api && yarn inst:app"
   },
   "repository": {
     "type": "git",

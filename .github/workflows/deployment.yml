@@ -1,0 +1,30 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  merge_pull_request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+
+      - name: Install dependencies
+        run: yarn inst
+
+      - name: Test application
+        run: yarn test
+
+      - name: Build and start application
+        run: yarn start
+
+      - name: Restart server application
+        run: pm2 restart eduvault
