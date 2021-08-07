@@ -1,0 +1,31 @@
+{
+  "name": "@eduvault/server",
+  "version": "1.0.0",
+  "description": "The server includes the backend api, the main app, and the homepage",
+  "main": "index.js",
+  "scripts": {
+    "test:api": "cd ./api && yarn test",
+    "test:app": "cd ./app && yarn test",
+    "dev:api": "cd ./api && yarn dev",
+    "dev:app": "cd ./app && yarn dev",
+    "dev": "run-p dev:*",
+    "build:api": "cd ./api && yarn build",
+    "build:app": "cd ./app && yarn build",
+    "start:api": "cd ./api && yarn start",
+    "start": "run-s build:* start:api"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EduVault/server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EduVault/server/issues"
+  },
+  "homepage": "https://github.com/EduVault/server#readme",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}
