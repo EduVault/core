@@ -5,16 +5,15 @@ import https from 'https';
 import http from 'https';
 
 import {
-  PORT_HTTP_DEV,
-  PORT_HTTPS_DEV,
-  CITest,
+  PORT_HTTP,
+  PORT_HTTPS,
   ENV_TEST,
   dev,
   unitTest,
-  SSL_KEY,
-  SSL_CERT,
-  PORT_HTTPS_PROD,
-  PORT_HTTP_PROD,
+  CITest,
+  SSL_KEY as key,
+  SSL_CERT as cert,
+  HOST,
 } from './config';
 import router from './routes';
 const app = express();
@@ -44,30 +43,24 @@ const httpRedirect = (server: Express) =>
     if (req.secure) {
       next();
     } else {
-      res.redirect('https://' + req.headers.host + req.url);
+      res.redirect(`https://${HOST}:${PORT_HTTPS}${req.url}`);
     }
   });
-
-const onStart = () => console.log('app listening at http://localhost');
+const onStart = (port: number) => () =>
+  console.log(
+    `app listening at http${port === PORT_HTTPS ? 's' : ''}://${HOST}:${port}`
+  );
 
 const startServer = () => {
   const httpServer = express();
   let server: https.Server | http.Server;
   if (unitTest) {
-    server = http.createServer(app).listen(80);
-  } else if (CITest || dev) {
-    httpRedirect(httpServer);
-
-    httpRedirect(httpServer);
-    httpServer.listen(PORT_HTTP_DEV);
-    server = https.createServer({ key: SSL_KEY, cert: SSL_CERT }, app);
-    server.listen(PORT_HTTPS_DEV);
+    server = http.createServer(app).listen();
   } else {
-    // production
     httpRedirect(httpServer);
-    httpServer.listen(PORT_HTTP_PROD);
-    server = https.createServer({ key: SSL_KEY, cert: SSL_CERT }, app);
-    server.listen(PORT_HTTPS_PROD);
+    httpServer.listen(PORT_HTTP, onStart(PORT_HTTP));
+    server = https.createServer({ key, cert }, app);
+    server.listen(PORT_HTTPS, onStart(PORT_HTTPS));
   }
 
   return server;

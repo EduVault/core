@@ -13,7 +13,7 @@ export const CITest = env.NODE_ENV === 'e2e';
 export const ENV_TEST = env.ENV_TEST;
 
 const PROD_HOST = env.PROD_HOST;
-export const HOST = dev ? 'localhost' : PROD_HOST;
+export const HOST = CITest || dev ? 'localhost' : PROD_HOST;
 
 const devSSLKeyPath = path.join(__dirname, '../../deploy/dev-certs/key.pem');
 const devSSLCertPath = path.join(__dirname, '../../deploy/dev-certs/cert.pem');
@@ -30,19 +30,20 @@ export const SSL_CERT = unitTest
   ? null
   : fs.readFileSync(dev ? devSSLCertPath : prodSSLCertPath);
 
-export const PORT_HTTP_DEV = Number(env.PORT_HTTP_DEV) || 5555;
-export const PORT_HTTPS_DEV = Number(env.PORT_HTTPS_DEV) || 6666;
-export const PORT_HTTP_PROD = 80;
-export const PORT_HTTPS_PROD = 443;
+const PORT_HTTP_DEV = Number(env.PORT_HTTP_DEV) || 5001;
+const PORT_HTTPS_DEV = Number(env.PORT_HTTPS_DEV) || 5002;
+const PORT_HTTP_PROD = 80;
+const PORT_HTTPS_PROD = 443;
+export const PORT_HTTP = CITest || dev ? PORT_HTTP_DEV : PORT_HTTP_PROD;
+export const PORT_HTTPS = CITest || dev ? PORT_HTTPS_DEV : PORT_HTTPS_PROD;
 
 console.log({
-  // port: env.PORT_API,
   NODE_ENV: env.NODE_ENV,
   dev,
   unitTest,
   ENV_TEST,
   PROD_HOST,
-  PORT_HTTP_DEV,
-  PORT_HTTPS_DEV,
+  PORT_HTTP,
+  PORT_HTTPS,
   CITest,
 });
