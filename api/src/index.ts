@@ -5,12 +5,15 @@ import https from 'https';
 import http from 'https';
 
 import {
-  // PORT_API,
+  PORT_HTTP,
+  PORT_HTTPS,
   ENV_TEST,
   dev,
   unitTest,
-  SSL_KEY,
-  SSL_CERT,
+  CITest,
+  SSL_KEY as key,
+  SSL_CERT as cert,
+  HOST,
 } from './config';
 import router from './routes';
 const app = express();
@@ -29,6 +32,7 @@ app.use('/api', router);
 const appPath = path.join(__dirname, '../../app/build');
 
 if (!dev && !unitTest) app.use(express.static(appPath));
+``;
 app.get('/app', (req, res) => {
   if (dev || unitTest) res.redirect('http://localhost:3000');
   else res.sendFile(appPath + '/index.html');
@@ -39,22 +43,24 @@ const httpRedirect = (server: Express) =>
     if (req.secure) {
       next();
     } else {
-      res.redirect('https://' + req.headers.host + req.url);
+      res.redirect(`https://${HOST}:${PORT_HTTPS}${req.url}`);
     }
   });
-
-const onStart = () => console.log('app listening at http://localhost');
+const onStart = (port: number) => () =>
+  console.log(
+    `app listening at http${port === PORT_HTTPS ? 's' : ''}://${HOST}:${port}`
+  );
 
 const startServer = () => {
   const httpServer = express();
   let server: https.Server | http.Server;
   if (unitTest) {
-    server = http.createServer(app).listen(80);
+    server = http.createServer(app).listen();
   } else {
     httpRedirect(httpServer);
-    httpServer.listen(80);
-    server = https.createServer({ key: SSL_KEY, cert: SSL_CERT }, app);
-    server.listen(443, onStart);
+    httpServer.listen(PORT_HTTP, onStart(PORT_HTTP));
+    server = https.createServer({ key, cert }, app);
+    server.listen(PORT_HTTPS, onStart(PORT_HTTPS));
   }
 
   return server;

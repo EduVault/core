@@ -4,3 +4,4 @@ build
 dist
 *.pem
 
+e2e/videos

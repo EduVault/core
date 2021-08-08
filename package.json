@@ -16,8 +16,11 @@
     "build:app": "cd ./app && npm run build",
     "build": "npm run build:app && npm run build:api",
     "start:api": "cd ./api && npm run start",
-    "start": "run-s build:app start:api",
-    "dev-certs": "rm -rf deploy/dev-certs && mkdir deploy/dev-certs && cd deploy/dev-certs && mkcert localhost; rm -rf deploy/prod-certs && mkdir deploy/prod-certs && cd deploy/prod-certs && mkcert localhost",
+    "build:start": "run-s build start",
+    "start:ci": "env NODE_ENV=e2e npm run start:api",
+    "start": "run-s start:api",
+    "dev-certs:ci": "rm -rf deploy/dev-certs; mkdir deploy/dev-certs; cd deploy/dev-certs && make-cert localhost && cd ../../ && rm -rf deploy/prod-certs; mkdir deploy/prod-certs; cd deploy/prod-certs && make-cert localhost",
+    "dev-certs:local": "rm -rf deploy/dev-certs; mkdir deploy/dev-certs; cd deploy/dev-certs && mkcert localhost && cp localhost-key.pem key.pem && cp localhost.pem cert.pem && cd ../../ && rm -rf deploy/prod-certs; mkdir deploy/prod-certs; cd deploy/prod-certs && mkcert localhost && cp localhost-key.pem key.pem && cp localhost.pem cert.pem",
     "inst:api": "cd ./api && npm install",
     "inst:app": "cd ./app && npm install",
     "inst": "npm install && npm run inst:api && npm run inst:app"
@@ -35,6 +38,7 @@
   "homepage": "https://github.com/EduVault/server#readme",
   "devDependencies": {
     "cypress": "^8.2.0",
+    "make-cert": "^1.2.1",
     "npm-run-all": "^4.1.5"
   }
 }

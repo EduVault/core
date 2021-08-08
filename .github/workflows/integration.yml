@@ -1,13 +1,10 @@
-name: Continuous Deployment - Production
+name: Continuous Integration
 
-on:
-  push:
-    branches:
-      - production
+on: [push]
 
 jobs:
   merge_pull_request:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout main branch
         uses: actions/checkout@v2
@@ -28,16 +25,18 @@ jobs:
       - name: Install application
         run: npm i && npm run inst
 
-      - name: Test application
-        run: npm run test
-
-      - name: Make SSL certs
-        run: npm run dev-certs
-
-      - name: Cypress run
-        uses: cypress-io/github-action@v2
-        with:
-          start: npm run start
-
       - name: Build application
         run: npm run build
+
+      - name: Make SSL certs
+        run: npm run dev-certs:ci
+
+      - name: Unit Test application
+        run: npm run test
+
+      - name: E2E Test - Cypress
+        uses: cypress-io/github-action@v2
+        with:
+          start: npm run start:ci
+        env:
+          NODE_ENV: 'e2e'
