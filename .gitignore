@@ -5,3 +5,4 @@ dist
 *.pem
 
 e2e/videos
+e2e/screenshots
