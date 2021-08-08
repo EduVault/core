@@ -18,7 +18,8 @@
     "start:api": "cd ./api && npm run start",
     "build:start": "run-s build start",
     "start": "run-s start:api",
-    "dev-certs": "rm -rf deploy/dev-certs; mkdir deploy/dev-certs; cd deploy/dev-certs && make-cert localhost && cd ../../ && rm -rf deploy/prod-certs; mkdir deploy/prod-certs; cd deploy/prod-certs && make-cert localhost",
+    "dev-certs:ci": "rm -rf deploy/dev-certs; mkdir deploy/dev-certs; cd deploy/dev-certs && make-cert localhost && cd ../../ && rm -rf deploy/prod-certs; mkdir deploy/prod-certs; cd deploy/prod-certs && make-cert localhost",
+    "dev-certs:local": "rm -rf deploy/dev-certs; mkdir deploy/dev-certs; cd deploy/dev-certs && mkcert localhost && cp localhost-key.pem key.pem && cp localhost.pem cert.pem && cd ../../ && rm -rf deploy/prod-certs; mkdir deploy/prod-certs; cd deploy/prod-certs && mkcert localhost && cp localhost-key.pem key.pem && cp localhost.pem cert.pem",
     "inst:api": "cd ./api && npm install",
     "inst:app": "cd ./app && npm install",
     "inst": "npm install && npm run inst:api && npm run inst:app"
