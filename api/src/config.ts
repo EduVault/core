@@ -4,9 +4,14 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 const env = process.env;
-export const ENV_TEST = env.ENV_TEST;
+
 export const dev = env.NODE_ENV === 'development';
 export const unitTest = env.NODE_ENV === 'test';
+export const CITest = env.NODE_ENV === 'e2e';
+
+// just to check .env file loads
+export const ENV_TEST = env.ENV_TEST;
+
 const PROD_HOST = env.PROD_HOST;
 export const HOST = dev ? 'localhost' : PROD_HOST;
 
@@ -25,14 +30,19 @@ export const SSL_CERT = unitTest
   ? null
   : fs.readFileSync(dev ? devSSLCertPath : prodSSLCertPath);
 
-// export const PORT_API = Number(env.PORT_API) || 5555;
+export const PORT_HTTP_DEV = Number(env.PORT_HTTP_DEV) || 5555;
+export const PORT_HTTPS_DEV = Number(env.PORT_HTTPS_DEV) || 6666;
+export const PORT_HTTP_PROD = 80;
+export const PORT_HTTPS_PROD = 443;
 
 console.log({
   // port: env.PORT_API,
   NODE_ENV: env.NODE_ENV,
   dev,
-  // PORT_API,
   unitTest,
   ENV_TEST,
   PROD_HOST,
+  PORT_HTTP_DEV,
+  PORT_HTTPS_DEV,
+  CITest,
 });

@@ -45,9 +45,14 @@ git init
 git remote add origin https://github.com/EduVault/server.git
 git fetch origin
 git checkout origin/main -ft
-```
 
-```bash
+# certbot
+sudo apt update
+sudo apt install certbot
+## must wait until DNS changes take effect!
+# replace eduvault.org with prod/staging server name
+mkdir deploy/prod-certs ; cd deploy/prod-certs && sudo certbot certonly --standalone -d eduvault.org<domain>
+
 # Download and install the latest runner package.
 cd ~
 mkdir actions-runner && cd actions-runner
