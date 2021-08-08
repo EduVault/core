@@ -23,7 +23,7 @@ jobs:
           ^ENV_TEST: ${{ secrets.ENV_TEST }}
 
       - name: Install application
-        run: npm i && npm run inst
+        run: npm run inst
 
       - name: Build application
         run: npm run build

@@ -12,27 +12,10 @@ jobs:
       - name: Checkout main branch
         uses: actions/checkout@v2
 
-      - name: Use Node.js
-        uses: actions/setup-node@v2
+      - name: Executing remote  command
+        uses: appleboy/ssh-action@master
         with:
-          node-version: '14.x'
-          cache: 'npm'
-
-      - name: Create .env.production
-        uses: weyheyhey/create-dotenv-action@v1
-        with:
-          wildecard: '^'
-        env:
-          ^ENV_TEST: ${{ secrets.ENV_TEST }}
-
-      - name: Install application
-        run: npm i && npm run inst
-
-      - name: Build application
-        run: npm run build
-
-      - name: Test application
-        run: npm run test
-
-      - name: Restart server application
-        run: pm2 restart eduvault
+          host: ${{ secrets.HOST_STAGING }}
+          USERNAME: ${{ secrets.USERNAME }}
+          KEY: ${{ secrets.SSHKEY }}
+          script: pm2 restart eduvault

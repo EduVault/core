@@ -26,6 +26,8 @@ link domain to floating ip
 copy over .env file
 change PROD_HOST to host e.g. eduvault.org
 
+add ssh info to github secrets
+
 ```bash
 ssh root@your_server_ip -i /path/to/keys
 adduser jacob
@@ -58,23 +60,6 @@ sudo apt install certbot
 # replace eduvault.org with prod/staging server name
 mkdir deploy/prod-certs ; cd deploy/prod-certs && sudo certbot certonly --standalone -d eduvault.org<domain>
 
-# Download and install the latest runner package.
-cd ~
-mkdir actions-runner && cd actions-runner
-curl -o actions-runner-linux-x64-2.278.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.278.0/actions-runner-linux-x64-2.278.0.tar.gz
-tar xzf ./actions-runner-linux-x64-2.278.0.tar.gz
-```
-
-Go to the Settings > Actions section of the GitHub repository, then click the Add runner button.
-copy the line with the token
-
-```bash
-# Configure the runner and start the runner as a Linux service.
-
-./config.sh --url https://github.com/EduVault/server --token <token>
-sudo ./svc.sh install
-sudo ./svc.sh start
-
 # Set up the project dependencies (Node.js and PM2 Process Manager).
 cd ~
 curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
@@ -83,17 +68,6 @@ sudo npm install pm2 -g
 
 # Log in to the Droplet via the terminal using the sudo user created earlier, navigate to the project root directory and start the application using the PM2 process manager.
 
-# cd ./actions-runner/_work/digitalocean-actions/digitalocean-actions #doesnt do anything
-# actions-runner/run.sh says already running
+cd ./eduvault && pm2 start --name eduvault npm -- start:production
 
-# make change to runner so that it install and builds
-
-pm2 start --name eduvault npm -- start
-
-
-# monitor runner
-cat ~/actions-runner/.service
-# actions.runner.octo-org-octo-repo.runner01.service
-sudo journalctl -u <result>
-sudo journalctl -u actions.runner.EduVault-server.eduvault-staging.service
 ```
