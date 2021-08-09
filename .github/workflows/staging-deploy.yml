@@ -17,5 +17,5 @@ jobs:
         with:
           host: ${{ secrets.HOST_STAGING }}
           USERNAME: ${{ secrets.USERNAME }}
-          KEY: ${{ secrets.SSHKEY }}
+          KEY: ${{ secrets.KEY }}
           script: pm2 restart eduvault
