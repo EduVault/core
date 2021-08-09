@@ -59,7 +59,15 @@ sudo apt install certbot
 ## must wait until DNS changes take effect!
 # replace eduvault.org with prod/staging server name
 mkdir deploy/prod-certs ; cd deploy/prod-certs && sudo certbot certonly --standalone -d eduvault.org<domain>
+# copy them in
+cd deploy/prod-certs && cp /etc/letsencrypt/live/is-a-test.xyz/fullchain.pem cert.pem && cp /etc/letsencrypt/live/is-a-test.xyz/privkey.pem key.pem
+# permission key
+sudo chown jacob /home/jacob/eduvault/deploy/prod-certs/key.pem
+sudo chmod 400 /home/jacob/eduvault/deploy/prod-certs/key.pem
 
+# allow port 80:
+sudo apt-get install libcap2-bin
+sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\``
 # Set up the project dependencies (Node.js and PM2 Process Manager).
 cd ~
 curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
@@ -68,6 +76,6 @@ sudo npm install pm2 -g
 
 # Log in to the Droplet via the terminal using the sudo user created earlier, navigate to the project root directory and start the application using the PM2 process manager.
 
-cd ./eduvault && pm2 start --name eduvault npm -- start:production
-
+cd ./eduvault && pm2 start --name eduvault npm -- run start:production
+pm2 logs #view logs
 ```
