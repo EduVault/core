@@ -16,6 +16,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_STAGING }}
-          USERNAME: ${{ secrets.USERNAME }}
-          KEY: ${{ secrets.KEY }}
+          username: ${{ secrets.USERNAME }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          key: ${{ secrets.KEY }}
           script: pm2 restart eduvault
