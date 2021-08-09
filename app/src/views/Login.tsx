@@ -4,7 +4,7 @@ const Login = (props: Props) => {
   return (
     <div>
       login
-      <p>continuous deployment online!</p>
+      <p>continuous deployment testing</p>
     </div>
   );
 };
