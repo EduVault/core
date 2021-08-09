@@ -7,12 +7,12 @@ on:
 
 jobs:
   merge_pull_request:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout main branch
         uses: actions/checkout@v2
 
-      - name: Executing remote  command
+      - name: Executing remote command
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_STAGING }}
