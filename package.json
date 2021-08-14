@@ -2,7 +2,7 @@
   "name": "@eduvault/server",
   "version": "1.0.0",
   "description": "The server includes the backend api, the main app, and the homepage",
-  "main": "index.js",
+  "main": "api/dist/index.js",
   "scripts": {
     "test:api": "cd ./api && npm run test",
     "test:app": "cd ./app && npm run test",
