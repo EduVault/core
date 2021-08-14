@@ -1,0 +1,29 @@
+{
+  "_id": "f4bde0df-c019-418e-a092-9f8371076316",
+  "cards": [{
+      "_id": "1",
+      "frontText": "<h2><strong>What is a group of zebras called?</strong></h2>",
+      "backText": "<h1><strong>A zeal</strong></h1>",
+      "updatedAt": 1596098767092
+    },
+    {
+      "_id": "2",
+      "frontText": "<h2><strong>What is a group of slugs called?</strong></h2>",
+      "backText": "<h1><strong>A cornucopia</strong></h1>",
+      "updatedAt": 1596098767092
+    },
+    {
+      "_id": "3",
+      "frontText": "<h2><strong>What is a group of lemurs called?</strong></h2>",
+      "backText": "<h1><strong>A conspiracy</strong></h1>",
+      "updatedAt": 1596098767092
+    }, {
+      "_id": "4",
+      "frontText": "<h2><strong>What is a group of lizards called?</strong></h2>",
+      "backText": "<h1><strong>A lounge</strong></h1>",
+      "updatedAt": 1596098767092
+    }
+  ],
+  "title": "Default Deck - Animal facts",
+  "updatedAt": 1596098767092
+}
