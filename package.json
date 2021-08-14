@@ -16,7 +16,7 @@
     "build:app": "cd ./app && npm run build",
     "build": "npm run build:app && npm run build:api",
     "start:api": "cd ./api && npm run start",
-    "build:start": "npm run build && npm run build:start",
+    "build:start": "npm run build && npm run start",
     "clean": "rm -rf app/node_modules; rm -rf api/node_modules",
     "start:ci": "env NODE_ENV=e2e npm run start:api",
     "start": "npm run start:api",

@@ -8,7 +8,7 @@ describe('Index Page', () => {
     expect(response).to.have.property('body', 'pong');
   });
   it('should contain a login element', () => {
-    cy.visit('localhost:5001/app');
+    cy.visit('localhost:5001/');
 
     const login = cy.contains('login');
     login.should('exist');
