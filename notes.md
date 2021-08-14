@@ -76,6 +76,6 @@ sudo npm install pm2 -g
 
 # Log in to the Droplet via the terminal using the sudo user created earlier, navigate to the project root directory and start the application using the PM2 process manager.
 
-cd ./eduvault && pm2 start --name eduvault npm -- run start:production
+cd ./eduvault && npm run build:production && pm2 start --name eduvault npm -- run start
 pm2 logs #view logs
 ```

@@ -19,4 +19,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           passphrase: ${{ secrets.PASSPHRASE }}
           key: ${{ secrets.KEY }}
-          script: pm2 restart eduvault
+          script: cd ./eduvault && npm run build:production && pm2 restart eduvault
