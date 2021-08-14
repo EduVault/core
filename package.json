@@ -11,7 +11,7 @@
     "e2e": "cypress run",
     "dev:api": "cd ./api && npm run dev",
     "dev:app": "cd ./app && npm run dev",
-    "dev": "run-s dev:*",
+    "dev": "run-p dev:*",
     "build:api": "cd ./api && npm run build",
     "build:app": "cd ./app && npm run build",
     "build": "npm run build:app && npm run build:api",
