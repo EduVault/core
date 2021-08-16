@@ -68,6 +68,7 @@ sudo chmod 400 /home/jacob/eduvault/deploy/prod-certs/key.pem
 # allow port 80:
 sudo apt-get install libcap2-bin
 sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\``
+
 # Set up the project dependencies (Node.js and PM2 Process Manager).
 cd ~
 curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
@@ -77,5 +78,5 @@ sudo npm install pm2 -g
 # Log in to the Droplet via the terminal using the sudo user created earlier, navigate to the project root directory and start the application using the PM2 process manager.
 
 cd ~/eduvault && npm run build:production && pm2 start --name eduvault npm -- run start
-pm2 logs #view logs
+pm2 logs # view logs
 ```

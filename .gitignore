@@ -1,8 +1,18 @@
-.env
+# keys
+*.env
+!example.env
+*.pem
+*.crt
+*.key
+
+# builds and deps
 node_modules
 build
 dist
-*.pem
 
+# e2e records
 e2e/videos
 e2e/screenshots
+
+# editor
+.vscode
