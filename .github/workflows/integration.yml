@@ -22,7 +22,7 @@ jobs:
         env:
           ^ENV_CHECK: ${{ secrets.ENV_CHECK }}
           ^DEV_HOST: 'localhost'
-          ^NODE_ENV: 'e2d'
+          ^NODE_ENV: 'e2e'
 
       - name: Install application
         run: npm run inst
