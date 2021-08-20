@@ -11,10 +11,38 @@
 [express http to https](https://stackoverflow.com/a/65551891/12662244)
 [Digital Ocean deploy with github actions CI](https://codememoirs.com/automatic-deployment-digitalocean-github-actions/)
 
+## Environments and builds
+
+### dev
+
+Docker: no
+SSL: yes
+
+### unit tests
+
+Docker: no
+SSL: no
+
+### CI tests
+
+Docker yes
+SSL: yes
+
+### Production
+
+Docker: yes
+SSL: yes
+
 ## SSL certs
 
-We use an npm package `make-cert:ci` during CI to make a self-signed cert without a cert authority, good enough for headless e2e tests. For local development, its better to use install [mkcert](https://github.com/FiloSottile/mkcert/) because it adds a cert authority (still have to manually get browser to trust it)
-e the script `yarn make-certs:local`
+use the scripts `npm run ssl-certs:` + env
+
+- CI:
+  we use an npm package make-cert during CI to make a self-signed cert without a cert authority, good enough for headless e2e tests.
+
+- Local development, its better to use [mkcert](https://github.com/FiloSottile/mkcert/) because it adds a cert authority (still have to manually get browser to trust it)
+
+- Production
 
 ## Deploy
 

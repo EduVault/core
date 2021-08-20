@@ -7,7 +7,8 @@ echo 'env: '$env;
 # load envs
 export $(cat .env | xargs);
 # check host environment variable
-echo 'host: ' $PROD_HOST;
+echo 'prod host: ' $PROD_HOST;
+echo 'dev host' $DEV_HOST;
 echo 'email: ' $EMAIL;
 
 echo 'current directory: ';
@@ -29,27 +30,27 @@ link_certs() {
     pwd;
     if [ $cert_script == "make-cert" ]; then
         cd ./dev-certs && \
-        ln -s cert.pem localhost.crt && \
-        ln -s key.pem localhost.key && \
+        ln -s cert.pem $DEV_HOST.crt && \
+        ln -s key.pem $DEV_HOST.key && \
 
         cd ../prod-certs && \
-        ln -s cert.pem localhost.crt && \
-        ln -s key.pem localhost.key;
+        ln -s cert.pem $DEV_HOST.crt && \
+        ln -s key.pem $DEV_HOST.key;
 
     elif [ $cert_script == "mkcert" ]; then
         cd ./dev-certs && \
-        ln -s localhost-key.pem key.pem && \
-        ln -s localhost-key.pem localhost.key && \
+        ln -s $DEV_HOST-key.pem key.pem && \
+        ln -s $DEV_HOST-key.pem $DEV_HOST.key && \
 
-        ln -s localhost.pem cert.pem && \
-        ln -s localhost.pem localhost.crt && \
+        ln -s $DEV_HOST.pem cert.pem && \
+        ln -s $DEV_HOST.pem $DEV_HOST.crt && \
 
         cd ../prod-certs && \
-        ln -s localhost-key.pem key.pem && \
-        ln -s localhost-key.pem localhost.key && \
+        ln -s $DEV_HOST-key.pem key.pem && \
+        ln -s $DEV_HOST-key.pem $DEV_HOST.key && \
 
-        ln -s localhost.pem cert.pem && \
-        ln -s localhost.pem localhost.crt;
+        ln -s $DEV_HOST.pem cert.pem && \
+        ln -s $DEV_HOST.pem $DEV_HOST.crt;
 
     elif [ $cert_script == "certbot" ]; then
         cd ./prod-certs && \
@@ -68,17 +69,17 @@ make_certs() {
     if [ $env == "ci" ]; then
         echo 'making CI certs';    
         cd ./dev-certs && \
-        ../../node_modules/.bin/make-cert localhost && \
+        ../../node_modules/.bin/make-cert $DEV_HOST && \
         cd ../prod-certs && \
-        ../../node_modules/.bin/make-cert localhost && \
+        ../../node_modules/.bin/make-cert $DEV_HOST && \
         cd ../;
         link_certs make-cert;
     elif [ $env == "local" ]; then
         echo 'making local certs';
         cd ./dev-certs && \
-        mkcert localhost && \
+        mkcert $DEV_HOST && \
         cd ../prod-certs  && \
-        mkcert localhost && \
+        mkcert $DEV_HOST && \
         cd ../;       
         link_certs mkcert;
     elif [ $env == "prod" ]; then

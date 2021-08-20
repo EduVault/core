@@ -20,7 +20,9 @@ jobs:
         with:
           wildecard: '^'
         env:
-          ^ENV_TEST: ${{ secrets.ENV_TEST }}
+          ^ENV_CHECK: ${{ secrets.ENV_CHECK }}
+          ^DEV_HOST: 'localhost'
+          ^NODE_ENV: 'e2d'
 
       - name: Install application
         run: npm run inst
@@ -29,7 +31,7 @@ jobs:
         run: npm run build
 
       - name: Make SSL certs
-        run: npm run dev-certs:ci
+        run: npm run ssl-certs:ci
 
       - name: Unit Test application
         run: npm run test

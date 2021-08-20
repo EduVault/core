@@ -7,31 +7,25 @@
     "test:api": "cd ./api && npm run test",
     "test:app": "cd ./app && npm run test",
     "test": "run-s test:*",
-
     "e2e-open": "cypress open",
     "e2e": "cypress run",
-
     "dev:api": "cd ./api && npm run dev",
     "dev:app": "cd ./app && npm run dev",
     "dev": "run-p dev:*",
-    
     "build:api": "cd ./api && npm run build",
     "build:app": "cd ./app && npm run build",
     "build": "npm run build:app && npm run build:api",
-    
     "build:start": "npm run build && npm run start",
-    "build:production": "git pull && npm run inst && npm run build",
-    
+    "build:production": "docker-compose down --remove-orphans && docker-compose up --build",
     "start:api": "cd ./api && npm run start",
-    "start:ci": "env NODE_ENV=e2e npm run start:api",
-    "start:production": "npm run build:production && npm run start",
+    "start:ci": "docker-compose up",
+    "start:production": "env NODE_ENV=production docker-compose down --remove-orphans && docker-compose up -d",
+    "start:production:logs": "env NODE_ENV=production docker-compose down --remove-orphans && docker-compose up",
     "start": "npm run start:api",
-
     "ssl-certs:local": "sh ./deploy/ssl-certs.sh local",
     "ssl-certs:ci": "sh ./deploy/ssl-certs.sh ci",
     "ssl-certs:prod": "sh ./deploy/ssl-certs.sh prod",
-
-    "clean": "rm -rf app/build; rm -rf api/dist; rm -rf app/node_modules; rm -rf api/node_modules",
+    "clean": "rm -rf app/build; rm -rf api/dist;  rm app/package-lock.json; rm api/package-lock.json; rm -rf app/node_modules; rm -rf api/node_modules; rm -rf node_modules; rm package-lock.json",
     "inst:api": "cd ./api && npm install",
     "inst:app": "cd ./app && npm install",
     "inst": "npm install && npm run inst:api && npm run inst:app"
@@ -48,7 +42,6 @@
   },
   "homepage": "https://github.com/EduVault/server#readme",
   "devDependencies": {
-    "cypress": "^8.2.0",
     "make-cert": "^1.2.1",
     "npm-run-all": "^4.1.5"
   }

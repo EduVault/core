@@ -7,8 +7,9 @@ import http from 'https';
 import {
   PORT_HTTP,
   PORT_HTTPS,
-  ENV_TEST,
+  ENV_CHECK,
   dev,
+  prod,
   unitTest,
   CITest,
   SSL_KEY as key,
@@ -17,12 +18,17 @@ import {
 } from './config';
 import router from './routes';
 const app = express();
+app.set('trust-proxy', true);
 
 app.use(cors());
 
 // Check dotenv Loads
 app.get('/dotenv-check', (req, res) => {
-  res.json({ ENV_TEST });
+  res.json({ ENV_CHECK });
+});
+
+app.get('/', (req, res) => {
+  res.json({ message: 'pong' });
 });
 
 // Serve API
@@ -31,9 +37,9 @@ app.use('/api', router);
 // Serve App
 const appPath = path.join(__dirname, '../../app/build');
 
-if (!dev && !unitTest) app.use(express.static(appPath));
+if (!dev && !unitTest) app.use('/app', express.static(appPath));
 ``;
-app.get('/app', (req, res) => {
+app.get(['/app', '/app/*'], (req, res) => {
   if (dev || unitTest) res.redirect('http://localhost:3000');
   else res.sendFile(appPath + '/index.html');
 });
@@ -54,16 +60,19 @@ const onStart = (port: number) => () =>
 const startServer = () => {
   const httpServer = express();
   let server: https.Server | http.Server;
-  if (unitTest) {
-    server = http.createServer(app).listen();
-  } else {
+  if (dev) {
     httpRedirect(httpServer);
     httpServer.listen(PORT_HTTP, onStart(PORT_HTTP));
     server = https.createServer({ key, cert }, app);
     server.listen(PORT_HTTPS, onStart(PORT_HTTPS));
+  } else if (unitTest) {
+    server = http.createServer(app).listen();
+  } else if (prod || CITest) {
+    app.listen(PORT_HTTP, onStart(PORT_HTTP));
   }
 
   return server;
 };
+
 if (!unitTest) startServer();
 export { app, startServer };
