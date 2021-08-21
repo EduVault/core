@@ -17,10 +17,8 @@ pwd;
 clean_folders() {
     echo 'cleaning folders';
     cd ./deploy &&  
-    rm -rf ./dev-certs; \
-    mkdir ./dev-certs; \
-    rm -rf ./prod-certs; \
-    mkdir ./prod-certs;
+    rm -rf ./certs; \
+    mkdir ./certs;
 };
 
 link_certs() {
@@ -29,23 +27,12 @@ link_certs() {
     echo 'current directory: ';
     pwd;
     if [ $cert_script == "make-cert" ]; then
-        cd ./dev-certs && \
-        ln -s cert.pem $DEV_HOST.crt && \
-        ln -s key.pem $DEV_HOST.key && \
-
-        cd ../prod-certs && \
+        cd ./certs && \
         ln -s cert.pem $DEV_HOST.crt && \
         ln -s key.pem $DEV_HOST.key;
 
     elif [ $cert_script == "mkcert" ]; then
-        cd ./dev-certs && \
-        ln -s $DEV_HOST-key.pem key.pem && \
-        ln -s $DEV_HOST-key.pem $DEV_HOST.key && \
-
-        ln -s $DEV_HOST.pem cert.pem && \
-        ln -s $DEV_HOST.pem $DEV_HOST.crt && \
-
-        cd ../prod-certs && \
+        cd ./certs && \
         ln -s $DEV_HOST-key.pem key.pem && \
         ln -s $DEV_HOST-key.pem $DEV_HOST.key && \
 
@@ -53,7 +40,7 @@ link_certs() {
         ln -s $DEV_HOST.pem $DEV_HOST.crt;
 
     elif [ $cert_script == "certbot" ]; then
-        cd ./prod-certs && \
+        cd ./certs && \
         ln -s /etc/letsencrypt/live/$PROD_HOST/privkey.pem key.pem && \
         ln -s /etc/letsencrypt/live/$PROD_HOST/privkey.pem $PROD_HOST.key && \
 
@@ -68,23 +55,19 @@ make_certs() {
     pwd;
     if [ $env == "ci" ]; then
         echo 'making CI certs';    
-        cd ./dev-certs && \
-        ../../node_modules/.bin/make-cert $DEV_HOST && \
-        cd ../prod-certs && \
+        cd ./certs && \
         ../../node_modules/.bin/make-cert $DEV_HOST && \
         cd ../;
         link_certs make-cert;
     elif [ $env == "local" ]; then
         echo 'making local certs';
-        cd ./dev-certs && \
-        mkcert $DEV_HOST && \
-        cd ../prod-certs  && \
+        cd ./certs && \
         mkcert $DEV_HOST && \
         cd ../;       
         link_certs mkcert;
     elif [ $env == "prod" ]; then
         echo 'making prod certs'
-        cd ./prod-certs && \
+        cd ./certs && \
         sudo certbot certonly --standalone -d $PROD_HOST --agree-tos -m $EMAIL --non-interactive;
         cd ../;
         link_certs certbot;
