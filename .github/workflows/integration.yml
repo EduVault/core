@@ -32,6 +32,8 @@ jobs:
 
       # - name: Install application
       #   run: npm run inst
+      - name: Install application
+        run: npm i
 
       # - name: Build application
       #   run: npm run build
