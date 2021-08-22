@@ -31,7 +31,7 @@ jobs:
           ^NODE_TLS_REJECT_UNAUTHORIZED: 0
 
       - name: Install application
-        run: npm run inst:prod
+        run: npm run inst:ci
 
       - name: Build application
         run: npm run build
