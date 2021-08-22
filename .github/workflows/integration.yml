@@ -28,7 +28,6 @@ jobs:
           ^PORT_API_HTTPS: 10443
           ^PORT_EXTERNAL_HTTP: 1080
           ^PORT_EXTERNAL_HTTPS: 10443
-          ^NODE_TLS_REJECT_UNAUTHORIZED: '0'
 
       - name: Install application
         run: npm run inst:ci
@@ -48,5 +47,5 @@ jobs:
           start: npm run start:ci
           wait-on: 'https://localhost:10443'
           wait-on-timeout: 500
-        env:
-          NODE_ENV: 'e2e'
+          browser: chrome
+          headless: true
