@@ -28,6 +28,7 @@ jobs:
           ^PORT_API_HTTPS: 10443
           ^PORT_EXTERNAL_HTTP: 8080
           ^PORT_EXTERNAL_HTTPS: 8081
+          ^NODE_TLS_REJECT_UNAUTHORIZED: 0
 
       - name: Install application
         run: npm run inst
