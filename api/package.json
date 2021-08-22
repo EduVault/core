@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "NODE_ENV=development TS_NODE_PROJECT='./tsconfig.json' ts-node-dev --inspect=0.0.0.0:9229 --poll --respawn ./src src/index.ts",
-    "build": "dotenv -e ../dev.env tsc -p tsconfig.json ",
-    "start": "dotenv -e ../dev.env node dist/",
+    "build": "tsc -p tsconfig.json ",
+    "start": "node dist/",
     "test": "npm run build && jest --env=./jest-env.js --detectOpenHandles",
     "test:watch": "jest --env=./jest-env.js --detectOpenHandles  --watch"
   },
