@@ -47,7 +47,7 @@ jobs:
       - name: E2E Test - Cypress
         uses: cypress-io/github-action@v2
         with:
-          start: npm run start:ci && npm run e2e
+          start: npm run start:ci
           wait-on: 'https://localhost:10443'
           wait-on-timeout: 500
         env:
