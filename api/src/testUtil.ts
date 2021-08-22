@@ -15,7 +15,7 @@ export const setupApp = () => {
   // const server = startServer();
   const request = () => supertest(app);
   const agent = supertest.agent(app);
-  console.log(`Koa test app listening`);
+  console.log(`test app listening`);
   return { request, agent, app };
 };
 
