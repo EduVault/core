@@ -7,11 +7,11 @@ RUN npm ci --production
 
 WORKDIR /eduvault/api
 COPY ./api/package*.json ./
-RUN npm ci --production
+RUN npm ci
 
 WORKDIR /eduvault/app
 COPY ./app/package*.json ./
-RUN npm ci --production
+RUN npm ci
 
 WORKDIR /eduvault/
 COPY . .
