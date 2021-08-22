@@ -45,5 +45,6 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           start: npm run start:ci
+          wait-on: 'https://localhost:10443'
         env:
           NODE_ENV: 'e2e'
