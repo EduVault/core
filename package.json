@@ -1,34 +1,42 @@
 {
-  "name": "@eduvault/server",
+  "name": "@eduvault/core",
   "version": "1.0.0",
-  "description": "The server includes the backend api, the main app, and the homepage",
+  "description": "Backend api server, the main app, and the homepage",
   "main": "api/dist/index.js",
   "scripts": {
+    "---------unit-test-----------": "--------------------",
     "test:api": "cd ./api && npm run test",
     "test:app": "cd ./app && npm run test",
     "test": "run-s test:*",
-    "e2e-open": "cypress open",
+    "-----------e2e-test---------": "--------------------",
+    "e2e:open": "cypress open",
     "e2e": "cypress run",
+    "---------dev-run----------": "--------------------",
     "dev:api": "cd ./api && npm run dev",
     "dev:app": "cd ./app && npm run dev",
-    "dev": "run-p dev:*",
+    "dev": "dotenv -e dev.env run-p dev:*",
+    "---------build----------": "--------------------",
     "build:api": "cd ./api && npm run build",
     "build:app": "cd ./app && npm run build",
     "build": "npm run build:app && npm run build:api",
     "build:start": "npm run build && npm run start",
-    "build:production": "docker-compose down --remove-orphans && docker-compose up --build",
+    "build:production": "dotenv -e .env docker-compose down --remove-orphans && docker-compose up --build",
+    "---------start----------": "--------------------",
+    "start:local": "env USE_HTTPS=true npm run start",
     "start:api": "cd ./api && npm run start",
-    "start:ci": "docker-compose up",
-    "start:production": "env NODE_ENV=production docker-compose down --remove-orphans && docker-compose up -d",
-    "start:production:logs": "env NODE_ENV=production docker-compose down --remove-orphans && docker-compose up",
-    "start": "npm run start:api",
-    "ssl-certs:local": "sh ./deploy/ssl-certs.sh local",
+    "start:ci": "dotenv -e .env docker-compose up --build",
+    "start:production": "dotenv -e .env docker-compose down --remove-orphans && docker-compose up -d",
+    "start:production:logs": "dotenv -e .env docker-compose down --remove-orphans && docker-compose up",
+    "start": "dotenv -e .env npm run start:api",
+    "---------https/ssl certs----------": "--------------------",
+    "ssl-certs:local": "dotenv -e dev.env sh ./deploy/ssl-certs.sh local",
     "ssl-certs:ci": "sh ./deploy/ssl-certs.sh ci",
     "ssl-certs:prod": "sh ./deploy/ssl-certs.sh prod",
-    "clean": "rm -rf app/build; rm -rf api/dist;  rm app/package-lock.json; rm api/package-lock.json; rm -rf app/node_modules; rm -rf api/node_modules; rm -rf node_modules; rm package-lock.json",
+    "---------install and clean----------": "--------------------",
     "inst:api": "cd ./api && npm install",
     "inst:app": "cd ./app && npm install",
-    "inst": "npm install && npm run inst:api && npm run inst:app"
+    "inst": "npm install && npm run inst:api && npm run inst:app",
+    "clean": "rm -rf app/build; rm -rf api/dist;  rm app/package-lock.json; rm api/package-lock.json; rm -rf app/node_modules; rm -rf api/node_modules; rm -rf node_modules; rm package-lock.json"
   },
   "repository": {
     "type": "git",
@@ -43,8 +51,11 @@
   "homepage": "https://github.com/EduVault/server#readme",
   "devDependencies": {
     "cypress": "^8.3.0",
-    "make-cert": "^1.2.1",
-    "npm-run-all": "^4.1.5"
+    "make-cert": "^1.2.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "dotenv-cli": "^4.0.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^4.3.5"
+  }
 }

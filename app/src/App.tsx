@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import Login from './views/Login';
 import NavBar from './components/NavBar';
-import Home from './views/Home';
+import HomePage from './views/HomePage';
+import AppHome from './views/AppHome';
 
 const App: React.FC = (props) => {
   return (
@@ -11,8 +12,9 @@ const App: React.FC = (props) => {
       <NavBar />
       <Router>
         <Switch>
-          <Route path={['/', '/login']} exact component={Login} />
-          <Route path="/home" component={Home} />
+          <Route path={['/login', '/app/login']} component={Login} />
+          <Route path="/app/*" component={AppHome} />
+          <Route path={['/*', '/home']} component={HomePage} />
         </Switch>
       </Router>
       {props.children}

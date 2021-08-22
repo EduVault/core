@@ -1,39 +1,37 @@
 import fs from 'fs';
 import path from 'path';
-import dotenv from 'dotenv';
-dotenv.config({ path: '../.env' });
 
 const env = process.env;
+export const NODE_ENV = process.env.NODE_ENV;
+export const dev = NODE_ENV === 'development';
+export const unitTest = env.TEST_ENV === 'unit'; // no SSL
+export const e2eTest = env.TEST_ENV === 'e2e'; // no SSL (SSL through docker)
 
-export const dev = env.NODE_ENV === 'development'; // SSL
-export const unitTest = env.NODE_ENV === 'test'; // no SSL
-export const CITest = env.NODE_ENV === 'e2e'; // no SSL (SSL through docker)
-export const prod = env.NODE_ENV === 'production'; // no SSL (SSL through docker)
+export const useHttps = unitTest ? false : env.USE_HTTPS === 'true';
 
 // just to check .env file loads
 export const ENV_CHECK = env.ENV_CHECK;
 
-const PROD_HOST = env.PROD_HOST;
-export const HOST = dev || unitTest ? 'localhost' : PROD_HOST;
+export const HOST = env.HOST;
 
-const devSSLKeyPath = path.join(__dirname, '../../deploy/dev-certs/key.pem');
-const devSSLCertPath = path.join(__dirname, '../../deploy/dev-certs/cert.pem');
+const SSLKeyPath = path.join(__dirname, '../../deploy/certs/key.pem');
+const SSLCertPath = path.join(__dirname, '../../deploy/certs/cert.pem');
 
-export const SSL_KEY = dev ? fs.readFileSync(devSSLKeyPath) : null;
+export const SSL_KEY = useHttps ? fs.readFileSync(SSLKeyPath) : null;
 
-export const SSL_CERT = dev ? fs.readFileSync(devSSLCertPath) : null;
+export const SSL_CERT = useHttps ? fs.readFileSync(SSLCertPath) : null;
 
-export const PORT_HTTP = Number(env.PORT_HTTP) || 5001;
-export const PORT_HTTPS = Number(env.PORT_HTTPS) || 5002;
+export const PORT_API_HTTP = Number(env.PORT_API_HTTP);
+export const PORT_API_HTTPS = Number(env.PORT_API_HTTPS);
 
 console.log({
   ENV_CHECK,
-  NODE_ENV: env.NODE_ENV,
+  NODE_ENV,
   dev,
-  prod,
   unitTest,
-  CITest,
+  e2eTest,
+  useHttps,
   HOST,
-  PORT_HTTP,
-  PORT_HTTPS,
+  PORT_API_HTTP,
+  PORT_API_HTTPS,
 });

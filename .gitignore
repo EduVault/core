@@ -1,7 +1,10 @@
 # keys
 *.env
 !example.env
+!example.dev.env
 *.pem
+# leave one localhost cert in there as filler
+!localhost.pem
 *.crt
 *.key
 

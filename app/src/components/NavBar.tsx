@@ -29,8 +29,9 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export const links = [
-  { text: 'Home', location: '/home' },
-  { text: 'Login', location: '/login' },
+  { text: 'Login', location: '/app/login' },
+  { text: 'App', location: '/app' },
+  { text: 'About Eduvault', location: '/home' },
 ];
 
 export default function ButtonAppBar() {
@@ -52,7 +53,7 @@ export default function ButtonAppBar() {
           return (
             <ListItem key={link.text} button>
               <ListItemIcon>
-                {link.text === 'Home' && <HomeOutlined />}
+                {link.text === 'App' && <HomeOutlined />}
                 {link.text === 'Login' && <OpenInBrowser />}
               </ListItemIcon>
               <ListItemText>

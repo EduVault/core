@@ -1,29 +1,30 @@
 version: '3.7'
 services:
   eduvault-core:
-    build:
-      context: ./
-    env_file:
-      - ./.env
+    build: ./
+    env_file: ./.env
     expose:
-      - ${PORT_HTTP}
+      - 1080
     environment:
-      - VIRTUAL_HOST=${PROD_HOST}
-      - VIRTUAL_PORT=${PORT_HTTP}
+      VIRTUAL_HOST: localhost
+      VIRTUAL_PORT: 1080
 
   nginx-proxy:
-    container_name: nginx-proxy
+    env_file: ./.env
     # using this instead of jwilder because issue with m1 https://github.com/nginx-proxy/nginx-proxy/issues/1550#issuecomment-799705715
     image: ninanung/nginx-proxy # on mac m1
     # image: jwilder/nginx-proxy
     # restart with: docker exec -it nginx-proxy nginx -s reload
-    # restart: unless-stopped
+    restart: unless-stopped
     volumes:
       # - ./deploy/nginx/d-dev:/etc/nginx/conf.d #for custom conf file, overiding auto generated one
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      # - ./deploy/prod-certs:/etc/nginx/certs:ro
+      - ./deploy/certs:/etc/nginx/certs:ro
     ports:
-      - '80:80'
-      # - '443:443'
+      - '1080:1080'
+      - '10443:10443'
     depends_on:
       - eduvault-core
+    environment:
+      HTTP_PORT: 1080
+      HTTPS_PORT: 10443

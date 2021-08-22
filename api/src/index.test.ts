@@ -25,7 +25,7 @@ describe('Loads .env', () => {
   });
 
   it('loads .env', async () => {
-    const res = await request().get('/dotenv-check').send();
+    const res = await request().get('/env-check').send();
     // console.log('ping test result', result);
     expect(res.status).toEqual(200);
     expect(res.body.ENV_CHECK).toEqual('working');

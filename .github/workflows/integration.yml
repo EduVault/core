@@ -20,9 +20,14 @@ jobs:
         with:
           wildecard: '^'
         env:
-          ^ENV_CHECK: ${{ secrets.ENV_CHECK }}
-          ^DEV_HOST: 'localhost'
-          ^NODE_ENV: 'e2e'
+          ^ENV_CHECK: 'working'
+          ^HOST: 'localhost'
+          ^TEST_ENV: 'e2e'
+          ^NODE_ENV: 'production'
+          ^PORT_API_HTTP: 1080
+          ^PORT_API_HTTPS: 10443
+          ^PORT_EXTERNAL_HTTP: 8080
+          ^PORT_EXTERNAL_HTTPS: 8081
 
       - name: Install application
         run: npm run inst
