@@ -33,21 +33,20 @@ jobs:
       - name: Install application
         run: npm run inst:ci
 
-      - name: Build application
-        run: npm run build
-
       - name: Make SSL certs
         run: npm run ssl-certs:ci
 
-      - name: Unit Test application
-        run: npm run test
+      - name: Build application
+        run: npm run build
+
+      # - name: Unit Test application
+      #   run: npm run test
 
       - name: E2E Test - Cypress
         uses: cypress-io/github-action@v2
         with:
           start: npm run start:ci
-          wait-on: 'https://localhost:10443'
-          wait-on-timeout: 500
+          wait-on: 'npx wait-on --timeout 50000 https://localhost:10443'
           browser: chrome
           headless: true
-          env: NODE_TLS_REJECT_UNAUTHORIZED='0'
+          env: NODE_TLS_REJECT_UNAUTHORIZED=0
