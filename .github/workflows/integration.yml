@@ -36,7 +36,7 @@ jobs:
         run: npm run build
 
       - name: Make SSL certs
-        run: npm run ssl-certs:ci
+        run: npm run ssl-certs:ci && cd ../deploy/certs && ls
 
       - name: Unit Test application
         run: npm run test
