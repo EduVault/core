@@ -46,5 +46,6 @@ jobs:
         with:
           start: npm run start:ci
           wait-on: 'https://localhost:10443'
+          wait-on-timeout: 180
         env:
           NODE_ENV: 'e2e'
