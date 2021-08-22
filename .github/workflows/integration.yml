@@ -30,19 +30,17 @@ jobs:
           ^PORT_EXTERNAL_HTTPS: 10443
           ^NODE_TLS_REJECT_UNAUTHORIZED: 0
 
-      # - name: Install application
-      #   run: npm run inst
       - name: Install application
-        run: npm i --production
+        run: npm run inst:prod
 
-      # - name: Build application
-      #   run: npm run build
+      - name: Build application
+        run: npm run build
 
       - name: Make SSL certs
         run: npm run ssl-certs:ci
 
-      # - name: Unit Test application
-      #   run: npm run test
+      - name: Unit Test application
+        run: npm run test
 
       - name: E2E Test - Cypress
         uses: cypress-io/github-action@v2

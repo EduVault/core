@@ -36,6 +36,7 @@
     "inst:api": "cd ./api && npm install",
     "inst:app": "cd ./app && npm install",
     "inst": "npm install && npm run inst:api && npm run inst:app",
+    "inst:prod": "npm ci --production && cd ./api && npm ci --production && npm ci ../app && npm ci --production",
     "clean": "rm -rf app/build; rm -rf api/dist;  rm app/package-lock.json; rm api/package-lock.json; rm -rf app/node_modules; rm -rf api/node_modules; rm -rf node_modules; rm package-lock.json"
   },
   "repository": {
