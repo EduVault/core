@@ -1,49 +1,37 @@
 import fs from 'fs';
 import path from 'path';
-import dotenv from 'dotenv';
-dotenv.config({ path: '../.env' });
 
 const env = process.env;
+export const NODE_ENV = process.env.NODE_ENV;
+export const dev = NODE_ENV === 'development';
+export const unitTest = env.TEST_ENV === 'unit'; // no SSL
+export const e2eTest = env.TEST_ENV === 'e2e'; // no SSL (SSL through docker)
 
-export const dev = env.NODE_ENV === 'development';
-export const unitTest = env.NODE_ENV === 'test';
-export const CITest = env.NODE_ENV === 'e2e';
+export const useHttps = unitTest ? false : env.USE_HTTPS === 'true';
 
 // just to check .env file loads
-export const ENV_TEST = env.ENV_TEST;
+export const ENV_CHECK = env.ENV_CHECK;
 
-const PROD_HOST = env.PROD_HOST;
-export const HOST = CITest || dev ? 'localhost' : PROD_HOST;
+export const HOST = env.HOST;
 
-const devSSLKeyPath = path.join(__dirname, '../../deploy/dev-certs/key.pem');
-const devSSLCertPath = path.join(__dirname, '../../deploy/dev-certs/cert.pem');
-const prodSSLKeyPath = path.join(__dirname, `../../deploy/prod-certs/key.pem`);
-const prodSSLCertPath = path.join(
-  __dirname,
-  `../../deploy/prod-certs/cert.pem`
-);
-export const SSL_KEY = unitTest
-  ? null
-  : fs.readFileSync(dev ? devSSLKeyPath : prodSSLKeyPath);
+const SSLKeyPath = path.join(__dirname, '../../deploy/certs/key.pem');
+const SSLCertPath = path.join(__dirname, '../../deploy/certs/cert.pem');
 
-export const SSL_CERT = unitTest
-  ? null
-  : fs.readFileSync(dev ? devSSLCertPath : prodSSLCertPath);
+export const SSL_KEY = useHttps ? fs.readFileSync(SSLKeyPath) : null;
 
-const PORT_HTTP_DEV = Number(env.PORT_HTTP_DEV) || 5001;
-const PORT_HTTPS_DEV = Number(env.PORT_HTTPS_DEV) || 5002;
-const PORT_HTTP_PROD = 80;
-const PORT_HTTPS_PROD = 443;
-export const PORT_HTTP = CITest || dev ? PORT_HTTP_DEV : PORT_HTTP_PROD;
-export const PORT_HTTPS = CITest || dev ? PORT_HTTPS_DEV : PORT_HTTPS_PROD;
+export const SSL_CERT = useHttps ? fs.readFileSync(SSLCertPath) : null;
+
+export const PORT_API_HTTP = Number(env.PORT_API_HTTP);
+export const PORT_API_HTTPS = Number(env.PORT_API_HTTPS);
 
 console.log({
-  NODE_ENV: env.NODE_ENV,
+  ENV_CHECK,
+  NODE_ENV,
   dev,
   unitTest,
-  ENV_TEST,
-  PROD_HOST,
-  PORT_HTTP,
-  PORT_HTTPS,
-  CITest,
+  e2eTest,
+  useHttps,
+  HOST,
+  PORT_API_HTTP,
+  PORT_API_HTTPS,
 });

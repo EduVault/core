@@ -1,8 +1,21 @@
-.env
+# keys
+*.env
+!example.env
+!example.dev.env
+*.pem
+# leave one localhost cert in there as filler
+!localhost.pem
+*.crt
+*.key
+
+# builds and deps
 node_modules
 build
 dist
-*.pem
 
+# e2e records
 e2e/videos
 e2e/screenshots
+
+# editor
+.vscode

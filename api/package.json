@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "NODE_ENV=development TS_NODE_PROJECT='./tsconfig.json' ts-node-dev --inspect=0.0.0.0:9229 --poll --respawn ./src src/index.ts",
-    "build": "tsc -p tsconfig.json ",
-    "start": "npm run build && node dist/",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/",
     "test": "npm run build && jest --env=./jest-env.js --detectOpenHandles",
     "test:watch": "jest --env=./jest-env.js --detectOpenHandles  --watch"
   },
@@ -14,9 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/dotenv": "^8.2.0",
     "cors": "^2.8.5",
-    "dotenv": "^10.0.0",
     "express": "^4.17.1"
   },
   "devDependencies": {

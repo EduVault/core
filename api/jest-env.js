@@ -1,4 +1,5 @@
 const Environment = require('jest-environment-node');
+
 // const fetch = require('isomorphic-fetch');
 /**
  * A custom environment to set the TextEncoder that is required by Textile js.
@@ -17,4 +18,10 @@ module.exports = class CustomTestEnvironment extends Environment {
       this.global.TextDecoder = TextDecoder;
     }
   }
+};
+process.env = {
+  ENV_CHECK: 'working',
+  TEST_ENV: 'unit',
+  HOST: 'localhost',
+  PORT_API_HTTP: 1080,
 };

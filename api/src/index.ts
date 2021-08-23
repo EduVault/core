@@ -5,65 +5,72 @@ import https from 'https';
 import http from 'https';
 
 import {
-  PORT_HTTP,
-  PORT_HTTPS,
-  ENV_TEST,
+  PORT_API_HTTP,
+  PORT_API_HTTPS,
+  ENV_CHECK,
   dev,
   unitTest,
-  CITest,
+  useHttps,
   SSL_KEY as key,
   SSL_CERT as cert,
   HOST,
 } from './config';
 import router from './routes';
 const app = express();
+app.set('trust-proxy', true);
 
 app.use(cors());
 
-// Check dotenv Loads
-app.get('/dotenv-check', (req, res) => {
-  res.json({ ENV_TEST });
+// Check environment variables load
+app.get('/env-check', (req, res) => {
+  res.json({ ENV_CHECK });
 });
 
 // Serve API
 app.use('/api', router);
 
 // Serve App
-const appPath = path.join(__dirname, '../../app/build');
-
-if (!dev && !unitTest) app.use(express.static(appPath));
-``;
-app.get('/app', (req, res) => {
-  if (dev || unitTest) res.redirect('http://localhost:3000');
-  else res.sendFile(appPath + '/index.html');
-});
-
-const httpRedirect = (server: Express) =>
-  server.use((req, res, next) => {
-    if (req.secure) {
-      next();
-    } else {
-      res.redirect(`https://${HOST}:${PORT_HTTPS}${req.url}`);
-    }
+if (dev) {
+  app.get(['/', '/*'], (req, res) => {
+    res.redirect('http://localhost:3000');
   });
-const onStart = (port: number) => () =>
-  console.log(
-    `app listening at http${port === PORT_HTTPS ? 's' : ''}://${HOST}:${port}`
+} else {
+  const buildPath = path.normalize(path.join(__dirname, '../../app/build'));
+  app.use(express.static(buildPath));
+  app.get('(/*)?', (req, res) =>
+    res.sendFile(path.join(buildPath, 'index.html'))
   );
+}
 
 const startServer = () => {
-  const httpServer = express();
-  let server: https.Server | http.Server;
-  if (unitTest) {
-    server = http.createServer(app).listen();
-  } else {
-    httpRedirect(httpServer);
-    httpServer.listen(PORT_HTTP, onStart(PORT_HTTP));
-    server = https.createServer({ key, cert }, app);
-    server.listen(PORT_HTTPS, onStart(PORT_HTTPS));
-  }
+  const onStart = (port: number) => () =>
+    console.log(
+      `app listening at http${
+        port === PORT_API_HTTPS ? 's' : ''
+      }://${HOST}:${port}`
+    );
+  if (unitTest) return http.createServer(app).listen();
 
-  return server;
+  if (useHttps) {
+    const httpRedirect = (server: Express) =>
+      server.use((req, res, next) => {
+        if (req.secure) {
+          next();
+        } else {
+          res.redirect(`https://${HOST}:${PORT_API_HTTPS}${req.url}`);
+        }
+      });
+
+    const httpServer = express();
+    httpRedirect(httpServer);
+    httpServer.listen(PORT_API_HTTP, onStart(PORT_API_HTTP));
+
+    const httpsServer = https.createServer({ key, cert }, app);
+    httpsServer.listen(PORT_API_HTTPS, onStart(PORT_API_HTTPS));
+  } else {
+    app.listen(PORT_API_HTTP, onStart(PORT_API_HTTP));
+  }
 };
+
 if (!unitTest) startServer();
 export { app, startServer };
