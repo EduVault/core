@@ -28,7 +28,6 @@ jobs:
           ^PORT_API_HTTPS: 10443
           ^PORT_EXTERNAL_HTTP: 1080
           ^PORT_EXTERNAL_HTTPS: 10443
-          ^NODE_TLS_REJECT_UNAUTHORIZED: 0
 
       - name: Install application
         run: npm run inst:ci
@@ -39,8 +38,8 @@ jobs:
       - name: Build application
         run: npm run build
 
-      # - name: Unit Test application
-      #   run: npm run test
+      - name: Unit Test application
+        run: npm run test
 
       - name: E2E Test - Cypress
         uses: cypress-io/github-action@v2
@@ -49,4 +48,5 @@ jobs:
           wait-on: 'npx wait-on --timeout 500000 https://localhost:10443'
           browser: chrome
           headless: true
+          record: false
           env: NODE_TLS_REJECT_UNAUTHORIZED=0
