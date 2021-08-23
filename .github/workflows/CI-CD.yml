@@ -6,7 +6,6 @@ on:
 
 jobs:
   build-and-test-application:
-    name: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -56,7 +55,7 @@ jobs:
 
   build-and-push-production-images:
     if: github.ref == 'refs/heads/main'
-    needs: test
+    needs: build-and-test-application
     runs-on: ubuntu-latest
     steps:
       - uses: mr-smithers-excellent/docker-build-push@v5
@@ -71,7 +70,7 @@ jobs:
 
   build-and-push-staging-images:
     if: github.ref == 'refs/heads/staging'
-    needs: test
+    needs: build-and-test-application
     runs-on: ubuntu-latest
     steps:
       - uses: mr-smithers-excellent/docker-build-push@v5
