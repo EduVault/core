@@ -58,10 +58,9 @@ jobs:
     needs: build-and-test-application
     runs-on: ubuntu-latest
     steps:
-    steps:
       - name: Checkout
         uses: actions/checkout@v2
-        
+
       - uses: mr-smithers-excellent/docker-build-push@v5
         name: Build & push production Docker image
         with:
@@ -77,10 +76,9 @@ jobs:
     needs: build-and-test-application
     runs-on: ubuntu-latest
     steps:
-    steps:
       - name: Checkout
         uses: actions/checkout@v2
-              
+
       - uses: mr-smithers-excellent/docker-build-push@v5
         name: Build & push Docker image
         with:
