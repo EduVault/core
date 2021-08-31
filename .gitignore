@@ -19,3 +19,6 @@ e2e/screenshots
 
 # editor
 .vscode
+
+# sql files
+*.sqlite

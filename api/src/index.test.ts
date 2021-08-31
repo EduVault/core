@@ -1,31 +1,35 @@
+import { Database } from '@textile/threaddb';
 import {
+  closeApp,
   setupApp,
-  // closeApp,
   supertest,
-  // Express,
+  Express,
   // https
-} from './testUtil';
+} from './helpers/testUtil';
 
 describe('Loads .env', () => {
   let request: () => supertest.SuperTest<supertest.Test>;
+  let db: Database;
+
   // let agent: supertest.SuperAgentTest;
-  // let app: Express;
+  let app: Express;
   // let server: https.Server;
 
-  beforeAll(() => {
-    const setup = setupApp();
+  beforeAll(async () => {
+    const setup = await setupApp();
     request = setup.request;
+    db = setup.db;
     // agent = setup.agent;
-    // app = setup.app;
+    app = setup.app;
     // server = setup.server;
   });
 
   afterAll(async () => {
-    // await closeApp({ app });
+    await closeApp({ app, db });
   });
 
   it('loads .env', async () => {
-    const res = await request().get('/env-check').send();
+    const res = await request().get(ROUTES.ENV_CHECK).send();
     // console.log('ping test result', result);
     expect(res.status).toEqual(200);
     expect(res.body.ENV_CHECK).toEqual('working');
