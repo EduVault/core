@@ -1,10 +1,8 @@
 import express, { Express } from 'express';
-import passport from 'passport';
 import cors from 'cors';
 import path from 'path';
 import https from 'https';
 import http from 'https';
-import { Database } from '@textile/threaddb';
 
 import {
   PORT_API_HTTP,
@@ -16,6 +14,7 @@ import {
   SSL_KEY as key,
   SSL_CERT as cert,
   HOST,
+  ROUTES,
 } from './config';
 import routerInit from './routes';
 import passportInit from './auth/passportInit';
