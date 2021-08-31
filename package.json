@@ -23,7 +23,7 @@
     "---------start---------------": "--------------------",
     "start:local": "env USE_HTTPS=true npm run start",
     "start:api": "cd ./api && npm run start",
-    "start:ci": "docker-compose up --build -d && npm run e2e",
+    "start:ci": "docker-compose down && docker-compose up --build -d && npm run e2e",
     "start:production": "sudo docker-compose -f docker-compose-prod.yml down --remove-orphans && sudo docker-compose -f docker-compose-prod.yml up -d",
     "start:production:logs": "sudo docker-compose -f docker-compose-prod.yml down --remove-orphans && sudo docker-compose -f docker-compose-prod.yml up",
     "start": "dotenv npm run start:api",
