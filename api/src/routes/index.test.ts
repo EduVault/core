@@ -1,5 +1,5 @@
 import { Database } from '@textile/threaddb';
-import { ROUTES } from 'config';
+import { ROUTES } from '../config';
 import {
   setupApp,
   closeApp,
