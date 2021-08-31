@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import session from 'express-session';
 import dotenv from 'dotenv';
+import session from 'express-session';
 
 const env = process.env;
 export const NODE_ENV = env.NODE_ENV;

@@ -1,6 +1,6 @@
 import { Express } from 'express';
 import { Database } from '@textile/threaddb';
-import session from 'express-session';
+import session from 'cookie-session';
 import passport from 'passport';
 
 import { IPerson } from '../models/person';
@@ -16,7 +16,7 @@ import passwordStrat from './strategies/password';
 // import appStrat from './strategies/app';
 
 export default (app: Express, db: Database) => {
-  app.use(session(SESSION_OPTIONS));
+  app.use(session(SESSION_OPTIONS as any)); // This library's shitty typescript declaration file does not export types properly. Luckily we have type safety in the config.js file when we create these options
 
   passport.serializeUser(function (personOrApp: IPerson | IApp, done) {
     if (!personOrApp) done(personOrApp, null);
