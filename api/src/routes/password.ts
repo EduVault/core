@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import passport from 'passport';
 import { IPerson } from '../models/person';
 // import { IApp } from '../models/app';
-import { ROUTES } from '../config';
+import { API_ROUTES } from '../config';
 import {
   hashPassword,
   createJwt,
@@ -71,7 +71,7 @@ const password = (
     req.logIn(newPerson, signupAuthCallback);
   };
 
-  router.post(ROUTES.PASSWORD_AUTH, async (req, res, next) => {
+  router.post(API_ROUTES.PASSWORD_AUTH, async (req, res, next) => {
     const data = req.body as PasswordLoginReq;
     // console.log({ data });
     if (!data) return respondError(res, 'missingPasswordRequestData');

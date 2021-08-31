@@ -49,13 +49,18 @@ export const SESSION_OPTIONS: session.SessionOptions = {
   proxy: !useHttps,
 };
 
-export const ROUTES = {
+export const API_ROUTES = {
   // implemented:
+  /** GET */
+  PING: '/ping',
+  /** GET */
   ENV_CHECK: '/env-check',
+  /** GET */
   AUTH_CHECK: '/auth-check',
+  /** GET */
   GET_JWT: '/get-jwt',
+  /** POST */
   PASSWORD_AUTH: '/auth/password',
-
 
   // TODO:
   VERIFY_JWT: '/verify-jwt',
@@ -75,6 +80,22 @@ export const ROUTES = {
   DEV_VERIFY: '/dev/verify',
 
   TEXTILE_RENEW: '/renew-textile',
+};
+
+const addApiPrefix = (routes: typeof API_ROUTES) => {
+  const routesWithPrefix = { ...routes };
+  Object.entries(routes).forEach(
+    ([key, route]: [keyof typeof API_ROUTES, string]) =>
+      (routesWithPrefix[key] = '/api' + route)
+  );
+  return routesWithPrefix;
+};
+
+/**
+ * @example ROUTES.api.PING => '/api/ping'
+ */
+export const ROUTES = {
+  api: addApiPrefix(API_ROUTES),
 };
 
 /** expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d" */

@@ -16,7 +16,7 @@ import { ROUTES } from '../config';
 const password = 'Password123';
 const username = 'person@email.com';
 
-describe(`POST 'api/auth/password'`, () => {
+describe(`POST ${ROUTES.api.PASSWORD_AUTH}`, () => {
   // test util startup teardown boilerplate
   let db: Database;
   let request: () => supertest.SuperTest<supertest.Test>;
@@ -84,7 +84,7 @@ describe(`POST 'api/auth/password'`, () => {
     expect(res.headers['set-cookie'][0]).toContain('eduvault.session=');
     const cookie = res.headers['set-cookie'];
 
-    const req = request().get('/api' + ROUTES.AUTH_CHECK);
+    const req = request().get(ROUTES.api.AUTH_CHECK);
     req.set('Cookie', cookie);
 
     const secondRes = await req;
@@ -94,7 +94,7 @@ describe(`POST 'api/auth/password'`, () => {
 
   it('Can get jwts', async () => {
     const res = await pwAuthWithCookie(
-      request().get('/api' + ROUTES.GET_JWT),
+      request().get(ROUTES.api.GET_JWT),
       agent
     );
     expect(res.status).toEqual(200);

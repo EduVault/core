@@ -78,9 +78,6 @@ npm run ssl-certs:prod
 sudo chown jacob /home/jacob/eduvault/deploy/prod-certs/key.pem
 sudo chmod 400 /home/jacob/eduvault/deploy/prod-certs/key.pem
 
-# allow port 80:
-sudo apt-get install libcap2-bin
-sudo setcap cap_net_bind_service=+ep `readlink -f \`which node\``
 
 # start
 npm run production

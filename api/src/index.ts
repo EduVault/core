@@ -26,7 +26,7 @@ app.use(cors()); //TODO: cors settings
 app.use(express.json());
 
 // Check environment variables load
-app.get(ROUTES.ENV_CHECK, (req, res) => {
+app.get(ROUTES.api.ENV_CHECK, (req, res) => {
   res.json({ ENV_CHECK });
 });
 

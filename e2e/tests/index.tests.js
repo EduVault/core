@@ -1,10 +1,11 @@
 /// <reference types="Cypress" />
 
+const { ROUTES } = require('../../api/src/config');
 const PORT = 11443;
 const baseUrl = 'https://localhost:' + PORT;
 describe('Index Page', () => {
   it('should be able to ping server', async () => {
-    const response = await cy.request(baseUrl + '/api/ping');
+    const response = await cy.request(baseUrl + ROUTES.api.PING);
     console.log({ response });
     expect(response).to.have.property('status', 200);
     expect(response).to.have.property('body', 'pong');

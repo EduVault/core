@@ -1,4 +1,5 @@
 import { Database } from '@textile/threaddb';
+import { ROUTES } from 'config';
 import {
   setupApp,
   closeApp,
@@ -28,7 +29,7 @@ describe('Pingger', () => {
   });
 
   it('Pings successfully', async () => {
-    const res = await request().get('/api/ping').send();
+    const res = await request().get(ROUTES.api.PING).send();
     // console.log('ping test result', result);
     expect(res.status).toEqual(200);
     expect(res.text).toEqual('pong');

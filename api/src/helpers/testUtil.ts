@@ -1,9 +1,8 @@
 import { Database } from '@textile/threaddb';
 import { Express } from 'express';
 import supertest from 'supertest';
-// import https from 'https';
 
-import { app, startServer } from '../';
+import { app } from '../';
 import { ROUTES } from '../config';
 import { clearCollections, newLocalDB } from '../db';
 import passportInit from '../auth/passportInit';
@@ -18,12 +17,9 @@ export const password = 'Password123';
 export const username = 'person@email.com';
 
 export const setupApp = async () => {
-  // app.removeAllListeners();
-
   const db = await newLocalDB('eduvault-test');
   const passport = passportInit(app, db);
   routerInit(app, passport, db);
-
   // const server = startServer();
   const request = () => supertest(app);
   const agent = supertest.agent(app);
@@ -59,7 +55,7 @@ export const pwAuthTestReq = async (
   const personAuthReq = await formatPasswordSignIn(options);
   // console.log({ personAuthReq });
   const res = await agent
-    .post('/api' + ROUTES.PASSWORD_AUTH)
+    .post(ROUTES.api.PASSWORD_AUTH)
     .send(personAuthReq)
     .set('Accept', 'application/json');
 
