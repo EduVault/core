@@ -29,7 +29,7 @@ jobs:
           ^PORT_API_HTTP: 8081
           ^PORT_API_HTTPS: 8082
           ^PORT_EXTERNAL_HTTP: 8083
-          ^PORT_EXTERNAL_HTTPS: 8084
+          ^PORT_EXTERNAL_HTTPS: 8085
 
       - name: Install application
         # run: npm run inst:ci

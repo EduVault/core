@@ -1,5 +1,5 @@
 {
-  "baseUrl": "https://localhost:8084",
+  "baseUrl": "https://localhost:8085",
   "fixturesFolder": "e2e/fixtures",
   "integrationFolder": "e2e/tests",
   "screenshotsFolder": "e2e/screenshots",
