@@ -53,9 +53,10 @@
     "cypress": "^8.3.0"
   },
   "dependencies": {
-    "make-cert": "^1.2.1",
     "dotenv-cli": "^4.0.0",
+    "make-cert": "^1.2.1",
     "npm-run-all": "^4.1.5",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "wait-on": "^6.0.0"
   }
 }
