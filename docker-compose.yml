@@ -27,4 +27,4 @@ services:
       - eduvault-core
     environment:
       HTTP_PORT: ${PORT_EXTERNAL_HTTP}
-      HTTPS_PORT: ${PORT_EXTERNAL_HTTPS}
+      HTTPS_PORT: ${PORT_EXTERNAL_HTTPS}    

@@ -1,4 +1,4 @@
-FROM node:14 AS build-stage
+FROM node:12 AS build-stage
 ENV PATH /eduvault/node_modules/.bin:/eduvault/api/node_modules/.bin:/eduvault/app/node_modules/.bin:$PATH
 
 WORKDIR /eduvault/

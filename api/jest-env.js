@@ -23,6 +23,6 @@ process.env = {
   ENV_CHECK: 'working',
   TEST_ENV: 'unit',
   HOST: 'localhost',
-  PORT_API_HTTP: 1081,
+  PORT_API_HTTP: 8081,
   APP_SECRET: 'jest-secret',
 };

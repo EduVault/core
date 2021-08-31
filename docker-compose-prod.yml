@@ -19,8 +19,8 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./deploy/certs:/etc/nginx/certs:ro
     ports:
-      - ${PORT_EXTERNAL_HTTP}:${PORT_EXTERNAL_HTTP}
-      - ${PORT_EXTERNAL_HTTPS}:${PORT_EXTERNAL_HTTPS}
+      - "${PORT_EXTERNAL_HTTP}:${PORT_EXTERNAL_HTTP}"
+      - "${PORT_EXTERNAL_HTTPS}:${PORT_EXTERNAL_HTTPS}"
     depends_on:
       - eduvault-core
     environment:

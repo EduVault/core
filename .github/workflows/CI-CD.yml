@@ -26,10 +26,10 @@ jobs:
           ^HOST: 'localhost'
           ^TEST_ENV: 'e2e'
           ^NODE_ENV: 'production'
-          ^PORT_API_HTTP: 1081
-          ^PORT_API_HTTPS: 11443
-          ^PORT_EXTERNAL_HTTP: 1081
-          ^PORT_EXTERNAL_HTTPS: 11443
+          ^PORT_API_HTTP: 8081
+          ^PORT_API_HTTPS: 8082
+          ^PORT_EXTERNAL_HTTP: 8083
+          ^PORT_EXTERNAL_HTTPS: 8084
 
       - name: Install application
         # run: npm run inst:ci
