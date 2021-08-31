@@ -1,6 +1,6 @@
 /// <reference types="Cypress" />
 
-const PORT = 10443;
+const PORT = 11443;
 const baseUrl = 'https://localhost:' + PORT;
 describe('Index Page', () => {
   it('should be able to ping server', async () => {

@@ -26,10 +26,10 @@ jobs:
           ^HOST: 'localhost'
           ^TEST_ENV: 'e2e'
           ^NODE_ENV: 'production'
-          ^PORT_API_HTTP: 1080
-          ^PORT_API_HTTPS: 10443
-          ^PORT_EXTERNAL_HTTP: 1080
-          ^PORT_EXTERNAL_HTTPS: 10443
+          ^PORT_API_HTTP: 1081
+          ^PORT_API_HTTPS: 11443
+          ^PORT_EXTERNAL_HTTP: 1081
+          ^PORT_EXTERNAL_HTTPS: 11443
 
       - name: Install application
         run: npm run inst:ci
@@ -47,7 +47,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           start: npm run start:ci
-          wait-on: 'npx wait-on --timeout 500000 https://localhost:10443'
+          wait-on: 'npx wait-on --timeout 500000 https://localhost:11443'
           browser: chrome
           headless: true
           record: false
