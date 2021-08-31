@@ -30,7 +30,7 @@ app.get(ROUTES.ENV_CHECK, (req, res) => {
   res.json({ ENV_CHECK });
 });
 
-const serveFrontend = (app: express.Application) => {
+const serveFrontend = (app: Express) => {
   if (dev) {
     app.get(['/', '/*'], (req, res) => {
       res.redirect('http://localhost:3000');
