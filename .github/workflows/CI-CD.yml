@@ -50,7 +50,7 @@ jobs:
           wait-on: 'npx wait-on --timeout 500000 https://localhost:8085'
           browser: chrome
           headless: true
-          record: false
+          record: true
           env: NODE_TLS_REJECT_UNAUTHORIZED=0
       - name: store screenshots
         uses: actions/upload-artifact@v1
