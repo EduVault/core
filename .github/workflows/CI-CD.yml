@@ -60,13 +60,13 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: cypress/screenshots
+          path: e2e/screenshots
       - name: store video
         uses: actions/upload-artifact@v1
         if: always()
         with:
           name: cypress-videos
-          path: cypress/videos
+          path: e2e/videos
 
   build-and-push-production-images:
     if: github.ref == 'refs/heads/main'
