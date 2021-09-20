@@ -1,16 +1,5 @@
 # Notes
 
-## References
-
-- [supertest](https://github.com/visionmedia/supertest#readme)
-- [using moxios](https://codewithhugo.com/testing-an-express-app-with-supertest-moxios-and-jest/)
-- [express best practice](http://expressjs.com/en/advanced/best-practice-performance.html)
-- [dotenv with jest](https://tekloon.dev/using-dotenv-with-jest)
-- [express.js](http://expressjs.com/en/)
-- [localhost https](https://medium.com/@nitinpatel_20236/how-to-create-an-https-server-on-localhost-using-express-366435d61f28)
-- [express http to https](https://stackoverflow.com/a/65551891/12662244)
-- [Digital Ocean deploy with github actions CI](https://codememoirs.com/automatic-deployment-digitalocean-github-actions/)
-
 ## Environments and builds
 
 | env        | docker | ssl |
@@ -22,33 +11,54 @@
 
 > if you get "error: port in use": `kill $(lsof -t -i:<PORT_NUMBER>)`
 
+## How to dev
+
+prepare dev env
+```sh
+npm run inst
+npm run ssl-certs:local
+npm run build
+```
+
+1. __Local__ `npm run dev` will start everything locally Ping server at http://localhost:8081/api/ping or https://localhost:8082/api/ping and app at http://localhost:8081/
+2. __Unit Tests__ you'll probably want to keep unit tests on watch mode as you make changes, `npm run test:api:watch` and `npm run test:app` (watches by default). Before commit do a full run with `npm run test`
+3. __Local Prod Build Run__ `npm run build:start`
+4. __Local Docker Prod Build Run__ `start:local:docker` Ping server at http://localhost:8083/api/ping or https://localhost:8085/api/ping and app at http://localhost:8083/ or https://localhost:8085/
+
 ## SSL certs
 
 use the scripts `npm run ssl-certs:` + env (local, ci, prod)
 
-- CI: we use an npm package make-cert during CI to make a self-signed cert without a cert authority, good enough for headless e2e tests.
+- CI: We use an npm package make-cert during CI to make a self-signed cert without a cert authority, good enough for headless e2e tests.
 
-- Local development: its better to use [mkcert](https://github.com/FiloSottile/mkcert/) because it adds a cert authority (still have to manually get browser to trust it)
+- Local development: It's better to use [mkcert](https://github.com/FiloSottile/mkcert/) because it adds a cert authority (still have to manually get browser to trust it)
 
-- Production: must have certbot installed (see deploy below)
+- Production: Must have certbot installed on the server (see deploy below)
 
 ## Deploy
 
-send namecheap dns to digital ocean dns
+### CI/CD explanation
+CD works by using [watchtower](https://containrrr.dev/watchtower/) in the docker-compose file. It will periodically check for new versions of the app/server's docker images on docker hub.
+On commits to `staging` or `prod` branches, if tests pass, Github actions will push updated images to docker hub with the corresponding tags.
+
+### Server setup
+
+send namecheap dns to digital ocean (DO) dns
 create DO ubuntu server with docker default image
-give it flaoting ip
+give it a floating ip
 link domain to floating ip
 
 copy over .env file
 change PROD_HOST to host e.g. eduvault.org
 
-add ssh info to github secrets
-
 ```bash
+# create user
 ssh root@your_server_ip -i /path/to/keys
 adduser jacob
 usermod -aG sudo jacob
 rsync --archive --chown=jacob:jacob ~/.ssh /home/jacob
+
+# firewall
 ufw app list
 ufw allow OpenSSH
 ufw allow http
@@ -56,29 +66,71 @@ ufw allow https
 ufw enable
 sudo ufw status verbose
 
-# disconnect and ssh as jacob
-```
 
-```bash
-# make a project folder in home/jacob
+# disconnect and ssh as jacob
+
+## copy .env file over
+### edit the following in the .env file
+PORT_EXTERNAL_HTTP=80
+PORT_EXTERNAL_HTTPS=443
+# TEST_ENV='e2e' # deactivate 
+HOST=is-a-test.xyz
+IMAGE_SUFFIX=production # or staging
+WATCHTOWER_POLLING_INTERVAL=600 #or whatever (in seconds)
+
+## get the code
 mkdir eduvault
 cd eduvault
 git init
-git remote add origin https://github.com/EduVault/server.git
+git remote add origin https://github.com/EduVault/core.git
 git fetch origin
 git checkout origin/main -ft
 
-
-# make certs
+#node
 sudo apt update
+sudo apt install nodejs npm
+
+# certbot
 sudo apt install certbot
-## must wait until DNS changes take effect to create ssl certs!
+## must wait until DNS changes take effect!
+# replace eduvault.org with prod/staging server name
 npm run ssl-certs:prod
-# permission key
-sudo chown jacob /home/jacob/eduvault/deploy/prod-certs/key.pem
-sudo chmod 400 /home/jacob/eduvault/deploy/prod-certs/key.pem
 
+# enable swap to use RAM better
+sudo dd if=/dev/zero of=/swapfile bs=1024 count=256k
+sudo mkswap /swapfile
+sudo swapon /swapfile
+sudo nano /etc/fstab
+# add line:
+ /swapfile       none    swap    sw      0       0 
+echo 10 | sudo tee /proc/sys/vm/swappiness
+echo vm.swappiness = 10 | sudo tee -a /etc/sysctl.conf
+sudo chown root:root /swapfile 
+sudo chmod 0600 /swapfile
 
-# start
-npm run production
+apt install gcc # if you run into an error using screen
+
+# build and run not in detached first to check logs and manually test 
+npm run start:production:logs
+
+# if ok, run in screen detached
+sudo apt install screen
+screen
+sudo service docker start
+npm run start:production
+
+# To detach a screen session and return to your normal SSH terminal, type
+Ctrl a d
 ```
+
+## References
+
+- [supertest](https://github.com/visionmedia/supertest#readme)
+<!-- - [using moxios](https://codewithhugo.com/testing-an-express-app-with-supertest-moxios-and-jest/) -->
+- [express.js](http://expressjs.com/en/)
+- [express best practice](http://expressjs.com/en/advanced/best-practice-performance.html)
+- [dotenv with jest](https://tekloon.dev/using-dotenv-with-jest)
+- [localhost https](https://medium.com/@nitinpatel_20236/how-to-create-an-https-server-on-localhost-using-express-366435d61f28)
+- [express http to https](https://stackoverflow.com/a/65551891/12662244)
+- [Digital Ocean deploy with github actions CI](https://codememoirs.com/automatic-deployment-digitalocean-github-actions/)
+- [Cypress Dashboard](https://dashboard.cypress.io/projects/obyc2w/)
