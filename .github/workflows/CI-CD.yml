@@ -52,6 +52,18 @@ jobs:
           headless: true
           record: false
           env: NODE_TLS_REJECT_UNAUTHORIZED=0
+      - name: store screenshots
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+      - name: store video
+        uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: cypress-videos
+          path: cypress/videos          
 
   build-and-push-production-images:
     if: github.ref == 'refs/heads/main'
