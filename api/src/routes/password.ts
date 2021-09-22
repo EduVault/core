@@ -19,8 +19,8 @@ const signup = async (
   req: Request,
   res: Response,
   db: Database,
-  appLoginToken?: string,
-  decryptToken?: string
+  appLoginToken: string,
+  decryptToken: string
 ) => {
   const data = req.body as PasswordLoginReq;
 
