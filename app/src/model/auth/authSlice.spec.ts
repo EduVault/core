@@ -3,13 +3,6 @@ import { AuthState } from './types';
 describe('authReducer', () => {
   const initialTestState: AuthState = {
     loggedIn: true,
-    privateKey: 'privateKey',
-    authType: 'google',
-    jwt: 'jwt',
-    pubKey: 'pubKey',
-    threadID: 'threadID',
-    threadIDStr: 'threadIDStr',
-    jwtEncryptedPrivateKey: 'jwtEncryptedPrivateKey',
   };
   it('should handle initial state', () => {
     expect(authReducer(undefined, { type: 'unknown' })).toEqual(initialState);

@@ -1,10 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import { authReducer as auth } from './auth';
-import { textileReducer as textile } from './textile';
+import Eduvault from '@eduvault/eduvault-js';
+export const eduvault = new Eduvault({ suppressInit: true });
+
 export const store = configureStore({
   reducer: {
     auth,
-    textile,
   },
 });
 
