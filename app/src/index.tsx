@@ -5,16 +5,16 @@ import App from './App';
 
 import theme from './theme';
 import { ThemeProvider, CssBaseline } from '@material-ui/core';
-if (process.env.NODE_ENV === 'development') {
-  const { worker } = require('./mocks/browser');
+import { startWorker } from '@eduvault/eduvault-js';
 
-  worker.start();
-}
+// use eduvault-js's mock service worker
+if (process.env.NODE_ENV === 'development') startWorker();
+
 ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <App />{' '}
+      <App />
     </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root')
