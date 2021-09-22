@@ -96,12 +96,7 @@ const password = (
     if (!person) return signup(req, res, appLoginToken, decryptToken);
 
     const loginAuthCallback = async (error: string, foundPerson: IPerson) => {
-      // strange bug where passport is returning false for the user, but accepting authentication. console logs aren't working within the strategy either
       console.log({ error, foundPerson });
-      // so do another check here:
-      // const valid = validPassword(data.password, person.password);
-      // console.log('password check: ', { valid });
-      //   if (error || !valid) {
       if (error) return respondError(res, 'passportError', error);
 
       await refreshJwts(req, person);

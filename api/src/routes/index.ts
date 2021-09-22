@@ -11,7 +11,7 @@ const routerInit = (
   db: Database
 ) => {
   const router = express.Router();
-  router.get('/ping', (req, res) => res.send('pong'));
+  router.get('/ping', (req, res) => res.json({ code: 200, content: 'pong' }));
 
   passwordRoute(router, passport, db);
   authCheck(router);

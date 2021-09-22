@@ -32,6 +32,7 @@ describe('Pingger', () => {
     const res = await request().get(ROUTES.api.PING).send();
     // console.log('ping test result', result);
     expect(res.status).toEqual(200);
-    expect(res.text).toEqual('pong');
+    expect(res.body.code).toEqual(200);
+    expect(res.body.content).toEqual('pong');
   });
 });

@@ -1,3 +1,11 @@
+declare module 'express-session' {
+  interface SessionData {
+    cookie: Cookie;
+    jwt: string;
+    oldJwt: string;
+  }
+}
+// MAKE SURE THESE MATCH eduvault/sdk-js/src/types/api
 export interface IApp {
   _id: string;
   appID: string;
@@ -70,11 +78,4 @@ export interface AppUpdateReq {
 export interface DevVerifyReq {
   appSecret: string;
   devID: string;
-}
-declare module 'express-session' {
-  interface SessionData {
-    cookie: Cookie;
-    jwt: string;
-    oldJwt: string;
-  }
 }

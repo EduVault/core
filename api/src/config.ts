@@ -49,6 +49,7 @@ export const SESSION_OPTIONS: session.SessionOptions = {
   proxy: !useHttps,
 };
 
+/** MAKE SURE THESE MATCH eduvault/sdk-js/src/config.ts */
 export const API_ROUTES = {
   // implemented:
   /** GET */
