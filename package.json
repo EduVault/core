@@ -40,8 +40,8 @@
     "inst:ci": "npm ci --production && cd ./api && npm ci && cd ../app && npm ci",
     "clean": "rm -rf app/build; rm -rf api/dist;  rm app/package-lock.json; rm api/package-lock.json; rm -rf app/node_modules; rm -rf api/node_modules; rm -rf node_modules; rm package-lock.json",
     "---------Link/unlink SDK---": "--------------------",
-    "link-sdk": "cd app && uninstall @eduvault/eduvault-js && dotenv -e dev.env -- bash -c 'cd $SDK_PATH && npm link && cd $PROJECT_PATH/app && npm link @eduvault/eduvault-js'",
-    "unlink-sdk": "cd app && unlink @eduvault/eduvault-js && npm install @eduvault/eduvault-js"
+    "link-sdk": "cd app && npm uninstall @eduvault/eduvault-js ; cd ../ && dotenv -e dev.env -- bash -c 'cd $SDK_PATH && npm link && cd $PROJECT_PATH/app && npm link @eduvault/eduvault-js'",
+    "unlink-sdk": "cd app && npm unlink @eduvault/eduvault-js ; npm install @eduvault/eduvault-js"
   },
   "repository": {
     "type": "git",
