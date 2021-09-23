@@ -1,6 +1,6 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import { authReducer as auth } from './auth';
-import Eduvault from '@eduvault/eduvault-js';
+import Eduvault from '@eduvault/sdk-js';
 export const eduvault = new Eduvault({ suppressInit: true });
 
 export const store = configureStore({

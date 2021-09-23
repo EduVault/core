@@ -40,8 +40,10 @@
     "inst:ci": "npm ci --production && cd ./api && npm ci && cd ../app && npm ci",
     "clean": "rm -rf app/build; rm -rf api/dist;  rm app/package-lock.json; rm api/package-lock.json; rm -rf app/node_modules; rm -rf api/node_modules; rm -rf node_modules; rm package-lock.json",
     "---------Link/unlink SDK---": "--------------------",
-    "link-sdk": "dotenv -e dev.env -- bash -c 'cd $SDK_PATH ; pwd ; echo $SDK_PATH $PROJECT_PATH ; npm link ; cd $PROJECT_PATH/app ; npm link @eduvault/eduvault-js'",
-    "unlink-sdk": "cd app && npm unlink @eduvault/eduvault-js ; npm uninstall @eduvault/eduvault-js ; npm install @eduvault/eduvault-js"
+    "link-sdk": "dotenv -e dev.env -- bash -c 'cd $SDK_PATH ; pwd ; echo $SDK_PATH $PROJECT_PATH ; npm link ; cd $PROJECT_PATH/app ; npm link @eduvault/sdk-js'",
+    "unlink-sdk": "cd app && npm unlink @eduvault/sdk-js ; rm -rf app/node_modules/@eduvault/sdk-js ; npm install @eduvault/sdk-js",
+    "---------Publish---": "--------------------",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -56,7 +58,8 @@
   "homepage": "https://github.com/EduVault/server#readme",
   "devDependencies": {
     "cypress": "^8.4.1",
-    "dotenv-cli": "^4.0.0"
+    "dotenv-cli": "^4.0.0",
+    "husky": "^7.0.0"
   },
   "dependencies": {
     "make-cert": "^1.2.1",

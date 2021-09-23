@@ -30,7 +30,6 @@ export const formatPasswordSignIn = async (options: {
     pubKey,
     redirectURL: options.redirectURL,
     appID: options.appID,
-    error: error === '' ? undefined : error,
   };
 
   return personAuthReq;
