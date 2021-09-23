@@ -14,7 +14,8 @@
   },
   "scripts": {
     "dev": "react-scripts start",
-    "build": "react-scripts build --max_old_space_size=1024",
+    "---": "------- on a small server/docker might want to change to: --max_old_space_size=1024 -----",
+    "build": "react-scripts build",
     "test:watch": "react-scripts test --env=./jest-env.js --watchAll",
     "test": "CI=true react-scripts test --coverage --env=./jest-env.js --watchAll=false",
     "eject": "react-scripts eject"

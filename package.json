@@ -24,11 +24,11 @@
     "build:start": "npm run build && npm run start",
     "---------start---------------": "--------------------",
     "start:local": "env USE_HTTPS=true npm run start",
-    "start:local:docker": "docker-compose down &&docker-compose up",
+    "start:local:docker": "npm run build:api && docker-compose down --remove-orphans && docker-compose up",
     "start:api": "cd ./api && npm run start",
-    "start:ci": "docker-compose down && docker-compose up --build -d && npm run e2e",
-    "start:production": "sudo docker-compose -f docker-compose-prod.yml down --remove-orphans && sudo docker-compose -f docker-compose-prod.yml up -d",
-    "start:production:logs": "sudo docker-compose -f docker-compose-prod.yml down --remove-orphans && sudo docker-compose -f docker-compose-prod.yml up",
+    "start:ci": "npm run build:api && docker-compose down && docker-compose up --build -d && npm run e2e",
+    "start:production": "npm run build:api && sudo docker-compose -f docker-compose-prod.yml down --remove-orphans && sudo docker-compose -f docker-compose-prod.yml up -d",
+    "start:production:logs": "npm run build:api && sudo docker-compose -f docker-compose-prod.yml down --remove-orphans && sudo docker-compose -f docker-compose-prod.yml up",
     "start": "dotenv npm run start:api",
     "---------https/ssl certs-----": "--------------------",
     "ssl-certs:local": "dotenv -e dev.env bash ./deploy/ssl-certs.sh local",
@@ -59,8 +59,8 @@
   "homepage": "https://github.com/EduVault/server#readme",
   "devDependencies": {
     "cypress": "^8.4.1",
-    "dotenv-cli": "^4.0.0",
-    "husky": "^7.0.0"
+    "husky": "^7.0.0",
+    "dotenv-cli": "^4.0.0"
   },
   "dependencies": {
     "is-ci": "^3.0.0",

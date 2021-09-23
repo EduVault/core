@@ -1,7 +1,9 @@
 # builds and deps
 node_modules
-build
-dist
+
+# building outside docker to save memory usage
+# app/build
+api/dist
 
 # e2e records
 e2e/videos
