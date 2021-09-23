@@ -5,7 +5,7 @@ import App from './App';
 
 import theme from './theme';
 import { ThemeProvider, CssBaseline } from '@material-ui/core';
-import { startWorker } from '@eduvault/sdk-js';
+import { startWorker } from '@eduvault/sdk-js/dist/main';
 
 // use eduvault-js's mock service worker
 if (process.env.NODE_ENV === 'development') startWorker();
