@@ -8,6 +8,9 @@ jobs:
   build-and-test-application:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -16,9 +19,6 @@ jobs:
 
       - name: Make sure local links are gone
         run: npm run unlink-sdk
-
-      - name: Checkout
-        uses: actions/checkout@v2
 
       - name: Create .env
         uses: weyheyhey/create-dotenv-action@v1
