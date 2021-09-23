@@ -20,7 +20,7 @@
     "---------build---------------": "--------------------",
     "build:api": "cd ./api && npm run build",
     "build:app": "cd ./app && npm run build",
-    "build": "npm run build:app && npm run build:api",
+    "build": "run-p build:app build:api",
     "build:start": "npm run build && npm run start",
     "---------start---------------": "--------------------",
     "start:local": "env USE_HTTPS=true npm run start",
