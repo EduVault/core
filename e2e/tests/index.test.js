@@ -5,7 +5,7 @@ describe('Index Page', () => {
     const response = await cy.request('/api/ping');
     console.log({ response });
     expect(response).to.have.property('status', 200);
-    expect(response).to.have.property('body', 'pong');
+    expect(response.body).to.have.property('content', 'pong');
   });
   it('should contain a login element', () => {
     cy.visit('/app/login');
