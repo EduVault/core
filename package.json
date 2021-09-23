@@ -43,7 +43,7 @@
     "link-sdk": "dotenv -e dev.env -- bash -c 'cd $SDK_PATH ; pwd ; echo $SDK_PATH $PROJECT_PATH ; npm link ; cd $PROJECT_PATH/app ; npm link @eduvault/sdk-js'",
     "unlink-sdk": "cd app && npm unlink @eduvault/sdk-js ; rm -rf app/node_modules/@eduvault/sdk-js ; npm install @eduvault/sdk-js",
     "---------Publish---": "--------------------",
-    "prepare": "husky install"
+    "prepare": "is-ci || husky install"
   },
   "repository": {
     "type": "git",
@@ -62,6 +62,7 @@
     "husky": "^7.0.0"
   },
   "dependencies": {
+    "is-ci": "^3.0.0",
     "make-cert": "^1.2.1",
     "npm-run-all": "^4.1.5",
     "typescript": "^4.4.3",
