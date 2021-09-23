@@ -24,7 +24,7 @@
     "build:start": "npm run build && npm run start",
     "---------start---------------": "--------------------",
     "start:local": "env USE_HTTPS=true npm run start",
-    "start:local:docker": "npm run build:app && docker-compose down --remove-orphans && docker-compose up",
+    "start:local:docker": "npm run build:app && docker-compose down --remove-orphans && docker-compose up --build",
     "start:api": "cd ./api && npm run start",
     "start:ci": "npm run build:app && docker-compose down && docker-compose up --build -d && npm run e2e",
     "start:production": "npm run build:app && sudo docker-compose -f docker-compose-prod.yml down --remove-orphans && sudo docker-compose -f docker-compose-prod.yml up -d",

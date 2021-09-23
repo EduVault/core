@@ -20,4 +20,5 @@ module.exports = class CustomTestEnvironment extends Environment {
 };
 process.env = {
   TEST_ENV: 'unit',
+  NODE_ENV: 'test',
 };

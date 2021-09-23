@@ -8,7 +8,11 @@ import { ThemeProvider, CssBaseline } from '@material-ui/core';
 import { startWorker } from '@eduvault/sdk-js/dist/main';
 
 // use eduvault-js's mock service worker
-if (process.env.NODE_ENV === 'development') startWorker();
+if (
+  process.env.NODE_ENV === 'development' &&
+  process.env.SUPPRESS_MSW !== 'true'
+)
+  startWorker();
 
 ReactDOM.render(
   <React.StrictMode>
