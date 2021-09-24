@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import Home from './AppHome';
+import { AppHome } from './AppHome';
 
-test('renders Home', () => {
-  render(<Home></Home>);
+test('renders AppHome', () => {
+  render(<AppHome></AppHome>);
   const homeText = screen.getByText('logged in to app');
   expect(homeText).toBeVisible();
 });

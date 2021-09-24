@@ -13,7 +13,7 @@ import {
   Link,
 } from '@material-ui/core/';
 import MenuIcon from '@material-ui/icons/Menu';
-import { EduVaultLogoSmall } from '../assets';
+import { EduVaultLogoSmall } from '../../assets';
 import { HomeOutlined, OpenInBrowser } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -34,14 +34,12 @@ export const links = [
   { text: 'About Eduvault', location: '/home' },
 ];
 
-export default function ButtonAppBar() {
+export const NavBar = () => {
   const classes = useStyles();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const toggleDrawer =
-    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-      setDrawerOpen(open);
-    };
-  const NavList = () => (
+  const toggleDrawer = (open: boolean) => () => setDrawerOpen(open);
+
+  const NavListDrawer = () => (
     <Box
       className={classes.list}
       role="presentation"
@@ -51,7 +49,11 @@ export default function ButtonAppBar() {
       <List data-testid="nav-drawer-list">
         {links.map((link) => {
           return (
-            <ListItem key={link.text} button>
+            <ListItem
+              onClick={() => window.location.assign(link.location)}
+              key={link.text}
+              button
+            >
               <ListItemIcon>
                 {link.text === 'App' && <HomeOutlined />}
                 {link.text === 'Login' && <OpenInBrowser />}
@@ -88,8 +90,8 @@ export default function ButtonAppBar() {
         </Toolbar>
       </AppBar>
       <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
-        {<NavList />}
+        {<NavListDrawer />}
       </Drawer>
     </>
   );
-}
+};

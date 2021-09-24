@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import NavBar, { links } from './NavBar';
+import { NavBar, links } from './NavBar';
 
 test('renders NavBar, toggler, and logo', () => {
   render(<NavBar></NavBar>);

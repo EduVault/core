@@ -1,10 +1,7 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import Login from './views/Login';
-import NavBar from './components/NavBar';
-import HomePage from './views/HomePage';
-import AppHome from './views/AppHome';
+import { Login, NavBar, HomePage, AppHome } from './components/';
 
 const App: React.FC = (props) => {
   return (
