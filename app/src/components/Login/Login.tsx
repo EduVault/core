@@ -2,14 +2,14 @@ import {
   Box,
   Container,
   Paper,
-  TextField,
-  Button,
   Typography,
   Link,
   makeStyles,
 } from '@material-ui/core';
-import { useState } from 'react';
+// import { useState } from 'react';
 import { EduVaultLogoFull } from '../../assets';
+import { useDispatch } from '../../model';
+import { pwLogin } from '../../model/auth';
 import { PasswordForm } from './PasswordForm';
 
 interface Props {}
@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 export const Login = (props: Props) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const handlePasswordSubmit = ({
     email,
     password,
@@ -43,7 +44,9 @@ export const Login = (props: Props) => {
     email: string;
     password: string;
   }) => {
-    alert({ email, password });
+    dispatch(
+      pwLogin({ username: email, password, redirectURL: window.location.href })
+    );
   };
   return (
     <Container maxWidth="sm">

@@ -1,4 +1,9 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import {
+  TypedUseSelectorHook,
+  useDispatch as useDispatchRaw,
+  useSelector as useSelectorRaw,
+} from 'react-redux';
 import { authReducer as auth } from './auth';
 import Eduvault from '@eduvault/sdk-js/dist/main';
 export const eduvault = new Eduvault({ suppressInit: true });
@@ -8,6 +13,10 @@ export const store = configureStore({
     auth,
   },
 });
+
+// Use throughout your app instead of plain `useDispatch` and `useSelector`
+export const useDispatch = () => useDispatchRaw<AppDispatch>();
+export const useSelector: TypedUseSelectorHook<RootState> = useSelectorRaw;
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
