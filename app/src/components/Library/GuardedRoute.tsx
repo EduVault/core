@@ -12,7 +12,7 @@ export const GuardedRoute = ({
   return (
     <Route
       render={() =>
-        auth === true ? <Route {...rest} /> : <Redirect to={redirectTo} />
+        auth === true ? <Route {...rest} /> : <Redirect to={redirectTo} exact />
       }
     />
   );

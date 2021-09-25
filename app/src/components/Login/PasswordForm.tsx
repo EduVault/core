@@ -1,5 +1,7 @@
-import { Box, TextField, Button, makeStyles } from '@material-ui/core';
+import { TextField, Button, makeStyles } from '@material-ui/core';
 import { useState } from 'react';
+import { useSelector } from '../../model';
+import { selectLoggingIn } from '../../model/auth';
 interface Props {
   submit: ({ email, password }: { email: string; password: string }) => any;
 }
@@ -54,7 +56,7 @@ export const PasswordForm = ({ submit }: Props) => {
     }
   };
   const loginValid = emailValid && passwordValid;
-  const disableButton = loginValid; // login status not in progress
+  const disableButton = useSelector(selectLoggingIn) && !loginValid; // login status not in progress
   return (
     <div className={classes.passwordForm} accessibility-role="form">
       <TextField
@@ -84,7 +86,7 @@ export const PasswordForm = ({ submit }: Props) => {
         className={classes.button}
         color="primary"
         variant="outlined"
-        disabled={!loginValid}
+        disabled={disableButton}
         onClick={() => submit({ email, password })}
       >
         Continue with Password

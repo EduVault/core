@@ -1,4 +1,9 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  Action,
+  createSlice,
+  PayloadAction,
+  ThunkDispatch,
+} from '@reduxjs/toolkit';
 import { AuthState } from './types';
 import { URL_API } from '../../config';
 import Eduvault from '@eduvault/sdk-js/dist/main';
@@ -36,7 +41,6 @@ export const selectLoggingIn = (state: RootState) => state.auth.loggingIn;
 export const selectLoginError = (state: RootState) => state.auth.loginError;
 
 export const authReducer = AuthSlice.reducer;
-export const eduvault = new Eduvault({ appID: '1', URL_API, log: true });
 // Thunks
 export const pwLogin =
   (payload: {
@@ -47,18 +51,12 @@ export const pwLogin =
   async (dispatch) => {
     try {
       dispatch(setLoggingIn(true));
+      const eduvault = new Eduvault({ appID: '1', URL_API, log: true });
       const loginRes = await eduvault.pwLogin(payload);
       console.log({ loginRes });
+      if (loginRes && 'error' in loginRes) throw loginRes.error;
+      if (!loginRes || !loginRes.jwt) throw loginRes;
       // login successful
-      if (loginRes && 'error' in loginRes) {
-        throw loginRes.error;
-      }
-      if (!loginRes || !loginRes.jwt) {
-        throw loginRes;
-      } else {
-        dispatch(setLoggedIn(true));
-        dispatch(setLoggedIn(false));
-      }
     } catch (error) {
       dispatch(setLoginError(error));
       dispatch(setLoggedIn(false));
@@ -66,3 +64,29 @@ export const pwLogin =
       dispatch(setLoggingIn(false));
     }
   };
+
+export const checkLoginStatus = (
+  eduvault: Eduvault,
+  dispatch: ThunkDispatch<
+    {
+      auth: AuthState;
+    },
+    unknown,
+    Action<string>
+  >
+) => {
+  try {
+    if (eduvault.privateKey?.canSign()) {
+      dispatch(setLoggedIn(true));
+      return true;
+    } else {
+      dispatch(setLoginError('private key cannot sign'));
+      dispatch(setLoggedIn(false));
+      return false;
+    }
+  } catch (err) {
+    dispatch(setLoginError(err));
+    dispatch(setLoggedIn(false));
+    return false;
+  }
+};

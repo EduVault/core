@@ -1,13 +1,23 @@
-import './App.css';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import EduVault from '@eduvault/sdk-js/dist/main';
+
+import './App.css';
 import { Login, NavBar, HomePage, AppHome } from './components/';
-import { useSelector } from './model';
-import { selectLoggedIn } from './model/auth';
+import { checkLoginStatus } from './model/auth';
 import { GuardedRoute } from './components/Library/GuardedRoute';
+import { URL_API } from './config';
+import { useDispatch } from './model';
 
 const App: React.FC = (props) => {
-  const loggedIn = useSelector(selectLoggedIn);
+  const dispatch = useDispatch();
+  let loggedIn = useRef(false);
+  useEffect(() => {
+    const eduvault = new EduVault({ appID: '1', URL_API });
+    const load = async () => await eduvault.load({});
+    load();
+    loggedIn.current = checkLoginStatus(eduvault, dispatch);
+  }, [dispatch]);
   return (
     <>
       <NavBar />
@@ -15,8 +25,8 @@ const App: React.FC = (props) => {
         <Switch>
           <Route path={'/app/login'} component={Login} />
           <GuardedRoute
-            auth={loggedIn}
-            path={['/']}
+            auth={loggedIn.current}
+            path={['/app/']}
             redirectTo={'app/login'}
             component={AppHome}
           />
