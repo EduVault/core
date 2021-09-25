@@ -49,7 +49,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           start: npm run start:ci
-          wait-on: 'npx wait-on --timeout 500000 https://localhost:8082'
+          wait-on: 'npx wait-on --timeout 500000 http://localhost:8081'
           browser: chrome
           headless: true
           record: true

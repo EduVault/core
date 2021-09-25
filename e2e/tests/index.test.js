@@ -10,7 +10,7 @@ describe('Index Page', () => {
   it('should contain a login element', () => {
     cy.visit('/app/login');
 
-    const login = cy.contains('login');
+    const login = cy.contains('Continue with Password');
     login.should('exist');
     // login.get('input#username').should('exist');
     // login.get('input#password').should('exist');

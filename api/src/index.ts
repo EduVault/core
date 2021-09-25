@@ -32,8 +32,8 @@ app.get(ROUTES.api.ENV_CHECK, (req, res) => {
 
 const serveFrontend = (app: Express) => {
   if (dev) {
-    app.get(['/', '/*'], (req, res) => {
-      res.redirect('http://localhost:3000');
+    app.get('(/*)?', (req, res) => {
+      res.redirect(`http://localhost:3000${req.url}`);
     });
   } else {
     const buildPath = path.normalize(path.join(__dirname, '../../app/build'));
@@ -65,7 +65,7 @@ const startServer = async () => {
         if (req.secure) {
           next();
         } else {
-          res.redirect(`https://${HOST}:${PORT_API_HTTPS}${req.url}`);
+          res.redirect(`https://${req.hostname}:${PORT_API_HTTPS}${req.url}`);
         }
       });
 
