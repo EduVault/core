@@ -45,7 +45,11 @@ export const Login = (props: Props) => {
     password: string;
   }) => {
     dispatch(
-      pwLogin({ username: email, password, redirectURL: window.location.href })
+      pwLogin({
+        username: email,
+        password,
+        redirectURL: window.location.origin + '/app',
+      })
     );
   };
   return (

@@ -54,9 +54,9 @@ export const PasswordForm = ({ submit }: Props) => {
     }
   };
   const loginValid = emailValid && passwordValid;
-
+  const disableButton = loginValid; // login status not in progress
   return (
-    <Box className={classes.passwordForm}>
+    <div className={classes.passwordForm} accessibility-role="form">
       <TextField
         className={classes.email}
         value={email}
@@ -89,6 +89,6 @@ export const PasswordForm = ({ submit }: Props) => {
       >
         Continue with Password
       </Button>
-    </Box>
+    </div>
   );
 };

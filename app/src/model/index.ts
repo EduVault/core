@@ -5,8 +5,6 @@ import {
   useSelector as useSelectorRaw,
 } from 'react-redux';
 import { authReducer as auth } from './auth';
-import Eduvault from '@eduvault/sdk-js/dist/main';
-export const eduvault = new Eduvault({ suppressInit: true });
 
 export const store = configureStore({
   reducer: {

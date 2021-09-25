@@ -1,8 +1,13 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { WrapProviders } from '../..';
 import { NavBar, links } from './NavBar';
 
 test('renders NavBar, toggler, and logo', () => {
-  render(<NavBar></NavBar>);
+  render(
+    <WrapProviders>
+      <NavBar></NavBar>
+    </WrapProviders>
+  );
   const navBarToggle = screen.getByTestId('nav-drawer-toggle');
   expect(navBarToggle).toBeVisible();
   const logo = screen.getByTestId('nav-eduvault-logo');
@@ -10,7 +15,11 @@ test('renders NavBar, toggler, and logo', () => {
 });
 
 test('opens drawer', () => {
-  render(<NavBar></NavBar>);
+  render(
+    <WrapProviders>
+      <NavBar></NavBar>
+    </WrapProviders>
+  );
   const notNavDrawerList = screen.queryByTestId('nav-drawer-list');
   expect(notNavDrawerList).not.toBeInTheDocument();
   const navBarToggle = screen.getByTestId('nav-drawer-toggle');
@@ -20,7 +29,11 @@ test('opens drawer', () => {
 });
 
 test.each(links)('Check if Nav Bar has %s link.', (link) => {
-  render(<NavBar />);
+  render(
+    <WrapProviders>
+      <NavBar></NavBar>
+    </WrapProviders>
+  );
   const navBarToggle = screen.getByTestId('nav-drawer-toggle');
   fireEvent.click(navBarToggle);
   const linkDom = screen.getByText(link.text);

@@ -1,4 +1,4 @@
-import { eduvault } from './';
+import { eduvault } from './auth';
 
 it('loads eduvault and mock server', async () => {
   const pingRes = await eduvault.api.ping();

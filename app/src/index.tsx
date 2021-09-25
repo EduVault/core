@@ -12,18 +12,27 @@ import { store } from './model';
 // use eduvault-js's mock service worker
 if (
   process.env.NODE_ENV === 'development' &&
-  process.env.SUPPRESS_MSW !== 'true'
+  process.env.REACT_APP_SUPPRESS_MSW !== 'true'
 )
   startWorker();
 
-ReactDOM.render(
-  <React.StrictMode>
+export const WrapProviders: React.FC = (props) => {
+  return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <App />
+        {props.children}
       </ThemeProvider>
     </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+  );
+};
+
+if (process.env.NODE_ENV !== 'test')
+  ReactDOM.render(
+    <React.StrictMode>
+      <WrapProviders>
+        <App />
+      </WrapProviders>
+    </React.StrictMode>,
+    document.getElementById('root')
+  );

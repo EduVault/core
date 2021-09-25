@@ -13,8 +13,13 @@ const App: React.FC = (props) => {
       <NavBar />
       <Router>
         <Switch>
-          <Route path={['/login', '/app/login']} component={Login} />
-          <GuardedRoute auth={loggedIn} path={['/']} component={AppHome} />
+          <Route path={'/app/login'} component={Login} />
+          <GuardedRoute
+            auth={loggedIn}
+            path={['/']}
+            redirectTo={'app/login'}
+            component={AppHome}
+          />
           <Route path={['/*', '/home']} component={HomePage} />
         </Switch>
       </Router>

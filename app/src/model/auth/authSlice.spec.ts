@@ -3,6 +3,8 @@ import { AuthState } from './types';
 describe('authReducer', () => {
   const initialTestState: AuthState = {
     loggedIn: true,
+    loggingIn: false,
+    loginError: '',
   };
   it('should handle initial state', () => {
     expect(authReducer(undefined, { type: 'unknown' })).toEqual(initialState);
