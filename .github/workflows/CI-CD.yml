@@ -31,8 +31,7 @@ jobs:
           ^NODE_ENV: 'production'
           ^PORT_API_HTTP: 8081
           ^PORT_API_HTTPS: 8082
-          ^PORT_EXTERNAL_HTTP: 8083
-          ^PORT_EXTERNAL_HTTPS: 8085
+          ^PORT_DOCKER: 8083
   
       - name: Install application
         run: npm run inst:ci
@@ -50,7 +49,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           start: npm run start:ci
-          wait-on: 'npx wait-on --timeout 500000 https://localhost:8085'
+          wait-on: 'npx wait-on --timeout 500000 https://localhost:8082'
           browser: chrome
           headless: true
           record: true

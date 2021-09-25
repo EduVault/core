@@ -4,10 +4,12 @@ services:
     build: ./
     env_file: ./.env
     expose:
-      - ${PORT_API_HTTP}
+      - PORT_DOCKER
     environment:
       VIRTUAL_HOST: ${HOST}
-      VIRTUAL_PORT: ${PORT_API_HTTP}
+      VIRTUAL_PORT: ${PORT_DOCKER}
+      PORT_API_HTTP: ${PORT_DOCKER}
+      USE_HTTPS: false
 
   nginx-proxy:
     env_file: ./.env
@@ -21,10 +23,10 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./deploy/certs:/etc/nginx/certs:ro
     ports:
-      - ${PORT_EXTERNAL_HTTP}:${PORT_EXTERNAL_HTTP}
-      - ${PORT_EXTERNAL_HTTPS}:${PORT_EXTERNAL_HTTPS}
+      - ${PORT_API_HTTP}:${PORT_API_HTTP}
+      - ${PORT_API_HTTPS}:${PORT_API_HTTPS}
     depends_on:
       - eduvault-core
     environment:
-      HTTP_PORT: ${PORT_EXTERNAL_HTTP}
-      HTTPS_PORT: ${PORT_EXTERNAL_HTTPS}    
+      HTTP_PORT: ${PORT_API_HTTP}
+      HTTPS_PORT: ${PORT_API_HTTPS}   

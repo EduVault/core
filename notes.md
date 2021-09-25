@@ -14,16 +14,21 @@
 ## How to dev
 
 prepare dev env
+
 ```sh
 npm run inst
 npm run ssl-certs:local
 npm run build
 ```
 
-1. __Local__ `npm run dev` will start everything locally Ping server at http://localhost:8081/api/ping or https://localhost:8082/api/ping and app at http://localhost:8081/
+Ping __server__ at <http://localhost:8081/api/ping> or <https://localhost:8082/api/ping>
+
+The __app__ is at <http://localhost:8081/>
+
+1. __Local__ `npm run dev` will start everything locally
 2. __Unit Tests__ you'll probably want to keep unit tests on watch mode as you make changes, `npm run test:api:watch` and `npm run test:app` (watches by default). Before commit do a full run with `npm run test`
 3. __Local Prod Build Run__ `npm run build:start`
-4. __Local Docker Prod Build Run__ `start:local:docker` Ping server at http://localhost:8083/api/ping or https://localhost:8085/api/ping and app at http://localhost:8083/ or https://localhost:8085/
+4. __Local Docker Prod Build Run__ `start:local:docker`
 
 ## SSL certs
 
@@ -38,6 +43,7 @@ use the scripts `npm run ssl-certs:` + env (local, ci, prod)
 ## Deploy
 
 ### CI/CD explanation
+
 CD works by using [watchtower](https://containrrr.dev/watchtower/) in the docker-compose file. It will periodically check for new versions of the app/server's docker images on docker hub.
 On commits to `staging` or `prod` branches, if tests pass, Github actions will push updated images to docker hub with the corresponding tags.
 
@@ -71,8 +77,8 @@ sudo ufw status verbose
 
 ## copy .env file over
 ### edit the following in the .env file
-PORT_EXTERNAL_HTTP=80
-PORT_EXTERNAL_HTTPS=443
+PORT_DOCKER=80
+PORT_DOCKERS=443
 # TEST_ENV='e2e' # deactivate 
 HOST=is-a-test.xyz
 IMAGE_SUFFIX=production # or staging
