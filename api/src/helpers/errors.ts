@@ -36,4 +36,9 @@ export const errors = {
     code: 10004,
     status: 401,
   },
+  missingRedirectURL: {
+    message: 'missing redirect URL',
+    code: 10005,
+    status: 400,
+  },
 };
