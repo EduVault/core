@@ -7,7 +7,7 @@ import { ROUTES } from '../config';
 import { clearCollections, newLocalDB } from '../db';
 import passportInit from '../auth/passportInit';
 import { formatPasswordSignIn } from './';
-import { ApiRes, PasswordLoginRes } from '../types';
+import { ApiRes, PasswordLoginReq, PasswordLoginRes } from '../types';
 import routerInit from '../routes';
 
 export { default as supertest } from 'supertest';
@@ -41,9 +41,30 @@ export const closeApp = async ({ app, db }: { app: Express; db: Database }) => {
 interface PwResponse extends supertest.Response {
   body: ApiRes<PasswordLoginRes>;
 }
+
+export const formatTestSignIn = async (options?: {
+  username?: string;
+  password?: string;
+  redirectURL?: string;
+  appID?: string;
+}) => {
+  const loginOptions: {
+    username: string;
+    password: string;
+    redirectURL: string;
+    appID: string;
+  } = {
+    username: options?.username ?? username,
+    password: options?.password ?? password,
+    redirectURL: options?.redirectURL ?? 'http://localhost',
+    appID: options?.appID ?? '1',
+  };
+  return (await formatPasswordSignIn(loginOptions)) as PasswordLoginReq;
+};
+
 /** Sends a password signup/login request */
 export const pwAuthTestReq = async (
-  options: {
+  personAuthReq: {
     username?: string;
     password?: string;
     redirectURL?: string;
@@ -51,18 +72,6 @@ export const pwAuthTestReq = async (
   },
   agent: supertest.SuperAgentTest
 ) => {
-  const loginOptions: {
-    username: string;
-    password: string;
-    redirectURL: string;
-    appID: string;
-  } = {
-    username: options.username ?? username,
-    password: options.password ?? password,
-    redirectURL: options.redirectURL ?? 'http://localhost',
-    appID: options.appID ?? '1',
-  };
-  const personAuthReq = await formatPasswordSignIn(loginOptions);
   // console.log({ personAuthReq });
   const res = await agent
     .post(ROUTES.api.PASSWORD_AUTH)
@@ -75,7 +84,8 @@ export const pwAuthWithCookie = async (
   req: supertest.Test,
   agent: supertest.SuperAgentTest
 ) => {
-  const res = await pwAuthTestReq({ password, username }, agent);
+  const loginData = await formatTestSignIn();
+  const res = await pwAuthTestReq(loginData, agent);
   const cookie: string = res.headers['set-cookie'];
   req.set('Cookie', cookie);
   return await req;

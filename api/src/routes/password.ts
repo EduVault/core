@@ -101,7 +101,7 @@ const password = (
 ) => {
   router.post(API_ROUTES.PASSWORD_AUTH, async (req, res, next) => {
     const data = req.body as PasswordLoginReq;
-    // console.log({ data });
+    console.log({ data });
     if (!data) return respondError(res, 'missingPasswordRequestData');
     if (!data.password || !data.username)
       return respondError(res, 'missingPasswordOrUsername');

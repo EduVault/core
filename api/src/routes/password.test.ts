@@ -9,6 +9,7 @@ import {
   pwAuthTestReq,
   pwAuthWithCookie,
   closeApp,
+  formatTestSignIn,
 } from '../helpers/testUtil';
 import { hashPassword, validPassword } from '../helpers';
 import { ROUTES } from '../config';
@@ -44,19 +45,24 @@ describe(`POST ${ROUTES.api.PASSWORD_AUTH}`, () => {
   });
 
   it('rejects signup with no username', async () => {
-    const res = await pwAuthTestReq({ password, username: null }, agent);
+    const loginData = await formatTestSignIn();
+    loginData.username = null;
+    const res = await pwAuthTestReq(loginData, agent);
     expect(401);
     expect(res.body.content).toEqual('missing password or username');
   });
 
   it('rejects signup with no password', async () => {
-    const res = await pwAuthTestReq({ password: null, username }, agent);
+    const loginData = await formatTestSignIn();
+    loginData.username = null;
+    const res = await pwAuthTestReq(loginData, agent);
     expect(401);
     expect(res.body.content).toEqual('missing password or username');
   });
 
   it('Accepts valid signup', async () => {
-    const res = await pwAuthTestReq({ password, username }, agent);
+    const loginData = await formatTestSignIn();
+    const res = await pwAuthTestReq(loginData, agent);
     expect(res.status).toEqual(200);
     expect(res.body.code).toEqual(200);
     expect(res.body.content);
@@ -71,14 +77,16 @@ describe(`POST ${ROUTES.api.PASSWORD_AUTH}`, () => {
   });
 
   it('Accepts valid sign in', async () => {
-    const res = await pwAuthTestReq({ password, username }, agent);
+    const loginData = await formatTestSignIn();
+    const res = await pwAuthTestReq(loginData, agent);
     expect(res.body.code).toEqual(200);
     expect(res.body.content);
     expect(res.headers['set-cookie'][0]).toContain('eduvault.session=');
   });
 
   it('Authorizes cookie', async () => {
-    const res = await pwAuthTestReq({ password, username }, agent);
+    const loginData = await formatTestSignIn();
+    const res = await pwAuthTestReq(loginData, agent);
     expect(res.body.code).toEqual(200);
     expect(res.body.content);
     expect(res.headers['set-cookie'][0]).toContain('eduvault.session=');
