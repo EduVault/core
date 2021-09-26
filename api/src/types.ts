@@ -34,10 +34,11 @@ export interface PasswordLoginReq {
   username: string;
   password: string;
   appID: string;
-  threadIDStr?: string;
-  pwEncryptedPrivateKey?: string;
-  pubKey?: string;
-  redirectURL?: string;
+  threadIDStr: string;
+  pwEncryptedPrivateKey: string;
+  pubKey: string;
+  redirectURL: string;
+  clientToken: string;
 }
 
 export interface PasswordLoginRes {
@@ -64,7 +65,7 @@ export interface AppAuthRes {
   decryptToken: string;
 }
 export interface AppRegisterReq {
-  appID?: string;
+  appID: string;
   username: string;
   password: string;
   name: string;

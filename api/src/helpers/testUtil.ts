@@ -51,14 +51,23 @@ export const pwAuthTestReq = async (
   },
   agent: supertest.SuperAgentTest
 ) => {
-  // console.log('pwAuthTestReq', options.appID);
-  const personAuthReq = await formatPasswordSignIn(options);
+  const loginOptions: {
+    username: string;
+    password: string;
+    redirectURL: string;
+    appID: string;
+  } = {
+    username: options.username ?? username,
+    password: options.password ?? password,
+    redirectURL: options.redirectURL ?? 'http://localhost',
+    appID: options.appID ?? '1',
+  };
+  const personAuthReq = await formatPasswordSignIn(loginOptions);
   // console.log({ personAuthReq });
   const res = await agent
     .post(ROUTES.api.PASSWORD_AUTH)
     .send(personAuthReq)
     .set('Accept', 'application/json');
-
   return res as PwResponse;
 };
 
