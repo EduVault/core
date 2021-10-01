@@ -25,7 +25,12 @@ const App: React.FC = (props) => {
       URL_APP: window.origin + '/app/login',
       log: true,
     });
-    let db = eduvault.db;
+    const EduVaultContext = React.createContext({ eduvault });
+    const EduVaultProvider: React.FC = ({ children }) => (
+      <EduVaultContext.Provider value={{ eduvault }}>
+        {children}
+      </EduVaultContext.Provider>
+    );
     const load = async () =>
       await eduvault.load({
         log: true,
