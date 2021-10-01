@@ -14,18 +14,24 @@ const App: React.FC = (props) => {
   const dispatch = useDispatch();
   let loggedIn = useRef(false);
   useEffect(() => {
-    const eduvault = new EduVault({ appID: '1', URL_API });
+    const eduvault = new EduVault({
+      appID: '1',
+      URL_API,
+      URL_WS_API: 'wss://localhost:8082/api/ws',
+    });
     eduvault.setupLoginButton({
       redirectURL: window.origin + '/app/login',
       buttonID: 'eduvault-button',
       URL_APP: window.origin + '/app/login',
       log: true,
     });
+    let db = eduvault.db;
     const load = async () =>
       await eduvault.load({
         log: true,
         onError: (err) => alert(err),
-        onReady: (result) => alert(result),
+        onLocalReady: () => alert('local ready '),
+        onReady: (result) => alert('remote ready ' + result),
       });
     load();
 

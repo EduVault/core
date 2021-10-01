@@ -2,20 +2,10 @@ import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 
 import { APP_SECRET, JWT_EXPIRY } from '../config';
-// import { IPerson } from '../models/person';
-// import { IApp } from '../models/app';
-import { LoginToken } from '../types';
-import { IPerson } from '../types';
 
-export const createJwt = (id: string) => {
-  const newJwt = jwt.sign({ data: { id } }, APP_SECRET, {
-    expiresIn: JWT_EXPIRY,
-  });
-  // console.log({ newJwt });
-  return newJwt;
-};
+import { JWTToken, LoginToken } from '../types';
 
-export const createCustomJwt = (
+export const createJwtWithData = (
   data: any,
   expiry?: jwt.SignOptions['expiresIn']
 ) => {
@@ -26,46 +16,62 @@ export const createCustomJwt = (
   return newJwt;
 };
 
-export const getJwtExpiry = async (token: string) => {
+/** Login token valid for 3 minutes */
+export const createLoginToken = (data: LoginToken['data']) =>
+  createJwtWithData(data, '3m');
+
+export const createAppJwt = (data: JWTToken['data']) =>
+  createJwtWithData(data, '2w');
+
+export const getJwtExpiry = (token: string) => {
   try {
     const decoded: any = jwt.verify(token, APP_SECRET);
     // console.log({ decoded });
-    return new Date(decoded.exp * 1000);
-  } catch (err) {
-    console.log('err', err);
-    return false;
+    return { expiry: new Date(decoded.exp * 1000) };
+  } catch (error) {
+    console.log('getJwtExpiry err', error);
+    return { error };
   }
 };
 
-export const validateAndDecodeJwt = async (token: string) => {
+export const validateAndDecodeJwt = async <T>(token: string) => {
   try {
-    const decoded: any = jwt.verify(token, APP_SECRET);
-    const exp = new Date(decoded.exp * 1000);
+    const decoded = jwt.verify(token, APP_SECRET) as T;
+    const { error, expiry } = getJwtExpiry(token);
+    if (error) throw error;
     const now = new Date();
-    const valid = now < exp;
+    const valid = now < expiry;
     if (valid) {
-      return decoded;
+      return { decoded };
     } else {
-      return false;
+      throw 'invalid. now: ' + now + 'expiry: ' + expiry;
     }
-  } catch (err) {
-    console.log('err', err);
-    return false;
+  } catch (error) {
+    // console.log('validateAndDecodeJwt error', error);
+    return { error };
   }
 };
 
-/** Login token valid for 3 minutes */
-export const createLoginToken = (data: LoginToken['data']) =>
-  createCustomJwt(data, '3m');
-
-export const refreshJwts = async (req: Request, person: IPerson) => {
+export const refreshJwts = async (
+  req: Request,
+  { appID, personID }: { appID: string; personID: string }
+) => {
   if (req.session.jwt) {
+    // if within a day of the expiry, refresh and store current in oldJwt.
+    /// helps app
     const now = new Date().getTime();
-    const expiry = await getJwtExpiry(req.session.jwt);
-    if (!expiry) req.session.jwt = createJwt(person.username);
-    else if (now - expiry.getTime() < 1000 * 60 * 60 * 24) {
-      req.session.oldJwt = JSON.parse(JSON.stringify(req.session.jwt));
-      req.session.jwt = createJwt(person.username);
+    const { error, expiry } = getJwtExpiry(req.session.jwt);
+    if (error) throw error;
+    // if within a day
+    const refreshWindow = 1000 * 60 * 60 * 24;
+    if (!expiry) req.session.jwt = createAppJwt({ appID, personID });
+    else if (now - expiry.getTime() < refreshWindow) {
+      // TODO: test this behavior
+      // console.log('refreshing jwts');
+      const oldJwt = JSON.parse(JSON.stringify(req.session.jwt));
+      req.session.oldJwt = oldJwt;
+
+      req.session.jwt = createAppJwt({ appID, personID });
     }
-  } else req.session.jwt = createJwt(person.username);
+  } else req.session.jwt = createAppJwt({ appID, personID });
 };

@@ -34,10 +34,12 @@ export const newLocalDB = (dbName = 'eduvault-api') => {
 };
 
 export const newClientDB = async () => {
-  const db = await Client.withKeyInfo({
+  const keyInfo = {
     key: TEXTILE_USER_API_KEY,
     secret: TEXTILE_USER_API_SECRET,
-  });
+  };
+  // console.log({ keyInfo });
+  const db = await Client.withKeyInfo(keyInfo);
   return db;
 };
 

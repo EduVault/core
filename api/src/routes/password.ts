@@ -3,7 +3,7 @@ import passport from 'passport';
 import { API_ROUTES, dev, e2eTest, HOST, prod, unitTest } from '../config';
 import {
   hashPassword,
-  createJwt,
+  createAppJwt,
   createLoginToken,
   refreshJwts,
   validPassword,
@@ -43,7 +43,7 @@ const signup = async (
 
   await savePerson(db, newPerson);
 
-  req.session.jwt = createJwt(newPerson.username);
+  req.session.jwt = createAppJwt({ personID: newPerson._id, appID });
   const loginToken = await createLoginToken({ appID, personID: newPerson._id });
   const returnData: PasswordLoginRes = {
     pwEncryptedPrivateKey,
@@ -62,19 +62,21 @@ const login = async ({
   loginToken,
   person,
   password,
+  appID,
 }: {
   req: Request;
   res: Response;
   person: IPerson;
   loginToken: string;
   password: string;
+  appID: string;
 }) => {
   // manually test password
   const valid = validPassword(password, person.password);
-  // console.log('password check: ', { valid });
+  console.log('password check: ', valid);
   if (!valid) respondError(res, 'incorrectPassword');
 
-  await refreshJwts(req, person);
+  await refreshJwts(req, { personID: person._id, appID });
 
   const returnData: PasswordLoginRes = {
     pwEncryptedPrivateKey: person.pwEncryptedPrivateKey,
@@ -112,7 +114,7 @@ const password = (router: Router, db: Database) => {
         appID,
         personID: person._id,
       });
-      return login({ req, res, person, loginToken, password });
+      return login({ req, res, person, loginToken, password, appID });
     }
   );
 };

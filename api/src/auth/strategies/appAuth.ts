@@ -35,7 +35,8 @@ export async function compareLoginToken(
   token: string,
   appID: string
 ): Promise<string | LoginToken> {
-  const decoded = await validateAndDecodeJwt(token);
+  const { error, decoded } = await validateAndDecodeJwt<LoginToken>(token);
+
   if (!decoded.data) return 'token could not be decoded';
   const now = new Date().getTime();
 
@@ -69,7 +70,7 @@ const appStrat = (db: Database) =>
       const personID = tokenData.data.personID;
       const person = await findPersonByID(db, personID);
       if (!person) done('person not found');
-      await refreshJwts(req, person);
+      await refreshJwts(req, { appID, personID });
       const appPerson: AppPerson = { app, person };
       done(null, appPerson);
     }

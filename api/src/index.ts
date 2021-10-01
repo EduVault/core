@@ -19,6 +19,7 @@ import routerInit from './routes';
 import passportInit from './auth/passportInit';
 import { newLocalDB, populateDB } from './db';
 import { cors, waitForDbReady } from './middleware';
+import { startWss } from './routes/wss';
 
 const app = express();
 app.set('trust-proxy', !useHttps);
@@ -76,9 +77,12 @@ const startServer = async () => {
     httpRedirect(httpServer);
 
     const httpsServer = https.createServer({ key, cert }, app);
+    await startWss(httpsServer, db);
+
     httpsServer.listen(PORT_API_HTTPS, onStart(PORT_API_HTTPS));
   } else {
-    app.listen(PORT_API_HTTP, onStart(PORT_API_HTTP));
+    const httpServer = app.listen(PORT_API_HTTP, onStart(PORT_API_HTTP));
+    await startWss(httpServer, db);
   }
 };
 
