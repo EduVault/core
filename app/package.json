@@ -29,7 +29,7 @@
     "typescript": "^4.4.3"
   },
   "scripts": {
-    "dev": "react-scripts start",
+    "dev": "dotenv -e ../dev.env react-scripts start",
     "---": "------- on a small server/docker might want to change to: --max_old_space_size=1024 -----",
     "build": "react-scripts build",
     "test:watch": "react-scripts test --env=./jest-env.js --watchAll",

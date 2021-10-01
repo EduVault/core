@@ -1,8 +1,7 @@
 import express, { Express } from 'express';
-import cors from 'cors';
 import path from 'path';
 import https from 'https';
-import http from 'https';
+// import http from 'http';
 
 import {
   PORT_API_HTTP,
@@ -18,11 +17,11 @@ import {
 } from './config';
 import routerInit from './routes';
 import passportInit from './auth/passportInit';
-import { newLocalDB } from './db';
+import { newLocalDB, populateDB } from './db';
+import { cors, waitForDbReady } from './middleware';
 
 const app = express();
 app.set('trust-proxy', !useHttps);
-app.use(cors()); //TODO: cors settings
 app.use(express.json());
 
 // Check environment variables load
@@ -52,13 +51,16 @@ const startServer = async () => {
       }://${HOST}:${port}`
     );
 
-  if (unitTest) return http.createServer(app).listen();
-
-  const db = await newLocalDB();
+  // TODO: in prod replace with persistent db that syncs with previous deployments
+  const db = newLocalDB();
+  await db.open(2);
+  await populateDB(db);
+  app.use(await cors(db));
+  app.use(waitForDbReady(db));
   const passport = passportInit(app, db);
   routerInit(app, passport, db);
   serveFrontend(app);
-
+  console.log({ useHttps });
   if (useHttps) {
     const httpRedirect = (server: Express) =>
       server.use((req, res, next) => {

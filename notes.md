@@ -9,7 +9,7 @@
 | CI test    | yes    | yes |
 | Production | yes    | yes |
 
-> if you get "error: port in use": `kill $(lsof -t -i:<PORT_NUMBER>)`
+> if you get "error: port in use": `npx kill-port :<PORT_NUMBER>`
 
 ## How to dev
 
@@ -21,14 +21,14 @@ npm run ssl-certs:local
 npm run build
 ```
 
-Ping __server__ at <http://localhost:8081/api/ping> or <https://localhost:8082/api/ping>
+Ping **server** at <http://localhost:8081/api/ping> or <https://localhost:8082/api/ping>
 
-The __app__ is at <http://localhost:8081/>
+The **app** is at <http://localhost:8081/>
 
-1. __Local__ `npm run dev` will start everything locally
-2. __Unit Tests__ you'll probably want to keep unit tests on watch mode as you make changes, `npm run test:api:watch` and `npm run test:app` (watches by default). Before commit do a full run with `npm run test`
-3. __Local Prod Build Run__ `npm run build:start`
-4. __Local Docker Prod Build Run__ `start:local:docker`
+1. **Local** `npm run dev` will start everything locally
+2. **Unit Tests** you'll probably want to keep unit tests on watch mode as you make changes, `npm run test:api:watch` and `npm run test:app` (watches by default). Before commit do a full run with `npm run test`
+3. **Local Prod Build Run** `npm run build:start`
+4. **Local Docker Prod Build Run** `start:local:docker`
 
 ## SSL certs
 
@@ -79,7 +79,7 @@ sudo ufw status verbose
 ### edit the following in the .env file
 PORT_DOCKER=80
 PORT_DOCKERS=443
-# TEST_ENV='e2e' # deactivate 
+# TEST_ENV='e2e' # deactivate
 HOST=is-a-test.xyz
 IMAGE_SUFFIX=production # or staging
 WATCHTOWER_POLLING_INTERVAL=600 #or whatever (in seconds)
@@ -108,15 +108,15 @@ sudo mkswap /swapfile
 sudo swapon /swapfile
 sudo nano /etc/fstab
 # add line:
- /swapfile       none    swap    sw      0       0 
+ /swapfile       none    swap    sw      0       0
 echo 10 | sudo tee /proc/sys/vm/swappiness
 echo vm.swappiness = 10 | sudo tee -a /etc/sysctl.conf
-sudo chown root:root /swapfile 
+sudo chown root:root /swapfile
 sudo chmod 0600 /swapfile
 
 apt install gcc # if you run into an error using screen
 
-# build and run not in detached first to check logs and manually test 
+# build and run not in detached first to check logs and manually test
 npm run start:production:logs
 
 # if ok, run in screen detached

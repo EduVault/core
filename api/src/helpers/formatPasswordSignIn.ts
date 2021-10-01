@@ -22,7 +22,6 @@ export const formatPasswordSignIn = async ({
   const pwEncryptedPrivateKey = encrypt(privateKey.toString(), password);
   if (!pwEncryptedPrivateKey)
     return { error: 'Could not encrypt private key with password' };
-  const clientToken = (Math.random() * 20).toString();
   const personAuthReq: PasswordLoginReq = {
     username,
     password: hash(password),
@@ -31,7 +30,6 @@ export const formatPasswordSignIn = async ({
     pubKey,
     redirectURL: redirectURL ?? 'http//:localhost',
     appID,
-    clientToken,
   };
 
   return personAuthReq;

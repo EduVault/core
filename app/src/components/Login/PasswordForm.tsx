@@ -1,5 +1,5 @@
 import { TextField, Button, makeStyles } from '@material-ui/core';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useSelector } from '../../model';
 import { selectLoggingIn } from '../../model/auth';
 interface Props {
@@ -57,6 +57,20 @@ export const PasswordForm = ({ submit }: Props) => {
   };
   const loginValid = emailValid && passwordValid;
   const disableButton = useSelector(selectLoggingIn) && !loginValid; // login status not in progress
+
+  const passwordRef = useRef<HTMLInputElement>();
+  const buttonRef = useRef<HTMLAnchorElement>();
+  const handleEnterKeyEmail: React.KeyboardEventHandler<HTMLDivElement> = (
+    e
+  ) => {
+    if (e.key === 'Enter') passwordRef?.current?.focus();
+  };
+  const handleEnterKeyPassword: React.KeyboardEventHandler<HTMLDivElement> = (
+    e
+  ) => {
+    console.log(e.key);
+    if (e.key === 'Enter') buttonRef?.current?.focus();
+  };
   return (
     <div className={classes.passwordForm} accessibility-role="form">
       <TextField
@@ -70,8 +84,10 @@ export const PasswordForm = ({ submit }: Props) => {
         fullWidth
         required
         variant="outlined"
+        onKeyPress={handleEnterKeyEmail}
       />
       <TextField
+        inputRef={passwordRef}
         value={password}
         onChange={(e) => validatePassword(e.target.value)}
         label="Password"
@@ -81,8 +97,10 @@ export const PasswordForm = ({ submit }: Props) => {
         fullWidth
         required
         variant="outlined"
+        onKeyPress={handleEnterKeyPassword}
       ></TextField>
       <Button
+        ref={buttonRef as any}
         className={classes.button}
         color="primary"
         variant="outlined"

@@ -1,43 +1,15 @@
-import { Express } from 'express';
-import { Database } from '@textile/threaddb';
-// import websockify from 'koa-websocket';
-import supertest from 'supertest';
-import * as http from 'http';
-
 import {
-  setupApp,
+  setupTests,
   pwAuthTestReq,
-  pwAuthWithCookie,
-  closeApp,
   formatTestSignIn,
 } from '../helpers/testUtil';
 import { hashPassword, validPassword } from '../helpers';
-import { ROUTES } from '../config';
-
-const password = 'Password123';
-const username = 'person@email.com';
-
+import * as config from '../config';
+const { ROUTES } = config;
 describe(`POST ${ROUTES.api.PASSWORD_AUTH}`, () => {
-  // test util startup teardown boilerplate
-  let db: Database;
-  let request: () => supertest.SuperTest<supertest.Test>;
-  let agent: supertest.SuperAgentTest;
-  let app: Express;
-  let server: http.Server;
+  it('hashes and compares passwords correctly', async () => {
+    const { agent, request } = await setupTests();
 
-  beforeEach(async () => {
-    const setup = await setupApp();
-    db = setup.db;
-    request = setup.request;
-    agent = setup.agent;
-    app = setup.app;
-    // server = setup.server;
-  });
-  afterEach(async () => {
-    await closeApp({ app, db });
-  });
-
-  it('hashes and compares passwords correctly', () => {
     const initPassword = 'hello123';
     const hashed = hashPassword(initPassword);
     const comparePassword = validPassword(initPassword, hashed);
@@ -45,22 +17,28 @@ describe(`POST ${ROUTES.api.PASSWORD_AUTH}`, () => {
   });
 
   it('rejects signup with no username', async () => {
+    const { agent, request } = await setupTests();
+
     const loginData = await formatTestSignIn();
     loginData.username = null;
     const res = await pwAuthTestReq(loginData, agent);
-    expect(401);
+    expect(res.status).toEqual(400);
     expect(res.body.content).toEqual('missing password or username');
   });
 
   it('rejects signup with no password', async () => {
+    const { agent, request } = await setupTests();
+
     const loginData = await formatTestSignIn();
     loginData.username = null;
     const res = await pwAuthTestReq(loginData, agent);
-    expect(401);
+    expect(res.status).toEqual(400);
     expect(res.body.content).toEqual('missing password or username');
   });
 
   it('Accepts valid signup', async () => {
+    const { agent, request } = await setupTests();
+
     const loginData = await formatTestSignIn();
     const res = await pwAuthTestReq(loginData, agent);
     expect(res.status).toEqual(200);
@@ -76,39 +54,6 @@ describe(`POST ${ROUTES.api.PASSWORD_AUTH}`, () => {
     expect(res.body.content.threadIDStr.length).toBeGreaterThan(10);
   });
 
-  it('Accepts valid sign in', async () => {
-    const loginData = await formatTestSignIn();
-    const res = await pwAuthTestReq(loginData, agent);
-    expect(res.body.code).toEqual(200);
-    expect(res.body.content);
-    expect(res.headers['set-cookie'][0]).toContain('eduvault.session=');
-  });
-
-  it('Authorizes cookie', async () => {
-    const loginData = await formatTestSignIn();
-    const res = await pwAuthTestReq(loginData, agent);
-    expect(res.body.code).toEqual(200);
-    expect(res.body.content);
-    expect(res.headers['set-cookie'][0]).toContain('eduvault.session=');
-    const cookie = res.headers['set-cookie'];
-
-    const req = request().get(ROUTES.api.AUTH_CHECK);
-    req.set('Cookie', cookie);
-
-    const secondRes = await req;
-    expect(secondRes.body.content).toBe('authorized');
-    expect(secondRes.body.code).toEqual(200);
-  });
-
-  it('Can get jwts', async () => {
-    const res = await pwAuthWithCookie(
-      request().get(ROUTES.api.GET_JWT),
-      agent
-    );
-    expect(res.status).toEqual(200);
-    expect(res.body.code).toEqual(200);
-    expect(res.body.content).toHaveProperty('jwt');
-    expect(typeof res.body.content.jwt).toBe('string');
-    expect(res.body.content.jwt.length).toBeGreaterThan(10);
-  });
+  test.todo('handlelogin callback');
+  test.todo('can log back in a second time time');
 });

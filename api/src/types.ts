@@ -1,3 +1,7 @@
+import { IPerson, IApp } from './models/types';
+import * as passport from 'passport';
+
+// Shims
 declare module 'express-session' {
   interface SessionData {
     cookie: Cookie;
@@ -5,82 +9,16 @@ declare module 'express-session' {
     oldJwt: string;
   }
 }
-// MAKE SURE THESE MATCH eduvault/sdk-js/src/types/api
-export interface IApp {
-  _id: string;
-  appID: string;
-  devID: string;
-  name: string;
-  description?: string;
-  authorizedDomains?: string[];
-  persons?: string[];
-}
-export interface AppAndTokenData extends IApp {
-  id: string;
-  decryptToken: string;
+declare module 'passport' {
+  interface User extends AppPerson {}
 }
 
-export interface AppTokenData {
-  data: { id: string; decryptToken: string };
+export interface LoginToken {
+  data: { appID: string; personID: string };
   iat: number;
   exp: number;
 }
 
-export interface ApiRes<T> {
-  content: T;
-  code: number;
-}
-export interface PasswordLoginReq {
-  username: string;
-  password: string;
-  appID: string;
-  threadIDStr: string;
-  pwEncryptedPrivateKey: string;
-  pubKey: string;
-  redirectURL: string;
-  clientToken: string;
-}
-
-export interface PasswordLoginRes {
-  pwEncryptedPrivateKey: string;
-  jwt: string;
-  pubKey: string;
-  threadIDStr: string;
-  appLoginToken: string;
-  decryptToken: string;
-}
-
-export interface GetJWTRes {
-  jwt: string;
-  oldJwt: string;
-}
-
-export interface AppAuthReq {
-  appLoginToken: string;
-  appID: string;
-}
-export interface AppAuthRes {
-  jwt: string;
-  oldJwt: string;
-  decryptToken: string;
-}
-export interface AppRegisterReq {
-  appID: string;
-  username: string;
-  password: string;
-  name: string;
-  description?: string;
-}
-export interface AppUpdateReq {
-  username: string;
-  password: string;
-  appID: string;
-  name?: string;
-  description?: string;
-  authorizedDomains?: string[];
-  persons?: string[];
-}
-export interface DevVerifyReq {
-  appSecret: string;
-  devID: string;
-}
+export type AppPerson = { app: IApp; person: IPerson };
+export * from './routes/types';
+export * from './models/types';

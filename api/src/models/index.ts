@@ -1,2 +1,2 @@
-export * from './app';
-export * from './person';
+export { appSchema } from './app';
+export { personSchema } from './person';

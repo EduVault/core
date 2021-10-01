@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV='development' TS_NODE_PROJECT='./tsconfig.build.json' ts-node-dev --inspect=0.0.0.0:9229 --poll --respawn ./src src/index.ts",
+    "ts-node-dev": "NODE_ENV='development' TS_NODE_PROJECT='./tsconfig.build.json' ts-node-dev --inspect=0.0.0.0:9229 --poll --respawn ./src src/index.ts",
+    "dev": "npm run ts-node-dev",
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/",
     "test": "tsc && jest --env=./jest-env.js --detectOpenHandles",
-    "test:watch": "tsc && jest --env=./jest-env.js --detectOpenHandles  --watch"
+    "test:watch": "tsc && jest --env=./jest-env.js --detectOpenHandles  --watch",
+    "clear-jest-cache": "jest --clearCache"
   },
   "keywords": [],
   "author": "",
@@ -18,14 +20,14 @@
     "@textile/threaddb": "^0.1.0",
     "bcryptjs": "^2.4.3",
     "cookie-session": "^1.4.0",
-    "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "passport": "^0.4.1",
+    "passport-custom": "^1.1.1",
     "passport-local": "^1.0.0",
-    "uuid": "^8.3.2"
+    "ulid": "^2.3.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
@@ -39,7 +41,6 @@
     "@types/passport": "^1.0.7",
     "@types/passport-local": "^1.0.34",
     "@types/supertest": "^2.0.11",
-    "@types/uuid": "^8.3.1",
     "jest": "^27.2.1",
     "supertest": "^6.1.4",
     "ts-jest": "^27.0.4",

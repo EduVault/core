@@ -16,7 +16,7 @@
     "---------dev-run--------------": "-------------------",
     "dev:api": "cd ./api && npm run dev",
     "dev:app": "cd ./app && npm run dev",
-    "dev": "dotenv -e dev.env run-p dev:*",
+    "dev": "run-p dev:*",
     "---------build---------------": "--------------------",
     "build:api": "cd ./api && npm run build",
     "build:app": "cd ./app && npm run build",
