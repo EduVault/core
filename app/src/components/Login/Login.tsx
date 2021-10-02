@@ -5,9 +5,12 @@ import {
   Typography,
   Link,
   makeStyles,
+  Button,
 } from '@material-ui/core';
+import { useContext, useEffect } from 'react';
 // import { useState } from 'react';
 import { EduVaultLogoFull } from '../../assets';
+import { EduVaultContext } from '../../EduVaultContext';
 import { useDispatch } from '../../model';
 import { pwLogin } from '../../model/auth';
 import { PasswordForm } from './PasswordForm';
@@ -23,17 +26,12 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(4),
   },
   logo: { maxHeight: 200 },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+  button: {
     marginTop: theme.spacing(4),
-    maxWidth: 600,
+    color: theme.palette.background.paper,
   },
-  button: { marginTop: theme.spacing(4) },
-  email: { marginBottom: theme.spacing(2) },
 }));
+
 export const Login = (props: Props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -52,6 +50,19 @@ export const Login = (props: Props) => {
       })
     );
   };
+  const hasLoginRedirectQueries =
+    window.location.search.includes('clientToken');
+  const { setupLoginButton } = useContext(EduVaultContext);
+  useEffect(() => {
+    if (!hasLoginRedirectQueries)
+      setupLoginButton({
+        redirectURL: window.origin + '/app/login', //use origin not href to avoid including query params
+        buttonID: 'eduvault-button',
+        URL_APP: window.origin + '/app/login',
+        log: true,
+      });
+  }, [setupLoginButton, hasLoginRedirectQueries]);
+
   return (
     <Container maxWidth="sm">
       <Paper>
@@ -62,7 +73,27 @@ export const Login = (props: Props) => {
             Own your data. Sync between learning apps.{' '}
             <Link href="https://eduvault.org">Learn more</Link>
           </Typography>
-          <PasswordForm submit={handlePasswordSubmit} />
+          {hasLoginRedirectQueries && (
+            <PasswordForm submit={handlePasswordSubmit} />
+          )}
+          {!hasLoginRedirectQueries && (
+            <Button
+              color="secondary"
+              className={classes.button}
+              variant="contained"
+            >
+              {
+                <Link
+                  color="inherit"
+                  underline="none"
+                  href="/"
+                  id="eduvault-button"
+                >
+                  Login with EduVault
+                </Link>
+              }
+            </Button>
+          )}
         </Box>
       </Paper>
     </Container>

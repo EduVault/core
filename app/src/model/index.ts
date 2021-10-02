@@ -5,10 +5,12 @@ import {
   useSelector as useSelectorRaw,
 } from 'react-redux';
 import { authReducer as auth } from './auth';
+import { dbReducer as db } from './db';
 
 export const store = configureStore({
   reducer: {
     auth,
+    db,
   },
 });
 

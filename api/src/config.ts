@@ -2,11 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
 import session from 'express-session';
-import { Database } from '@textile/threaddb';
-import express from 'express';
-
-import { findAllAppsWithAuthorizedDomains } from './db';
-import { respondError } from 'helpers';
 
 const env = process.env;
 export const NODE_ENV = env.NODE_ENV;
@@ -49,7 +44,7 @@ export const SESSION_OPTIONS: session.SessionOptions = {
   cookie: {
     maxAge: 1000 * 60 * 60 * 24 * 2 /** two days */,
     httpOnly: useHttps,
-    secure: useHttps,
+    secure: true,
     sameSite: useHttps ? 'none' : null,
   },
   saveUninitialized: false,

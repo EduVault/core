@@ -61,7 +61,6 @@ const startServer = async () => {
   const passport = passportInit(app, db);
   routerInit(app, passport, db);
   serveFrontend(app);
-  console.log({ useHttps });
   if (useHttps) {
     const httpRedirect = (server: Express) =>
       server.use((req, res, next) => {

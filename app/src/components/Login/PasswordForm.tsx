@@ -1,7 +1,7 @@
 import { TextField, Button, makeStyles } from '@material-ui/core';
 import { useRef, useState } from 'react';
 import { useSelector } from '../../model';
-import { selectLoggingIn } from '../../model/auth';
+import { selectLoggingIn, selectLoginError } from '../../model/auth';
 interface Props {
   submit: ({ email, password }: { email: string; password: string }) => any;
 }
@@ -71,6 +71,8 @@ export const PasswordForm = ({ submit }: Props) => {
     console.log(e.key);
     if (e.key === 'Enter') buttonRef?.current?.focus();
   };
+
+  const errorText = useSelector(selectLoginError);
   return (
     <div className={classes.passwordForm} accessibility-role="form">
       <TextField
@@ -109,6 +111,7 @@ export const PasswordForm = ({ submit }: Props) => {
       >
         Continue with Password
       </Button>
+      <p>{errorText}</p>
     </div>
   );
 };

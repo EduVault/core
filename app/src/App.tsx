@@ -1,56 +1,24 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import EduVault from '@eduvault/sdk-js/dist/main';
 
 import './App.css';
 import { Login, NavBar, HomePage, AppHome } from './components/';
-import { checkLoginStatus } from './model/auth';
 import { GuardedRoute } from './components/Library/GuardedRoute';
-import { URL_API } from './config';
-import { useDispatch } from './model';
-import { Link } from '@material-ui/core';
+import { EduVaultContext } from './EduVaultContext';
 
 const App: React.FC = (props) => {
-  const dispatch = useDispatch();
-  let loggedIn = useRef(false);
-  useEffect(() => {
-    const eduvault = new EduVault({
-      appID: '1',
-      URL_API,
-      URL_WS_API: 'wss://localhost:8082/api/ws',
-    });
-    eduvault.setupLoginButton({
-      redirectURL: window.origin + '/app/login',
-      buttonID: 'eduvault-button',
-      URL_APP: window.origin + '/app/login',
-      log: true,
-    });
-    const EduVaultContext = React.createContext({ eduvault });
-    const EduVaultProvider: React.FC = ({ children }) => (
-      <EduVaultContext.Provider value={{ eduvault }}>
-        {children}
-      </EduVaultContext.Provider>
-    );
-    const load = async () =>
-      await eduvault.load({
-        log: true,
-        onError: (err) => alert(err),
-        onLocalReady: () => alert('local ready '),
-        onReady: (result) => alert('remote ready ' + result),
-      });
-    load();
+  const {
+    api: { checkAuth },
+  } = useContext(EduVaultContext);
 
-    loggedIn.current = checkLoginStatus(eduvault, dispatch);
-  }, [dispatch]);
   return (
     <>
-      <Link id="eduvault-button">Login with EduVault</Link>
       <NavBar />
       <Router>
         <Switch>
           <Route path={'/app/login'} component={Login} />
           <GuardedRoute
-            auth={loggedIn.current}
+            auth={checkAuth}
             path={['/app/']}
             redirectTo={'app/login'}
             component={AppHome}

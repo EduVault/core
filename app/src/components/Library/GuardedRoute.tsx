@@ -1,7 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 
 interface GuardedRouteProps extends RouteProps {
-  auth: boolean;
+  auth: () => Promise<boolean>;
   redirectTo: string;
 }
 export const GuardedRoute = ({
@@ -9,11 +10,32 @@ export const GuardedRoute = ({
   redirectTo,
   ...rest
 }: GuardedRouteProps) => {
+  const [loadingState, setLoadingState] = useState<
+    'loading' | 'authenticated' | 'notAuthenticated'
+  >('loading');
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authorized = await auth();
+      setLoadingState(authorized ? 'authenticated' : 'notAuthenticated');
+    };
+    checkAuth();
+  }, [auth]);
+
   return (
-    <Route
-      render={() =>
-        auth === true ? <Route {...rest} /> : <Redirect to={redirectTo} exact />
-      }
-    />
+    <>
+      {loadingState === 'loading' && <div />}
+      {loadingState !== 'loading' && (
+        <Route
+          render={() =>
+            loadingState === 'authenticated' ? (
+              <Route {...rest} />
+            ) : (
+              <Redirect to={redirectTo} exact />
+            )
+          }
+        />
+      )}
+    </>
   );
 };

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": false,
   "dependencies": {
-    "@eduvault/sdk-js": "^0.1.0",
+    "@eduvault/sdk-js": "^0.1.1",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "@reduxjs/toolkit": "^1.6.1",
@@ -29,7 +29,7 @@
     "typescript": "^4.4.3"
   },
   "scripts": {
-    "dev": "dotenv -e ../dev.env react-scripts start",
+    "dev": "HTTPS=true HTTPS=true SSL_CRT_FILE=../deploy/certs/cert.pem SSL_KEY_FILE=../deploy/certs/key.pem dotenv -e ../dev.env react-scripts start",
     "---": "------- on a small server/docker might want to change to: --max_old_space_size=1024 -----",
     "build": "react-scripts build",
     "test:watch": "react-scripts test --env=./jest-env.js --watchAll",

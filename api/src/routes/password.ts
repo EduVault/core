@@ -73,7 +73,7 @@ const login = async ({
 }) => {
   // manually test password
   const valid = validPassword(password, person.password);
-  console.log('password check: ', valid);
+  // console.log('password check: ', valid);
   if (!valid) respondError(res, 'incorrectPassword');
 
   await refreshJwts(req, { personID: person._id, appID });

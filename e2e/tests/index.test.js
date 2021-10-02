@@ -3,7 +3,6 @@
 describe('Index Page', () => {
   it('should be able to ping server', async () => {
     const response = await cy.request('/api/ping');
-    console.log({ response });
     expect(response).to.have.property('status', 200);
     expect(response.body).to.have.property('content', 'pong');
   });

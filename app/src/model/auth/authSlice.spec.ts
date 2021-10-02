@@ -4,7 +4,7 @@ describe('authReducer', () => {
   const initialTestState: AuthState = {
     loggedIn: true,
     loggingIn: false,
-    loginError: '',
+    error: '',
   };
   it('should handle initial state', () => {
     expect(authReducer(undefined, { type: 'unknown' })).toEqual(initialState);

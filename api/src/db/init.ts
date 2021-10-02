@@ -101,6 +101,7 @@ export const formatNewApp = (devID: string, appID?: string) => {
       'http://localhost:8082',
       'http://localhost:8081',
       'http://localhost:3000',
+      'https://localhost:3000',
     ],
   };
   return app;

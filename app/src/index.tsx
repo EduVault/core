@@ -2,13 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider, CssBaseline } from '@material-ui/core';
+import { startWorker } from '@eduvault/sdk-js/dist/main';
 
 import './index.css';
 import App from './App';
 
 import theme from './theme';
-import { startWorker } from '@eduvault/sdk-js/dist/main';
 import { store } from './model';
+
+import { EduVaultProvider } from './EduVaultContext';
+
 // use eduvault-js's mock service worker
 if (
   process.env.NODE_ENV === 'development' &&
@@ -19,10 +22,12 @@ if (
 export const WrapProviders: React.FC = (props) => {
   return (
     <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {props.children}
-      </ThemeProvider>
+      <EduVaultProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          {props.children}
+        </ThemeProvider>
+      </EduVaultProvider>
     </Provider>
   );
 };

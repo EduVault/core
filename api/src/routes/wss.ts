@@ -12,14 +12,12 @@ import { Client, Database } from '@textile/threaddb';
 
 const tokenChallengeMessageHandlers = async ({
   data,
-  client,
   emitter,
   ws,
   db,
   sendMessage,
 }: {
   data: WsMessageData;
-  client: Client;
   emitter: Emittery;
   ws: WebSocket;
   db: Database;
@@ -35,6 +33,7 @@ const tokenChallengeMessageHandlers = async ({
   const app = await findAppByID(db, decoded.data.appID);
   // console.log({ person, app });
   if (!(person || app)) throw 'could not find person/app';
+  let client = await newClientDB();
 
   const handleTokenRequest = async () => {
     if (!data.pubKey) throw 'missing pubkey';
@@ -51,26 +50,36 @@ const tokenChallengeMessageHandlers = async ({
         /** Wait for the challenge event from our event emitter */
         emitter.on('challenge-response', async (signature: string) => {
           received = true;
-          console.log('challenge-response signature', signature);
+          // console.log('challenge-response signature', signature);
           resolve(Buffer.from(signature));
         });
         setTimeout(() => {
           reject();
           if (!received) {
-            console.log('client took too long to respond');
+            // console.log('client took too long to respond');
           }
         }, 10000);
       });
     };
-    const token = await client.getTokenChallenge(
-      data.pubKey,
-      sendTokenChallenge
-    );
 
     /**
      * The challenge was successfully completed by the client
      */
     // console.log('challenge completed');
+    let token;
+
+    try {
+      token = await client.getTokenChallenge(data.pubKey, sendTokenChallenge);
+    } catch (error) {
+      console.log(error);
+      if (error.includes('Auth expired')) {
+        client = await newClientDB();
+        token = await client.getTokenChallenge(data.pubKey, sendTokenChallenge);
+      }
+    }
+
+    if (!token) throw 'unable to make token';
+
     const apiSig = await getAPISig(5000);
     const personAuth: PersonAuth = {
       ...apiSig,
@@ -84,7 +93,7 @@ const tokenChallengeMessageHandlers = async ({
   };
   const challengeResponse = async () => {
     if (!data.signature) throw new Error('missing signature');
-    console.log('got signature response', data.signature);
+    // console.log('got signature response', data.signature);
     await emitter.emit('challenge-response', data.signature);
   };
   return { handleTokenRequest, challengeResponse };
@@ -98,7 +107,6 @@ export const startWss = async (
 ) => {
   const wss = new WebSocket.Server({ server, path: '/api/ws' });
   const emitter = new Emittery();
-  const client = await newClientDB();
 
   wss.on('connection', (ws: WebSocket) => {
     //connection is up, let's add a simple simple event
@@ -106,14 +114,13 @@ export const startWss = async (
       const sendMessage = makeSendMessage(ws);
       try {
         const data = JSON.parse(message);
-        console.log('=================wss message===================\n', data);
+        // console.log('=================wss message===================\n', data);
         if (!data.jwt) return ws.send(`jwt missing`);
 
         const { handleTokenRequest, challengeResponse } =
           await tokenChallengeMessageHandlers({
             sendMessage,
             data,
-            client,
             ws,
             db,
             emitter,
@@ -142,17 +149,3 @@ export const startWss = async (
     });
   });
 };
-
-// const generateChallenge = async (pubKey: string) => {
-//   if (!pubKey) {
-//     throw new Error('missing public key');
-//   }
-//   const db = await newClientDB();
-//   let response: Uint8Array;
-//   db.getToken()
-//   const token = await db.getTokenChallenge(pubKey, (challenge) => {
-//     response = challenge;
-//   });
-
-//   return JSON.stringify(Buffer.from(response).toJSON());
-// };
