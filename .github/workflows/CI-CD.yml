@@ -14,7 +14,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14.x'
+          node-version: '12.x'
           cache: 'npm'
 
       - name: Make sure local links are gone
@@ -32,7 +32,7 @@ jobs:
           ^PORT_API_HTTP: 8081
           ^PORT_API_HTTPS: 8082
           ^PORT_DOCKER: 8083
-  
+
       - name: Install application
         run: npm run inst:ci
 
