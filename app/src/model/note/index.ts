@@ -36,3 +36,12 @@ export const deleteNote = async (
   await Note.delete(noteId);
   if (callback) callback(Note);
 };
+
+export const updateNote = async (
+  Note: NoteCollection,
+  note: INote,
+  callback?: (Note: NoteCollection) => unknown
+) => {
+  await Note.save(note);
+  if (callback) callback(Note);
+};

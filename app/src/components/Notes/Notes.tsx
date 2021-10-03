@@ -20,13 +20,19 @@ import {
 } from 'react';
 import AddIcon from '@material-ui/icons/Add';
 import { NoteCollection, INote } from '@eduvault/sdk-js/';
-import { createNote, deleteNote, fetchNotes } from '../../model/note';
+import {
+  createNote,
+  deleteNote,
+  fetchNotes,
+  updateNote,
+} from '../../model/note';
 
 export interface NotesState {
   refreshNotes: () => Promise<void>;
   notes: INote[];
   saveNewNote: (noteText: string) => Promise<void>;
   removeNote: (noteID: string) => Promise<void>;
+  editNote: (note: INote) => Promise<void>;
 }
 
 const initialState: NotesState = {
@@ -34,6 +40,7 @@ const initialState: NotesState = {
   notes: [],
   saveNewNote: async (noteText: string) => undefined,
   removeNote: async (noteID: string) => undefined,
+  editNote: async (note: INote) => undefined,
 };
 
 export const NotesContext = createContext(initialState);
@@ -50,19 +57,26 @@ export const NotesProvider: FC<{ Note: NoteCollection }> = ({
   };
 
   useEffect(() => {
-    refreshNotes();
-  }, []);
+    const refresh = async () => {
+      const refreshedNotes = await fetchNotes(Note);
+      setNotes(refreshedNotes);
+    };
+
+    refresh();
+  }, [Note]);
 
   const saveNewNote = (noteText: string) =>
     createNote(Note, noteText, refreshNotes);
 
   const removeNote = (noteID: string) => deleteNote(Note, noteID, refreshNotes);
 
+  const editNote = (note: INote) => updateNote(Note, note, refreshNotes);
   const state: NotesState = {
     notes,
     refreshNotes,
     saveNewNote,
     removeNote,
+    editNote,
   };
   return (
     <NotesContext.Provider value={state}>{children}</NotesContext.Provider>
@@ -120,7 +134,10 @@ export interface EditorProps {
 }
 export const NoteEditor = ({ editorOpen, handleClose }: EditorProps) => {
   const [noteText, setNoteText] = useState('');
-  const { saveNewNote } = useContext(NotesContext);
+  const {
+    saveNewNote,
+    // editNote
+  } = useContext(NotesContext);
   const handleConfirm = () => {
     handleClose();
     saveNewNote(noteText);
