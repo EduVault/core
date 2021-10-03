@@ -114,7 +114,7 @@ export const NotesDashboard = () => {
         {notes &&
           notes.length > 0 &&
           notes.map((note) => (
-            <Box margin={4} width={200}>
+            <Box key={note._id} margin={4} width={200}>
               <Card>
                 <Box padding={4} width={200} minHeight={200}>
                   {note.text}
