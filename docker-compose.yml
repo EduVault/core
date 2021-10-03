@@ -4,12 +4,12 @@ services:
     build: ./
     env_file: ./.env
     expose:
-      - PORT_DOCKER
+      - ${PORT_DOCKER}
     environment:
       VIRTUAL_HOST: ${HOST}
       VIRTUAL_PORT: ${PORT_DOCKER}
       PORT_API_HTTP: ${PORT_DOCKER}
-      USE_HTTPS: false
+      USE_HTTPS: 'false'
 
   nginx-proxy:
     env_file: ./.env
