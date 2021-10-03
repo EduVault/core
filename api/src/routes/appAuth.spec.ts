@@ -26,6 +26,6 @@ it('Authorizes cookie', async () => {
   const cookie = await pwAndAppLogin(agent);
   const res = await request().get(ROUTES.api.AUTH_CHECK).set('Cookie', cookie);
 
-  expect(res.body.content).toBe('authorized');
+  expect(res.body.content).toBe('authenticated');
   expect(res.body.code).toEqual(200);
 });
