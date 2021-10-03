@@ -33,7 +33,7 @@ app.get(ROUTES.api.ENV_CHECK, (req, res) => {
 const serveFrontend = (app: Express) => {
   if (dev) {
     app.get('(/*)?', (req, res) => {
-      res.redirect(`http://localhost:3000${req.url}`);
+      res.redirect(`https://localhost:3000${req.url}`);
     });
   } else {
     const buildPath = path.normalize(path.join(__dirname, '../../app/build'));
