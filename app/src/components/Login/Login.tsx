@@ -56,7 +56,7 @@ export const Login = (props: Props) => {
   useEffect(() => {
     if (!hasLoginRedirectQueries)
       setupLoginButton({
-        redirectURL: window.origin + '/app/login', //use origin not href to avoid including query params
+        redirectURL: window.origin + '/app', //use origin not href to avoid including query params
         buttonID: 'eduvault-button',
         URL_APP: window.origin + '/app/login',
         log: true,

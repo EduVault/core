@@ -8,6 +8,6 @@ test('renders login', () => {
       <Login></Login>
     </WrapProviders>
   );
-  const loginText = screen.getByText('Continue with Password');
+  const loginText = screen.getByText('Login with EduVault');
   expect(loginText).toBeVisible();
 });

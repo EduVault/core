@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
+import { selectLocalReady } from '../../model/db';
 
 interface GuardedRouteProps extends RouteProps {
   auth: () => Promise<boolean>;
@@ -10,25 +12,26 @@ export const GuardedRoute = ({
   redirectTo,
   ...rest
 }: GuardedRouteProps) => {
-  const [loadingState, setLoadingState] = useState<
+  const [authState, setAuthState] = useState<
     'loading' | 'authenticated' | 'notAuthenticated'
   >('loading');
-
+  const dbLoaded = useSelector(selectLocalReady);
+  const ready = dbLoaded && authState !== 'loading';
   useEffect(() => {
     const checkAuth = async () => {
       const authorized = await auth();
-      setLoadingState(authorized ? 'authenticated' : 'notAuthenticated');
+      setAuthState(authorized ? 'authenticated' : 'notAuthenticated');
     };
     checkAuth();
   }, [auth]);
 
   return (
     <>
-      {loadingState === 'loading' && <div />}
-      {loadingState !== 'loading' && (
+      {!ready && <div />}
+      {ready && (
         <Route
           render={() =>
-            loadingState === 'authenticated' ? (
+            authState === 'authenticated' ? (
               <Route {...rest} />
             ) : (
               <Redirect to={redirectTo} exact />
