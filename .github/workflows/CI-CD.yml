@@ -27,6 +27,7 @@ jobs:
         env:
           ^ENV_CHECK: 'working'
           ^HOST: 'localhost'
+          ^REACT_APP_HOST: 'localhost'
           ^TEST_ENV: 'e2e'
           ^NODE_ENV: 'production'
           ^PORT_API_HTTP: 8081
