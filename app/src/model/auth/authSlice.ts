@@ -1,8 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AuthState } from './types';
-import { URL_API } from '../../config';
-import Eduvault from '@eduvault/sdk-js/dist/main';
 import { RootState, AppThunk } from '..';
+import { eduvault } from '../../EduVaultContext';
 
 export const initialState: AuthState = {
   loggedIn: false,
@@ -47,7 +46,6 @@ export const pwLogin =
   async (dispatch) => {
     try {
       dispatch(setLoggingIn(true));
-      const eduvault = new Eduvault({ appID: '1', URL_API, log: true });
       const loginRes = await eduvault.pwLogin(payload);
       // console.log({ loginRes });
       if (loginRes && 'error' in loginRes) throw loginRes.error;

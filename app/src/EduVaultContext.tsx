@@ -1,7 +1,7 @@
 import EduVault from '@eduvault/sdk-js/dist/main';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { URL_API } from './config';
+import { URL_API, URL_WS_API } from './config';
 import { setLoggedIn } from './model/auth';
 import {
   setDBError,
@@ -10,10 +10,10 @@ import {
   setStartingLocal,
 } from './model/db';
 
-const eduvault = new EduVault({
+export const eduvault = new EduVault({
   appID: '1',
   URL_API,
-  URL_WS_API: 'wss://localhost:8082/api/ws',
+  URL_WS_API,
 });
 
 export const EduVaultContext = React.createContext(eduvault);
