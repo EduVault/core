@@ -176,7 +176,7 @@ export const NoteEditor = ({
       setNote(selectedNote);
       setNoteText(selectedNote.text);
     }
-  }, []);
+  }, [selectedNote]);
   const editMode = mode === 'edit';
 
   const handleEditConfirm = () => {

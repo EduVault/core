@@ -32,11 +32,11 @@ const tokenChallengeMessageHandlers = async ({
   const person = await findPersonByID(db, decoded.data.personID);
   const app = await findAppByID(db, decoded.data.appID);
   // console.log({ person, app });
-  if (!(person || app)) throw 'could not find person/app';
+  if (!(person || app)) throw new Error('could not find person/app');
   let client = await newClientDB();
 
   const handleTokenRequest = async () => {
-    if (!data.pubKey) throw 'missing pubkey';
+    if (!data.pubKey) throw new Error('missing pubkey');
 
     const sendTokenChallenge = (challenge: Uint8Array): Promise<Uint8Array> => {
       return new Promise((resolve, reject) => {
@@ -72,13 +72,13 @@ const tokenChallengeMessageHandlers = async ({
       token = await client.getTokenChallenge(data.pubKey, sendTokenChallenge);
     } catch (error) {
       console.log(error);
-      if (error.includes('Auth expired')) {
+      if (JSON.stringify(error).includes('Auth expired')) {
         client = await newClientDB();
         token = await client.getTokenChallenge(data.pubKey, sendTokenChallenge);
       }
     }
 
-    if (!token) throw 'unable to make token';
+    if (!token) throw new Error('unable to make token');
 
     const apiSig = await getAPISig(5000);
     const personAuth: PersonAuth = {
