@@ -92,6 +92,8 @@ export const NotesProvider: FC<NotesProps> = ({
   }, [Note, dbPush]);
 
   const refreshNotes = async () => {
+    console.log({ syncingStatus });
+
     const refreshedNotes = await fetchNotes(Note);
     setNotes(refreshedNotes);
     dbPush([noteKey]);
