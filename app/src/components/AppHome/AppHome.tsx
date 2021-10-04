@@ -11,6 +11,8 @@ export const AppHome = (props: Props) => {
   const { db } = useContext(EduVaultContext);
   // const dbState = useSelector(selectDBState);
   const Note = db?.coreCollections.Note;
+  const dbSync = db?.sync;
+  const dbPush = db?.push;
 
   return (
     <Container>
@@ -20,7 +22,7 @@ export const AppHome = (props: Props) => {
         paddingTop={4}
         paddingBottom={4}
       >
-        {Note && <Notes Note={Note} />}
+        {Note && dbSync && dbPush && <Notes {...{ dbSync, dbPush, Note }} />}
 
         {/* <Box>{JSON.stringify(dbState)}</Box> */}
       </Box>

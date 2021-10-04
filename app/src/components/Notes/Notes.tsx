@@ -19,7 +19,12 @@ import {
   useState,
 } from 'react';
 import AddIcon from '@material-ui/icons/Add';
-import { NoteCollection, INote } from '@eduvault/sdk-js/';
+import {
+  NoteCollection,
+  INote,
+  Instances,
+  noteKey,
+} from '@eduvault/sdk-js/dist/main';
 import {
   createNote,
   deleteNote,
@@ -45,25 +50,52 @@ const initialState: NotesState = {
 
 export const NotesContext = createContext(initialState);
 
-export const NotesProvider: FC<{ Note: NoteCollection }> = ({
+export const NotesProvider: FC<NotesProps> = ({
   Note,
   children,
+  dbPush,
+  dbSync,
 }) => {
   const [notes, setNotes] = useState<INote[]>([]);
+  type SyncingState = 'init' | 'syncing' | 'error' | 'complete';
+  const [syncingStatus, setSyncingStatus] = useState<SyncingState>('init');
 
-  const refreshNotes = async () => {
-    const refreshedNotes = await fetchNotes(Note);
-    setNotes(refreshedNotes);
-  };
+  useEffect(() => {
+    const startingSync = async () => {
+      try {
+        setSyncingStatus('syncing');
+        const { result, error } = await dbSync([noteKey]);
+        if (error) throw error;
+        setSyncingStatus('complete');
+
+        console.log({ syncResult: result });
+        const refreshedNotes = await fetchNotes(Note);
+        setNotes(refreshedNotes);
+        dbPush([noteKey]);
+      } catch (error) {
+        console.log({ syncError: error });
+        setSyncingStatus('error');
+      }
+    };
+
+    startingSync();
+  }, [dbSync, dbPush, Note]);
 
   useEffect(() => {
     const refresh = async () => {
       const refreshedNotes = await fetchNotes(Note);
       setNotes(refreshedNotes);
+      dbPush([noteKey]);
     };
 
     refresh();
-  }, [Note]);
+  }, [Note, dbPush]);
+
+  const refreshNotes = async () => {
+    const refreshedNotes = await fetchNotes(Note);
+    setNotes(refreshedNotes);
+    dbPush([noteKey]);
+  };
 
   const saveNewNote = (noteText: string) =>
     createNote(Note, noteText, refreshNotes);
@@ -83,8 +115,28 @@ export const NotesProvider: FC<{ Note: NoteCollection }> = ({
   );
 };
 
-export const Notes = ({ Note }: { Note: NoteCollection }) => (
-  <NotesProvider Note={Note}>
+export interface NotesProps {
+  dbSync: (collectionNames: string[]) => Promise<
+    | {
+        result: Instances<any>;
+        error?: undefined;
+      }
+    | {
+        error: unknown;
+        result?: undefined;
+      }
+  >;
+  dbPush: (collectionNames: string[]) => Promise<
+    | {
+        error: unknown;
+      }
+    | undefined
+  >;
+  Note: NoteCollection;
+}
+
+export const Notes = (props: NotesProps) => (
+  <NotesProvider {...props}>
     <NotesDashboard></NotesDashboard>
   </NotesProvider>
 );

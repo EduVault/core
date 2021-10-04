@@ -1,4 +1,4 @@
-import { NoteCollection, INote } from '@eduvault/sdk-js/';
+import { NoteCollection, INote } from '@eduvault/sdk-js/dist/main';
 import { ulid } from 'ulid';
 
 export const fetchNotes = async (Note: NoteCollection) => {
