@@ -114,11 +114,6 @@ sudo chmod 0600 /swapfile
 
 sudo apt install gcc # if you run into an error using screen
 
-# install
-npm run inst
-
-# change the react app build to --max_old_space_size=1024
-
 # build and run not in detached first to check logs and manually test
 npm run start:production:logs
 
