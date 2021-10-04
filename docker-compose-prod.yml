@@ -9,7 +9,7 @@ services:
       VIRTUAL_HOST: ${HOST}
       VIRTUAL_PORT: ${PORT_DOCKER}
       PORT_API_HTTP: ${PORT_DOCKER}
-      USE_HTTPS: false
+      USE_HTTPS: 'false'
 
     cpus: '0.75'
     mem_limit: 768m

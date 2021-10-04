@@ -72,8 +72,14 @@ ufw allow https
 ufw enable
 sudo ufw status verbose
 
-
 # disconnect and ssh as jacob
+## get the code
+mkdir eduvault
+cd eduvault
+git init
+git remote add origin https://github.com/EduVault/core.git
+git fetch origin
+git checkout origin/main -ft
 
 ## copy .env file over
 ### edit the following in the .env file
@@ -83,14 +89,6 @@ PORT_DOCKERS=443
 HOST=is-a-test.xyz
 IMAGE_SUFFIX=production # or staging
 WATCHTOWER_POLLING_INTERVAL=600 #or whatever (in seconds)
-
-## get the code
-mkdir eduvault
-cd eduvault
-git init
-git remote add origin https://github.com/EduVault/core.git
-git fetch origin
-git checkout origin/main -ft
 
 #node
 sudo apt update
@@ -114,7 +112,12 @@ echo vm.swappiness = 10 | sudo tee -a /etc/sysctl.conf
 sudo chown root:root /swapfile
 sudo chmod 0600 /swapfile
 
-apt install gcc # if you run into an error using screen
+sudo apt install gcc # if you run into an error using screen
+
+# install
+npm run inst
+
+# change the react app build to --max_old_space_size=1024
 
 # build and run not in detached first to check logs and manually test
 npm run start:production:logs

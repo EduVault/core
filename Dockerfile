@@ -9,9 +9,9 @@ WORKDIR /eduvault/api
 COPY ./api/package*.json ./
 RUN npm ci
 
-# WORKDIR /eduvault/app
-# COPY ./app/package*.json ./
-# RUN npm ci
+WORKDIR /eduvault/app
+COPY ./app/package*.json ./
+RUN npm ci
 
 WORKDIR /eduvault/
 COPY . .
@@ -20,6 +20,5 @@ FROM build-stage AS prod-stage
 
 WORKDIR /eduvault/
 RUN npm run build:api
-# build on system so docker does not run out of memory
-# RUN npm run build:app
+RUN npm run build:app
 CMD ["npm", "run", "start"]
