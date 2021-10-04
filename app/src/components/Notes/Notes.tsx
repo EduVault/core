@@ -91,19 +91,34 @@ export const Notes = ({ Note }: { Note: NoteCollection }) => (
 
 export const NotesDashboard = () => {
   const [editorOpen, setEditorOpen] = useState(false);
+  const [editorMode, setEditorMode] = useState<'new' | 'edit'>('new');
+  const [selectedNote, setSelectedNote] = useState('');
 
-  const handleClickOpen = () => setEditorOpen(true);
+  const handleClickOpen = (
+    mode: 'new' | 'edit' = 'new',
+    noteID: string = ''
+  ) => {
+    setEditorMode(mode);
+    setSelectedNote(noteID);
+    setEditorOpen(true);
+  };
+
   const handleClose = () => setEditorOpen(false);
   const { notes, removeNote } = useContext(NotesContext);
 
-  const editorProps: EditorProps = { editorOpen, handleClose };
+  const editorProps: EditorProps = {
+    editorOpen,
+    handleClose,
+    mode: editorMode,
+    noteID: selectedNote,
+  };
   return (
     <Box display="flex" flexDirection="column" textAlign="center">
       <Box margin="auto" alignItems="center" display="flex">
         <Box marginRight={4}>
           <Typography variant="h2">Notes</Typography>
         </Box>
-        <Fab onClick={handleClickOpen} color="primary" aria-label="add">
+        <Fab onClick={() => handleClickOpen()} color="primary" aria-label="add">
           <AddIcon />
         </Fab>
       </Box>
@@ -119,7 +134,17 @@ export const NotesDashboard = () => {
                 <Box padding={4} width={200} minHeight={200}>
                   {note.text}
                 </Box>
-                <Button onClick={() => removeNote(note._id)}> DELETE</Button>
+                <Box
+                  width="100%"
+                  display="flex"
+                  justifyContent="space-between"
+                  padding={1}
+                >
+                  <Button onClick={() => handleClickOpen('edit', note._id)}>
+                    EDIT
+                  </Button>
+                  <Button onClick={() => removeNote(note._id)}> DELETE</Button>
+                </Box>
               </Card>
             </Box>
           ))}
@@ -131,20 +156,46 @@ export const NotesDashboard = () => {
 export interface EditorProps {
   editorOpen: boolean;
   handleClose: () => void;
+  mode: 'edit' | 'new';
+  noteID: INote['_id'];
 }
-export const NoteEditor = ({ editorOpen, handleClose }: EditorProps) => {
+export const NoteEditor = ({
+  editorOpen,
+  handleClose,
+  mode,
+  noteID,
+}: EditorProps) => {
   const [noteText, setNoteText] = useState('');
-  const {
-    saveNewNote,
-    // editNote
-  } = useContext(NotesContext);
-  const handleConfirm = () => {
-    handleClose();
-    saveNewNote(noteText);
-    setNoteText('');
+  const [note, setNote] = useState<INote>();
+  const { saveNewNote, editNote, notes } = useContext(NotesContext);
+  const selectedNote: INote | undefined = notes.find(
+    (note) => note._id === noteID
+  );
+  useEffect(() => {
+    if (selectedNote) {
+      setNote(selectedNote);
+      setNoteText(selectedNote.text);
+    }
+  }, []);
+  const editMode = mode === 'edit';
+
+  const handleEditConfirm = () => {
+    if (!note) return;
+    editNote(note);
   };
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
+
+  const handleConfirm = () => {
+    if (!editMode) saveNewNote(noteText);
+    else if (editMode) handleEditConfirm();
+    setNoteText('');
+    handleClose();
+  };
+
+  const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNoteText(e.target.value);
+    if (note) setNote({ ...note, text: noteText });
+  };
+
   return (
     <Dialog
       open={editorOpen}
@@ -152,14 +203,16 @@ export const NoteEditor = ({ editorOpen, handleClose }: EditorProps) => {
       aria-labelledby="form-dialog-title"
     >
       <Box minWidth="500px">
-        <DialogTitle id="form-dialog-title">New Note</DialogTitle>
+        <DialogTitle id="form-dialog-title">
+          {editMode ? 'Edit Note' : 'New Note'}
+        </DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             multiline
             maxRows={10}
             value={noteText}
-            onChange={handleChange}
+            onChange={handleTextChange}
             id="note-text"
             fullWidth
           />
@@ -169,7 +222,7 @@ export const NoteEditor = ({ editorOpen, handleClose }: EditorProps) => {
             Cancel
           </Button>
           <Button onClick={handleConfirm} color="primary">
-            Submit
+            Confirm
           </Button>
         </DialogActions>
       </Box>
