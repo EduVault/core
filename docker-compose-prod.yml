@@ -16,19 +16,16 @@ services:
 
   nginx-proxy:
     env_file: ./.env
-    image: jwilder/nginx-proxy
+    image: nginxproxy/nginx-proxy
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./deploy/certs:/etc/nginx/certs:ro
     ports:
-      - "${PORT_API_HTTP}:${PORT_API_HTTP}"
-      - "${PORT_API_HTTPS}:${PORT_API_HTTPS}"
+      - "80:80"
+      - "443:443"
     depends_on:
       - eduvault-core
-    environment:
-      HTTP_PORT: ${PORT_API_HTTP}
-      HTTPS_PORT: ${PORT_API_HTTPS}
     cpus: '0.2'
     mem_limit: 512m
 
