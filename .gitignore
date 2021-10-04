@@ -14,8 +14,8 @@ build
 dist
 
 # e2e records
-e2e/videos
-e2e/screenshots
+e2e/videos/index.test.js.mp4
+e2e/tests/index.test.js
 
 # editor
 .vscode
