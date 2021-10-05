@@ -43,14 +43,14 @@ export const SESSION_OPTIONS: session.SessionOptions = {
   name: 'eduvault.session',
   cookie: {
     maxAge: 1000 * 60 * 60 * 24 * 2 /** two days */,
-    httpOnly: useHttps,
+    httpOnly: true,
     secure: true,
-    sameSite: useHttps ? 'none' : null,
+    sameSite: true,
   },
   saveUninitialized: false,
   resave: false,
   rolling: true,
-  proxy: !useHttps,
+  proxy: true,
 };
 
 /** MAKE SURE THESE MATCH eduvault/sdk-js/src/config.ts */
