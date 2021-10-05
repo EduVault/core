@@ -83,7 +83,7 @@ cd eduvault
 git init
 git remote add origin https://github.com/EduVault/core.git
 git fetch origin
-git checkout origin/main -ft
+git checkout origin/main -ft # or staging for staging
 
 ## copy .env file over
 ### edit the following in the .env file
