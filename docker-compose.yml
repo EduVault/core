@@ -15,7 +15,7 @@ services:
     env_file: ./.env
     # using this instead of nginxproxy because issue with m1 https://github.com/nginx-proxy/nginx-proxy/issues/1550#issuecomment-799705715
     # image: ninanung/nginx-proxy # on mac m1
-    image: nginxproxy/nginx-proxy
+    image: nginxproxy/nginx-proxy:alpine
     # restart with: docker exec -it nginx-proxy nginx -s reload
     restart: unless-stopped
     volumes:
@@ -26,7 +26,7 @@ services:
       - ${PORT_API_HTTP}:${PORT_API_HTTP}
       - ${PORT_API_HTTPS}:${PORT_API_HTTPS}
     depends_on:
-      - eduvault-core
     environment:
       HTTP_PORT: ${PORT_API_HTTP}
       HTTPS_PORT: ${PORT_API_HTTPS}   
+      - eduvault-core

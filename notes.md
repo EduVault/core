@@ -50,12 +50,16 @@ On commits to `staging` or `prod` branches, if tests pass, Github actions will p
 ### Server setup
 
 send namecheap dns to digital ocean (DO) dns
-create DO ubuntu server with docker default image
+create DO ubuntu server
 give it a floating ip
 link domain to floating ip
 
 copy over .env file
 change PROD_HOST to host e.g. eduvault.org
+
+TODO: try again using a base ubuntu image and manually installing docker. docker seems to
+
+wait a minute. might just have been i didn't enable ufw https?
 
 ```bash
 # create user
@@ -90,6 +94,23 @@ HOST=is-a-test.xyz
 IMAGE_SUFFIX=production # or staging
 WATCHTOWER_POLLING_INTERVAL=600 #or whatever (in seconds)
 
+## docker
+
+sudo apt update
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+sudo apt update
+apt-cache policy docker-ce
+sudo apt install docker-ce
+sudo systemctl status docker
+
+## docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+
+
 #node
 sudo apt update
 sudo apt install nodejs npm
@@ -98,7 +119,7 @@ sudo apt install nodejs npm
 sudo apt install certbot
 ## must wait until DNS changes take effect!
 # replace eduvault.org with prod/staging server name
-npm run ssl-certs:prod
+sudo npm run ssl-certs:prod
 
 # enable swap to use RAM better
 sudo dd if=/dev/zero of=/swapfile bs=1024 count=256k

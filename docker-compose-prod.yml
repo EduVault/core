@@ -16,14 +16,17 @@ services:
 
   nginx-proxy:
     env_file: ./.env
-    image: nginxproxy/nginx-proxy
+    image: nginxproxy/nginx-proxy:alpine
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./deploy/certs:/etc/nginx/certs:ro
     ports:
-      - "80:80"
-      - "443:443"
+      - '${PORT_API_HTTP}:${PORT_API_HTTP}'
+      - '${PORT_API_HTTPS}:${PORT_API_HTTPS}'
+    environment:
+      HTTP_PORT: ${PORT_API_HTTP}
+      HTTPS_PORT: ${PORT_API_HTTPS}
     depends_on:
       - eduvault-core
     cpus: '0.2'
