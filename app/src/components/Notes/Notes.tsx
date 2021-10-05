@@ -22,7 +22,8 @@ import AddIcon from '@material-ui/icons/Add';
 import {
   NoteCollection,
   INote,
-  Instances,
+  EduVaultSync,
+  EduVaultPush,
   noteKey,
 } from '@eduvault/sdk-js/dist/main';
 import {
@@ -31,6 +32,8 @@ import {
   fetchNotes,
   updateNote,
 } from '../../model/note';
+import { useSelector } from 'react-redux';
+import { selectRemoteReady } from '../../model/db';
 
 export interface NotesState {
   refreshNotes: () => Promise<void>;
@@ -60,6 +63,9 @@ export const NotesProvider: FC<NotesProps> = ({
   type SyncingState = 'init' | 'syncing' | 'error' | 'complete';
   const [syncingStatus, setSyncingStatus] = useState<SyncingState>('init');
 
+  const remoteReady = useSelector(selectRemoteReady);
+  console.log({ remoteReady });
+
   useEffect(() => {
     const startingSync = async () => {
       try {
@@ -70,22 +76,22 @@ export const NotesProvider: FC<NotesProps> = ({
 
         console.log({ syncResult: result });
         const refreshedNotes = await fetchNotes(Note);
-        setNotes(refreshedNotes);
-        dbPush([noteKey]);
+        console.log({ refreshedNotes });
+        await setNotes(refreshedNotes);
+        await dbPush([noteKey]);
       } catch (error) {
         console.log({ syncError: error });
         setSyncingStatus('error');
       }
     };
 
-    startingSync();
-  }, [dbSync, dbPush, Note]);
+    if (remoteReady) startingSync();
+  }, [dbSync, dbPush, Note, remoteReady]);
 
   useEffect(() => {
     const refresh = async () => {
       const refreshedNotes = await fetchNotes(Note);
       setNotes(refreshedNotes);
-      dbPush([noteKey]);
     };
 
     refresh();
@@ -96,7 +102,7 @@ export const NotesProvider: FC<NotesProps> = ({
 
     const refreshedNotes = await fetchNotes(Note);
     setNotes(refreshedNotes);
-    dbPush([noteKey]);
+    if (remoteReady) dbPush([noteKey]);
   };
 
   const saveNewNote = (noteText: string) =>
@@ -118,22 +124,8 @@ export const NotesProvider: FC<NotesProps> = ({
 };
 
 export interface NotesProps {
-  dbSync: (collectionNames: string[]) => Promise<
-    | {
-        result: Instances<any>;
-        error?: undefined;
-      }
-    | {
-        error: unknown;
-        result?: undefined;
-      }
-  >;
-  dbPush: (collectionNames: string[]) => Promise<
-    | {
-        error: unknown;
-      }
-    | undefined
-  >;
+  dbSync: EduVaultSync;
+  dbPush: EduVaultPush;
   Note: NoteCollection;
 }
 

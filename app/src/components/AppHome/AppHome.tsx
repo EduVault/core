@@ -1,8 +1,6 @@
 import { Box, Container } from '@material-ui/core';
 import { useContext } from 'react';
 import { EduVaultContext } from '../../EduVaultContext';
-// import { useSelector } from 'react-redux';
-// import { selectDBState } from '../../model/db';
 import { Notes } from '../Notes/Notes';
 
 interface Props {}
