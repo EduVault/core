@@ -26,7 +26,7 @@ services:
       - ${PORT_API_HTTP}:${PORT_API_HTTP}
       - ${PORT_API_HTTPS}:${PORT_API_HTTPS}
     depends_on:
+      - eduvault-core
     environment:
       HTTP_PORT: ${PORT_API_HTTP}
       HTTPS_PORT: ${PORT_API_HTTPS}   
-      - eduvault-core
