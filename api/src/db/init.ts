@@ -1,5 +1,12 @@
 import { Client } from '@textile/hub';
-import { TEXTILE_USER_API_KEY, TEXTILE_USER_API_SECRET } from '../config';
+import {
+  ADMIN_USERNAME,
+  APP_SECRET,
+  HOST,
+  prod,
+  TEXTILE_USER_API_KEY,
+  TEXTILE_USER_API_SECRET,
+} from '../config';
 import { CollectionConfig } from '@textile/threaddb/dist/cjs/local/collection';
 import { Database, PrivateKey, ThreadID } from '@textile/threaddb';
 
@@ -9,6 +16,7 @@ import { ulid } from 'ulid';
 import { encrypt, hash, hashPassword } from '../helpers';
 import { appID, password, personID, username } from '../helpers/testUtil';
 import { findAppByID, findPersonByID, saveApp, savePerson } from './methods';
+import { findPersonByUsername } from 'db';
 
 // textile bug, not accepting this as an array so add using db.collectionConfig()
 const collectionConfigs: CollectionConfig[] = [
@@ -89,32 +97,76 @@ export const formatNewPerson = async (options: {
   return person;
 };
 
-export const formatNewApp = (devID: string, appID?: string) => {
+export const formatNewApp = ({
+  devID,
+  appID,
+  description,
+  name,
+  authorizedDomains,
+}: {
+  devID: string;
+  appID?: string;
+  description?: string;
+  name: string;
+  authorizedDomains: string[];
+}) => {
   const app: IApp = {
     _id: appID ?? ulid(),
     devID,
-    description: 'A default testing app',
-    name: 'Awesome App',
-    authorizedDomains: [
-      'http://localhost',
-      'http://127.0.0.1',
-      'http://localhost:8082',
-      'http://localhost:8081',
-      'http://localhost:3000',
-      'https://localhost:3000',
-    ],
+    description,
+    name: name,
+    authorizedDomains,
   };
   return app;
 };
 
 /**
- * sets a dummy user and app
+ * if production, load or create th
  */
 export const populateDB = async (db: Database) => {
-  const newPerson = await formatNewPerson({ username, password, appID });
-  await savePerson(db, newPerson);
-  const newApp = formatNewApp(username, appID);
-  await saveApp(db, newApp);
+  if (prod) {
+    const createAdmin = async () =>
+      await formatNewPerson({
+        username: ADMIN_USERNAME,
+        password: APP_SECRET,
+        appID: '1',
+      });
+    let admin: IPerson;
+    try {
+      admin = await findPersonByUsername(db, ADMIN_USERNAME);
+    } catch (error) {
+      admin = await createAdmin();
+    }
+    if (!admin) admin = await createAdmin();
+    let officialApp = await findAppByID(db, '1');
+    if (!officialApp) {
+      officialApp = formatNewApp({
+        appID: '1',
+        devID: admin._id,
+        name: 'EduVault Home',
+        description: 'Your personal education database',
+        authorizedDomains: [`https://${HOST}`],
+      });
+    }
+    await saveApp(db, officialApp);
+  } else {
+    const newPerson = await formatNewPerson({ username, password, appID });
+    await savePerson(db, newPerson);
+    const newApp = formatNewApp({
+      devID: newPerson._id,
+      name: 'testing app',
+      description: 'an app for testing',
+      authorizedDomains: [
+        'http://localhost',
+        'http://127.0.0.1',
+        'http://localhost:8082',
+        'http://localhost:8081',
+        'http://localhost:3000',
+        'https://localhost:3000',
+      ],
+    });
+    await saveApp(db, newApp);
+  }
 };
 
 export const dbReady = async (db: Database) => {

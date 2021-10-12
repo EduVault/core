@@ -26,7 +26,9 @@ export const useHttps = unitTest ? false : env.USE_HTTPS === 'true';
 
 // just to check .env file loads
 export const ENV_CHECK = env.ENV_CHECK;
+
 export const APP_SECRET = env.APP_SECRET || 'super-secret';
+export const ADMIN_USERNAME = env.ADMIN_USERNAME || 'admin@eduvault.org';
 
 const SSLKeyPath = path.join(__dirname, '../../deploy/certs/key.pem');
 const SSLCertPath = path.join(__dirname, '../../deploy/certs/cert.pem');
