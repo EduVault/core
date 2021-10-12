@@ -26,7 +26,7 @@ const registeredUrlMatchesRequest = async ({
   const search = app.authorizedDomains.filter((domain) =>
     domain.includes(req.hostname)
   );
-  // console.log({ search });
+  console.log({ search }, app.authorizedDomains, req.hostname);
   if (search.length > 0) return true;
   else return false;
 };
@@ -52,7 +52,7 @@ export async function compareLoginToken(
   if (IDMatches) return decoded as LoginToken;
   else return 'token ID does not match';
 }
-// TODO: make a minimum reproducible example to see if its my or the library problems. is async no allowed?
+
 const appStrat = (db: Database) =>
   new Strategy(async (req, done) => {
     const { loginToken, appID }: AppAuthReq = req.body;
