@@ -154,6 +154,7 @@ export const populateDB = async (db: Database) => {
     const newPerson = await formatNewPerson({ username, password, appID });
     await savePerson(db, newPerson);
     const newApp = formatNewApp({
+      appID: '1',
       devID: newPerson._id,
       name: 'testing app',
       description: 'an app for testing',
