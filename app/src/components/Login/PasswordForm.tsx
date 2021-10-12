@@ -56,7 +56,7 @@ export const PasswordForm = ({ submit }: Props) => {
     }
   };
   const loginValid = emailValid && passwordValid;
-  const disableButton = useSelector(selectLoggingIn) && !loginValid; // login status not in progress
+  const disableButton = useSelector(selectLoggingIn) || !loginValid; // login status not in progress
 
   const passwordRef = useRef<HTMLInputElement>();
   const buttonRef = useRef<HTMLAnchorElement>();
