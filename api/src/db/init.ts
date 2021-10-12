@@ -9,14 +9,14 @@ import {
 } from '../config';
 import { CollectionConfig } from '@textile/threaddb/dist/cjs/local/collection';
 import { Database, PrivateKey, ThreadID } from '@textile/threaddb';
+import { ulid } from 'ulid';
 
 import { appSchema, personSchema } from '../models';
 import { IApp, IPerson } from '../types';
-import { ulid } from 'ulid';
 import { encrypt, hash, hashPassword } from '../helpers';
 import { appID, password, personID, username } from '../helpers/testUtil';
 import { findAppByID, findPersonByID, saveApp, savePerson } from './methods';
-import { findPersonByUsername } from 'db';
+import { findPersonByUsername } from '../db';
 
 // textile bug, not accepting this as an array so add using db.collectionConfig()
 const collectionConfigs: CollectionConfig[] = [
