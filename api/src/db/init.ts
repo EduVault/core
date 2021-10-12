@@ -148,6 +148,7 @@ export const populateDB = async (db: Database) => {
         authorizedDomains: [`https://${HOST}`],
       });
     }
+    console.log({ officialApp, admin });
     await saveApp(db, officialApp);
   } else {
     const newPerson = await formatNewPerson({ username, password, appID });
