@@ -19,14 +19,16 @@ const registeredUrlMatchesRequest = async ({
   db?: Database;
   app?: IApp;
 }) => {
-  if (!app && db) {
-    app = await findAppByID(db, appID);
+  let _app = app;
+  if (!_app && db) {
+    _app = await findAppByID(db, appID);
   }
-  if (!app || !app._id) throw 'app not found :' + app;
-  const search = app.authorizedDomains.filter((domain) =>
+  console.log({ _app });
+  if (!_app || !_app._id) throw 'app not found :' + _app;
+  const search = _app.authorizedDomains.filter((domain) =>
     domain.includes(req.hostname)
   );
-  console.log({ search }, app.authorizedDomains, req.hostname);
+  console.log({ search }, _app.authorizedDomains, req.hostname);
   if (search.length > 0) return true;
   else return false;
 };

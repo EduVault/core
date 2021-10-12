@@ -18,7 +18,7 @@ const appAuth = function (router: Router, passport: passport.PassportStatic) {
     passport.authenticate(
       'app-auth',
       (error: string | undefined, appPerson: AppPerson) => {
-        console.log({ error, appPerson });
+        console.log('app auth route callback', { error, appPerson });
         if (error) return respondError(res, 'passportError', error);
 
         const returnData: AppAuthRes = {
