@@ -114,7 +114,7 @@ export const formatNewApp = ({
     _id: appID ?? ulid(),
     devID,
     description,
-    name: name,
+    name,
     authorizedDomains,
   };
   return app;
@@ -141,7 +141,7 @@ export const populateDB = async (db: Database) => {
     let officialApp = await findAppByID(db, '1');
     if (!officialApp) {
       officialApp = formatNewApp({
-        appID: '1',
+        appID, // '1'
         devID: admin._id,
         name: 'EduVault Home',
         description: 'Your personal education database',
@@ -154,7 +154,7 @@ export const populateDB = async (db: Database) => {
     const newPerson = await formatNewPerson({ username, password, appID });
     await savePerson(db, newPerson);
     const newApp = formatNewApp({
-      appID: '1',
+      appID,
       devID: newPerson._id,
       name: 'testing app',
       description: 'an app for testing',
@@ -173,7 +173,10 @@ export const populateDB = async (db: Database) => {
 
 export const dbReady = async (db: Database) => {
   const defaultApp = await findAppByID(db, appID);
-  const defaultPerson = await findPersonByID(db, personID);
+  let defaultPerson: IPerson;
+  if (prod) defaultPerson = await findPersonByUsername(db, ADMIN_USERNAME);
+  else defaultPerson = await findPersonByID(db, personID);
+
   if (defaultApp && defaultApp._id && defaultPerson && defaultPerson._id)
     return true;
   return false;
