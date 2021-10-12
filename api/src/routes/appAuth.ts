@@ -11,35 +11,25 @@ import { restrictToOfficialApp } from '../middleware';
  */
 const appAuth = function (router: Router, passport: passport.PassportStatic) {
   // workaround because passport custom's callbacks don't have the full middleware available
-  let request: Request;
-  let response: Response;
-  let storedNext: (...args: any) => any;
-  router.post(
-    API_ROUTES.APP_AUTH,
-    restrictToOfficialApp,
-    (req, res, next) => {
-      request = req;
-      response = res;
-      storedNext = next;
-      next();
-    },
+  // let request: Request;
+  // let response: Response;
+  // let storedNext: (...args: any) => any;
+  router.post(API_ROUTES.APP_AUTH, restrictToOfficialApp, (req, res, next) => {
     passport.authenticate(
       'app-auth',
       (error: string | undefined, appPerson: AppPerson) => {
-        if (error) return respondError(response, 'passportError', error);
-        sessionLogin({ req: request, res: response, appPerson });
-        storedNext();
+        console.log({ error, appPerson });
+        if (error) return respondError(res, 'passportError', error);
+
+        const returnData: AppAuthRes = {
+          jwt: req.session.jwt,
+          oldJwt: req.session.oldJwt,
+        };
+        sessionLogin({ req, res, appPerson });
+        respond(res)(returnData);
       }
-    ),
-    (req, res) => {
-      const returnData: AppAuthRes = {
-        jwt: req.session.jwt,
-        oldJwt: req.session.oldJwt,
-      };
-      // console.log({ returnData });
-      return respond(res)(returnData);
-    }
-  );
+    )(req, res, next);
+  });
 
   return router;
 };
