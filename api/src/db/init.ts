@@ -129,16 +129,21 @@ export const populateDB = async (db: Database) => {
       await formatNewPerson({
         username: ADMIN_USERNAME,
         password: APP_SECRET,
-        appID: '1',
+        appID: appID,
       });
     let admin: IPerson;
     try {
       admin = await findPersonByUsername(db, ADMIN_USERNAME);
     } catch (error) {
       admin = await createAdmin();
+      await savePerson(db, admin);
     }
-    if (!admin) admin = await createAdmin();
-    let officialApp = await findAppByID(db, '1');
+    if (!admin) {
+      admin = await createAdmin();
+      await savePerson(db, admin);
+    }
+
+    let officialApp = await findAppByID(db, appID);
     if (!officialApp) {
       officialApp = formatNewApp({
         appID, // '1'
@@ -176,7 +181,7 @@ export const dbReady = async (db: Database) => {
   let defaultPerson: IPerson;
   if (prod) defaultPerson = await findPersonByUsername(db, ADMIN_USERNAME);
   else defaultPerson = await findPersonByID(db, personID);
-
+  console.log({ defaultPerson, defaultApp });
   if (defaultApp && defaultApp._id && defaultPerson && defaultPerson._id)
     return true;
   return false;
