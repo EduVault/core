@@ -22,7 +22,7 @@ import { cors, waitForDbReady } from './middleware';
 import { startWss } from './routes/wss';
 
 const app = express();
-app.set('trust-proxy', !useHttps);
+app.set('trust proxy', useHttps ? 0 : 1); //trust one hop away in http (docker) mode
 app.use(express.json());
 
 // Check environment variables load
