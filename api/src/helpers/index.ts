@@ -25,5 +25,6 @@ export const sessionLogin = ({
       return respondError(res, 'passportError', error);
     }
   };
+  if (!appPerson) console.log('attempting login, appPerson is undefined');
   req.login(appPerson, done ?? loginCallback);
 };
