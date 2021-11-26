@@ -23,7 +23,7 @@ export const cors = async (db: Database) => {
     const handleRequest = async () => {
       try {
         const url = req.url;
-        console.log({ requestUrl: req.url });
+        console.log({ url });
         // console.log({ validDomains });
         const headers = {
           'Access-Control-Allow-Origin': '*',
