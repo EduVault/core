@@ -37,8 +37,6 @@ export const cors = async (db: Database) => {
         if (url.startsWith('/api')) {
           headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS, POST';
         }
-        const reqHeaders = req.headers;
-        console.log({ reqHeaders });
 
         /**
          * @example extractOrigin('https://www.example.com/') => 'https://www.example.com'
@@ -48,7 +46,6 @@ export const cors = async (db: Database) => {
           const originHost = origin.split('//')[1];
           const protocol = origin.split('//')[0];
           const trailingSlashRemoved = originHost.split('/')[0];
-          console.log({ trailingSlashRemoved });
           return protocol + '//' + trailingSlashRemoved;
         };
 
@@ -59,7 +56,6 @@ export const cors = async (db: Database) => {
           if (!origin) return null;
           const originHost = origin.split('//')[1];
           const trailingSlashRemoved = originHost.split('/')[0];
-          console.log({ trailingSlashRemoved });
           return trailingSlashRemoved;
         };
 
@@ -67,7 +63,7 @@ export const cors = async (db: Database) => {
         const originHost =
           extractOriginHost(req.headers.origin) ??
           extractOriginHost(req.headers.referer);
-        const inValid = validDomains.indexOf(originHost) === -1;
+        const validDomain = validDomains.indexOf(originHost) !== -1;
 
         const origin =
           extractOrigin(req.headers.origin) ??
@@ -77,14 +73,14 @@ export const cors = async (db: Database) => {
         // const checkNewAppDomain = async () => {
         //   findAuthorizedDomain(db, origin);
         // };
-        console.log({ validDomains, origin, inValid });
-        if (!inValid) {
+        console.log({ origin, originHost, validDomain });
+        if (!validDomain) {
           headers['Access-Control-Allow-Origin'] = origin;
           headers['Access-Control-Allow-Credentials'] = 'true';
           headers['Access-Control-Max-Age'] = '2592000'; // 30 days, in seconds
         }
 
-        console.log({ headers, method: req.method });
+        // console.log({ headers, method: req.method });
         if (req.method === 'OPTIONS') {
           console.log('writing option header');
           res.writeHead(200, headers);

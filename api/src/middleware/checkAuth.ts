@@ -4,6 +4,7 @@ import { respondError } from '../helpers';
 
 export const checkAuth = (req: Request, res: Response, next: NextFunction) => {
   console.log('cookies', req.headers.cookie);
+  console.log({ user: req.user });
   if (!req.isAuthenticated()) {
     console.log('authenticationFailed');
     respondError(res, 'authenticationFailed');
