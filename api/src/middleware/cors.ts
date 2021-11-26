@@ -74,7 +74,7 @@ export const cors = async (db: Database) => {
         //   findAuthorizedDomain(db, origin);
         // };
         console.log({ origin, originHost, validDomain });
-        if (!validDomain) {
+        if (validDomain) {
           headers['Access-Control-Allow-Origin'] = origin;
           headers['Access-Control-Allow-Credentials'] = 'true';
           headers['Access-Control-Max-Age'] = '2592000'; // 30 days, in seconds
@@ -82,11 +82,11 @@ export const cors = async (db: Database) => {
 
         // console.log({ headers, method: req.method });
         if (req.method === 'OPTIONS') {
-          console.log('writing option header');
+          // console.log('writing option header');
           res.writeHead(200, headers);
           return res.end();
         } else {
-          console.log('writing headers');
+          // console.log('writing headers');
           Object.entries(headers).forEach(([header, val]) =>
             res.header(header, val)
           );
