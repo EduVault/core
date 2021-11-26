@@ -21,3 +21,8 @@ export const findAllAppsWithAuthorizedDomains = async (db: Database) =>
   await db
     .collection<IApp>('app')
     .find({ authorizedDomains: { $exists: true } });
+
+export const findAuthorizedDomain = async (db: Database, domain: string) =>
+  await db
+    .collection<IApp>('app')
+    .findOne({ authorizedDomains: { $elemMatch: { $eq: domain } } });

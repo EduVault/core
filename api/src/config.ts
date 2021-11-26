@@ -15,6 +15,7 @@ dotenv.config({
   path: path.join(__dirname, dev ? '../../dev.env' : '../../.env'),
 });
 
+/** `localhost` or `eduvault.org` */
 export const HOST = env.HOST;
 export const PORT_API_HTTP = Number(env.PORT_API_HTTP);
 export const PORT_API_HTTPS = Number(env.PORT_API_HTTPS);
