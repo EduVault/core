@@ -5,10 +5,10 @@ import { respondError } from '../helpers';
 export const checkAuth = (req: Request, res: Response, next: NextFunction) => {
   console.log('cookies', req.headers.cookie);
   if (!req.isAuthenticated()) {
-    // console.log('authenticationFailed');
+    console.log('authenticationFailed');
     respondError(res, 'authenticationFailed');
   } else {
-    // console.log('authenticated');
+    console.log('authenticated');
     return next();
   }
 };

@@ -18,6 +18,7 @@ export const cors = async (db: Database) => {
   );
   return (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log({ requestUrl: req.url });
       // console.log({ validDomains });
       const headers = {
         'Access-Control-Allow-Origin': '*',

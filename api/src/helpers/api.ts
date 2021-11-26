@@ -6,7 +6,7 @@ export const respond =
   <T>(res: Response) =>
   (content: T, code = 200) => {
     const response: ApiRes<T> = { content, code };
-    // res.status(200); // disabling to avoid resetting headers
+    res.status(200);
     res.json(response);
   };
 
