@@ -16,7 +16,7 @@ export const cors = async (db: Database) => {
   await apps.each((app) =>
     app.authorizedDomains.forEach((domain) => validDomains.push(domain))
   );
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     try {
       // console.log({ validDomains });
       const headers = {
