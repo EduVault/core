@@ -150,7 +150,7 @@ export const populateDB = async (db: Database) => {
         devID: admin._id,
         name: 'EduVault Home',
         description: 'Your personal education database',
-        authorizedDomains: [`https://${HOST}`],
+        authorizedDomains: [`${HOST}`],
       });
     }
     console.log({ officialApp, admin });
@@ -164,12 +164,11 @@ export const populateDB = async (db: Database) => {
       name: 'testing app',
       description: 'an app for testing',
       authorizedDomains: [
-        'http://localhost',
-        'http://127.0.0.1',
-        'http://localhost:8082',
-        'http://localhost:8081',
-        'http://localhost:3000',
-        'https://localhost:3000',
+        'localhost',
+        '127.0.0.1',
+        'localhost:8082',
+        'localhost:8081',
+        'localhost:3000',
       ],
     });
     await saveApp(db, newApp);

@@ -37,18 +37,26 @@ export const cors = async (db: Database) => {
         if (url.startsWith('/api')) {
           headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS, POST';
         }
+        const reqHeaders = req.headers;
+        console.log({ reqHeaders });
 
-        const origin = `https://${req.headers.host}`;
-        const originHTTP = `http://${req.headers.host}`;
-        const inValid =
-          validDomains.indexOf(origin) === -1 &&
-          validDomains.indexOf(originHTTP) === -1;
+        const extractOriginHost = (origin: string) => {
+          const originHost = origin.split('//')[1];
+          const trailingSlashRemoved = originHost.split('/')[0];
+          console.log({ trailingSlashRemoved });
+          return trailingSlashRemoved;
+        };
+
+        const originHost =
+          extractOriginHost(req.headers.origin) ??
+          extractOriginHost(req.headers.referer);
+        const inValid = validDomains.indexOf(origin) === -1;
 
         // TODO: if domain can't be found in what the database loaded at server start, check again if the app was just registered.
         // const checkNewAppDomain = async () => {
         //   findAuthorizedDomain(db, origin);
         // };
-        console.log({ validDomains, origin, originHTTP, inValid });
+        console.log({ validDomains, origin, inValid });
         if (!inValid) {
           headers['Access-Control-Allow-Origin'] = origin;
           headers['Access-Control-Allow-Credentials'] = 'true';
