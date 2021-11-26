@@ -30,19 +30,19 @@ export const cors = async (db: Database) => {
 
       const origin = req.headers.origin;
       const inValid = validDomains.indexOf(origin) === -1;
-      // console.log({ validDomains, origin, inValid });
+      console.log({ validDomains, origin, inValid });
       if (!inValid) {
         headers['Access-Control-Allow-Origin'] = origin;
         headers['Access-Control-Allow-Credentials'] = 'true';
       }
-      // console.log({ headers, method: req.method });
 
+      console.log({ headers, method: req.method });
       if (req.method === 'OPTIONS') {
-        console.log('writing option header', { headers });
+        console.log('writing option header');
         res.writeHead(200, headers);
         return res.end();
       } else {
-        console.log('writing headers', { headers });
+        console.log('writing headers');
         Object.entries(headers).forEach(([header, val]) =>
           res.header(header, val)
         );
