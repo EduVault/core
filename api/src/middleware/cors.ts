@@ -38,9 +38,11 @@ export const cors = async (db: Database) => {
       // console.log({ headers, method: req.method });
 
       if (req.method === 'OPTIONS') {
+        console.log('writing option header', { headers });
         res.writeHead(200, headers);
         return res.end();
       } else {
+        console.log('writing headers', { headers });
         Object.entries(headers).forEach(([header, val]) =>
           res.header(header, val)
         );
