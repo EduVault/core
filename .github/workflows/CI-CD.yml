@@ -11,65 +11,65 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Use Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '12.x'
-          cache: 'npm'
+      # - name: Use Node.js
+      #   uses: actions/setup-node@v2
+      #   with:
+      #     node-version: '12.x'
+      #     cache: 'npm'
 
-      - name: Make sure local links are gone
-        run: npm run unlink-sdk
+      # - name: Make sure local links are gone
+      #   run: npm run unlink-sdk
 
-      - name: Create .env
-        uses: weyheyhey/create-dotenv-action@v1
-        with:
-          wildecard: '^'
-        env:
-          ^ENV_CHECK: 'working'
-          ^HOST: 'localhost'
-          ^REACT_APP_HOST: 'localhost'
-          ^TEST_ENV: 'e2e'
-          ^NODE_ENV: 'production'
-          ^PORT_API_HTTP: 8081
-          ^PORT_API_HTTPS: 8082
-          ^PORT_DOCKER: 8083
+      # - name: Create .env
+      #   uses: weyheyhey/create-dotenv-action@v1
+      #   with:
+      #     wildecard: '^'
+      #   env:
+      #     ^ENV_CHECK: 'working'
+      #     ^HOST: 'localhost'
+      #     ^REACT_APP_HOST: 'localhost'
+      #     ^TEST_ENV: 'e2e'
+      #     ^NODE_ENV: 'production'
+      #     ^PORT_API_HTTP: 8081
+      #     ^PORT_API_HTTPS: 8082
+      #     ^PORT_DOCKER: 8083
 
-      - name: Install application
-        run: npm run inst:ci
+      # - name: Install application
+      #   run: npm run inst:ci
 
-      - name: Make SSL certs
-        run: npm run ssl-certs:ci
+      # - name: Make SSL certs
+      #   run: npm run ssl-certs:ci
 
-      - name: Build application
-        run: npm run build
+      # - name: Build application
+      #   run: npm run build
 
-      - name: Unit Test application
-        run: npm run test
+      # - name: Unit Test application
+      #   run: npm run test
 
-      - name: E2E Test - Cypress
-        uses: cypress-io/github-action@v2
-        with:
-          start: npm run start:ci
-          wait-on: 'npx wait-on --timeout 500000 http://localhost:8081'
-          browser: chrome
-          headless: true
-          record: true
-        env:
-          NODE_TLS_REJECT_UNAUTHORIZED: 0
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-      - name: store screenshots
-        uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: e2e/screenshots
-      - name: store video
-        uses: actions/upload-artifact@v1
-        if: always()
-        with:
-          name: cypress-videos
-          path: e2e/videos
+      # - name: E2E Test - Cypress
+      #   uses: cypress-io/github-action@v2
+      #   with:
+      #     start: npm run start:ci
+      #     wait-on: 'npx wait-on --timeout 500000 http://localhost:8081'
+      #     browser: chrome
+      #     headless: true
+      #     record: true
+      #   env:
+      #     NODE_TLS_REJECT_UNAUTHORIZED: 0
+      #     CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      #     GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+      # - name: store screenshots
+      #   uses: actions/upload-artifact@v1
+      #   if: failure()
+      #   with:
+      #     name: cypress-screenshots
+      #     path: e2e/screenshots
+      # - name: store video
+      #   uses: actions/upload-artifact@v1
+      #   if: always()
+      #   with:
+      #     name: cypress-videos
+      #     path: e2e/videos
 
   build-and-push-production-images:
     if: github.ref == 'refs/heads/main'
