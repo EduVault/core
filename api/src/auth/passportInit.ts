@@ -21,7 +21,7 @@ export default (app: Express, db: Database) => {
   // a session must have both an app and a person
   passport.serializeUser((appPerson: AppPerson, done) => {
     if (!appPerson) done(appPerson, null);
-    console.log('serializing: ', { appPerson });
+    console.log('serializing user: ', appPerson.person.username);
     done(null, appPerson.person._id + IDSplitTerm + appPerson.app._id);
   });
 
@@ -40,8 +40,7 @@ export default (app: Express, db: Database) => {
       if (!app) done(app);
       else {
         const person = await findPersonByID(db, personID);
-        console.log('deserializing');
-        console.log({ person });
+        console.log('deserializing user: ', person.username);
         if (!person) done(person);
         else done(null, { person, app });
       }

@@ -21,7 +21,7 @@ export const sessionLogin = ({
 }) => {
   const loginCallback = (error: string) => {
     if (error) {
-      console.log({ error });
+      console.log('req.login error', { error });
       return respondError(res, 'passportError', error);
     }
   };
