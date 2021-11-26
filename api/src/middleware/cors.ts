@@ -73,7 +73,10 @@ export const cors = async (db: Database) => {
         // const checkNewAppDomain = async () => {
         //   findAuthorizedDomain(db, origin);
         // };
-        console.log({ origin, originHost, validDomain });
+        console.log({
+          // origin, originHost,
+          validDomain,
+        });
         if (validDomain) {
           headers['Access-Control-Allow-Origin'] = origin;
           headers['Access-Control-Allow-Credentials'] = 'true';
