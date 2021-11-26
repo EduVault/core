@@ -40,6 +40,20 @@ export const cors = async (db: Database) => {
         const reqHeaders = req.headers;
         console.log({ reqHeaders });
 
+        /**
+         * @example extractOrigin('https://www.example.com/') => 'https://www.example.com'
+         */
+        const extractOrigin = (origin: string) => {
+          const originHost = origin.split('//')[1];
+          const protocol = origin.split('//')[0];
+          const trailingSlashRemoved = originHost.split('/')[0];
+          console.log({ trailingSlashRemoved });
+          return protocol + '//' + trailingSlashRemoved;
+        };
+
+        /**
+         * @example extractOriginHost('https://www.example.com/') => 'www.example.com'
+         */
         const extractOriginHost = (origin: string) => {
           const originHost = origin.split('//')[1];
           const trailingSlashRemoved = originHost.split('/')[0];
@@ -50,7 +64,11 @@ export const cors = async (db: Database) => {
         const originHost =
           extractOriginHost(req.headers.origin) ??
           extractOriginHost(req.headers.referer);
-        const inValid = validDomains.indexOf(origin) === -1;
+        const inValid = validDomains.indexOf(originHost) === -1;
+
+        const origin =
+          extractOrigin(req.headers.origin) ??
+          extractOrigin(req.headers.referer);
 
         // TODO: if domain can't be found in what the database loaded at server start, check again if the app was just registered.
         // const checkNewAppDomain = async () => {
