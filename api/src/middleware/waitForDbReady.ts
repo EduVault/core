@@ -6,7 +6,7 @@ import { dbReady } from '../db';
 export const waitForDbReady =
   (db: Database) => async (req: Request, res: Response, next: NextFunction) => {
     if (req.app.locals.dbReady === true) {
-      console.log('dbReady');
+      // console.log('dbReady');
       return next();
     } else {
       const maxTries = 10;
