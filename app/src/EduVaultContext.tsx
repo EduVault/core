@@ -19,11 +19,10 @@ export const eduvault = new EduVault({
 export const EduVaultContext = React.createContext(eduvault);
 export const EduVaultProvider: React.FC = ({ children }) => {
   const dispatch = useDispatch();
-  const load = eduvault.load;
 
   useEffect(() => {
     // console.log('loading eduvault');
-    load({
+    eduvault.load({
       log: true,
       onStart: () => dispatch(setStartingLocal),
       onError: (error) => dispatch(setDBError(error)),
@@ -31,7 +30,7 @@ export const EduVaultProvider: React.FC = ({ children }) => {
       onReady: () => dispatch(setRemoteReady(true)),
       onLogin: () => dispatch(setLoggedIn(true)),
     });
-  }, [dispatch, load]);
+  }, [dispatch]);
   return (
     <EduVaultContext.Provider value={eduvault}>
       {children}
