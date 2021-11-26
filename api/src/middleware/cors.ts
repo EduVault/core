@@ -44,6 +44,7 @@ export const cors = async (db: Database) => {
          * @example extractOrigin('https://www.example.com/') => 'https://www.example.com'
          */
         const extractOrigin = (origin: string) => {
+          if (!origin) return null;
           const originHost = origin.split('//')[1];
           const protocol = origin.split('//')[0];
           const trailingSlashRemoved = originHost.split('/')[0];
@@ -55,12 +56,14 @@ export const cors = async (db: Database) => {
          * @example extractOriginHost('https://www.example.com/') => 'www.example.com'
          */
         const extractOriginHost = (origin: string) => {
+          if (!origin) return null;
           const originHost = origin.split('//')[1];
           const trailingSlashRemoved = originHost.split('/')[0];
           console.log({ trailingSlashRemoved });
           return trailingSlashRemoved;
         };
 
+        // Then browser sometimes only sends a referer not an origin
         const originHost =
           extractOriginHost(req.headers.origin) ??
           extractOriginHost(req.headers.referer);
