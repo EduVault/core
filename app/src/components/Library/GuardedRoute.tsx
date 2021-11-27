@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
-import { selectLoginError } from '../../model/auth';
+import {
+  selectLoggedIn,
+  selectLoggingIn,
+  selectLoginError,
+} from '../../model/auth';
 import { selectDBError, selectLocalReady } from '../../model/db';
 
 interface GuardedRouteProps extends RouteProps {
@@ -13,30 +16,25 @@ export const GuardedRoute = ({
   redirectTo,
   ...rest
 }: GuardedRouteProps) => {
-  const [authState, setAuthState] = useState<
-    'loading' | 'authenticated' | 'notAuthenticated'
-  >('loading');
-  const dbLoaded = useSelector(selectLocalReady);
-  const ready = dbLoaded && authState !== 'loading';
+  const loggingIn = useSelector(selectLoggingIn);
+  const loggedIn = useSelector(selectLoggedIn);
+  const loginError = useSelector(selectLoginError);
+
+  const localReady = useSelector(selectLocalReady);
   const dbError = useSelector(selectDBError);
-  const authError = useSelector(selectLoginError);
-  const error = dbError && authError;
-  useEffect(() => {
-    const checkAuth = async () => {
-      const authorized = await auth();
-      setAuthState(authorized ? 'authenticated' : 'notAuthenticated');
-    };
-    checkAuth();
-  }, [auth]);
+  const error = dbError || loginError;
+
+  const loading = loggingIn || !localReady;
+  const authenticated = loggedIn;
 
   return (
     <>
       {error && <Route render={() => <Redirect to={redirectTo} exact />} />}
-      {!ready && <div />}
-      {ready && (
+      {loading && <div />}
+      {!loading && (
         <Route
           render={() =>
-            authState === 'authenticated' ? (
+            authenticated ? (
               <Route {...rest} />
             ) : (
               <Redirect to={redirectTo} exact />

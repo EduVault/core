@@ -1,3 +1,4 @@
+import { LoginButtonQueries } from '@eduvault/sdk-js';
 import {
   Box,
   Container,
@@ -46,22 +47,34 @@ export const Login = (props: Props) => {
       pwLogin({
         username: email,
         password,
-        redirectURL: window.location.origin + '/app',
+        redirectURL: window.location.origin,
       })
     );
   };
-  const hasLoginRedirectQueries =
-    window.location.search.includes('clientToken');
+  type ButtonKey = keyof LoginButtonQueries;
+  const loginButtonQueries: ButtonKey[] = [
+    'appID',
+    'redirectURL',
+    'clientToken',
+  ];
+
+  let hasLoginButtonQueries = false;
+  const loginButtonQueriesSearch = loginButtonQueries.map((query) =>
+    window.location.search.includes(query)
+  );
+  // if all three are present
+  if (!loginButtonQueriesSearch.includes(false)) hasLoginButtonQueries = true;
+
   const { setupLoginButton } = useContext(EduVaultContext);
   useEffect(() => {
-    if (!hasLoginRedirectQueries)
+    if (!hasLoginButtonQueries)
       setupLoginButton({
         redirectURL: window.origin + '/app', //use origin not href to avoid including query params
         buttonID: 'eduvault-button',
         URL_APP: window.origin + '/app/login',
         log: true,
       });
-  }, [setupLoginButton, hasLoginRedirectQueries]);
+  }, [setupLoginButton, hasLoginButtonQueries]);
 
   return (
     <Container maxWidth="sm">
@@ -73,10 +86,10 @@ export const Login = (props: Props) => {
             Own your data. Sync between learning apps.{' '}
             <Link href="https://eduvault.org">Learn more</Link>
           </Typography>
-          {hasLoginRedirectQueries && (
+          {hasLoginButtonQueries && (
             <PasswordForm submit={handlePasswordSubmit} />
           )}
-          {!hasLoginRedirectQueries && (
+          {!hasLoginButtonQueries && (
             <Button
               color="secondary"
               className={classes.button}
