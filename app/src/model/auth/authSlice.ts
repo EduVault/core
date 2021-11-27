@@ -47,7 +47,7 @@ export const pwLogin =
     try {
       dispatch(setLoggingIn(true));
       const loginRes = await eduvault.pwLogin(payload);
-      console.log({ loginRes });
+      // we never get here if login succeeds
       if (loginRes && 'error' in loginRes) throw loginRes.error;
       if (!loginRes || !loginRes.jwt) throw loginRes;
       // login successful, will be redirected by SDK.
