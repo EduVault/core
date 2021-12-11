@@ -10,61 +10,39 @@ import { findAppByID, findPersonByID, newClientDB, getAPISig } from '../db';
 import { JWTToken, WsMessageData } from './types';
 import { Client, Database } from '@textile/threaddb';
 
-const tokenChallengeMessageHandlers = async ({
+const messageHandlers = async ({
   data,
   emitter,
-  ws,
-  db,
+  client,
   sendMessage,
 }: {
   data: WsMessageData;
   emitter: Emittery;
-  ws: WebSocket;
-  db: Database;
+  client: Client;
   sendMessage: (message: WsMessageData) => void;
 }) => {
-  const { decoded, error } = await validateAndDecodeJwt<JWTToken>(data.jwt);
-  // console.log({ decoded, error });
+  const sendTokenChallenge = (challenge: Uint8Array): Promise<Uint8Array> => {
+    return new Promise((resolve, reject) => {
+      let response: WsMessageData = {
+        type: 'challenge-request',
+        challenge: Buffer.from(challenge).toJSON(),
+      };
+      sendMessage(response);
 
-  if (error) throw new Error('invalid jwt');
-
-  // add a param isPerson or isApp
-  const person = await findPersonByID(db, decoded.data.personID);
-  const app = await findAppByID(db, decoded.data.appID);
-  // console.log({ person, app });
-  if (!(person || app)) throw new Error('could not find person/app');
-  let client = await newClientDB();
-
+      let received = false;
+      /** Wait for the challenge event from our event emitter */
+      emitter.on('challenge-response', async (signature: string) => {
+        received = true;
+        resolve(Buffer.from(signature));
+      });
+      setTimeout(() => {
+        if (!received) console.warn('client took too long to respond');
+        reject();
+      }, 10000);
+    });
+  };
   const handleTokenRequest = async () => {
     if (!data.pubKey) throw new Error('missing pubkey');
-
-    const sendTokenChallenge = (challenge: Uint8Array): Promise<Uint8Array> => {
-      return new Promise((resolve, reject) => {
-        let response: WsMessageData = {
-          type: 'challenge-request',
-          challenge: Buffer.from(challenge).toJSON(),
-        };
-        sendMessage(response);
-
-        let received = false;
-        /** Wait for the challenge event from our event emitter */
-        emitter.on('challenge-response', async (signature: string) => {
-          received = true;
-          // console.log('challenge-response signature', signature);
-          resolve(Buffer.from(signature));
-        });
-        setTimeout(() => {
-          reject();
-          if (!received) {
-            // console.log('client took too long to respond');
-          }
-        }, 10000);
-      });
-    };
-
-    /**
-     * The challenge was successfully completed by the client
-     */
     // console.log('challenge completed');
     let token;
 
@@ -98,54 +76,74 @@ const tokenChallengeMessageHandlers = async ({
   };
   return { handleTokenRequest, challengeResponse };
 };
-const makeSendMessage = (ws: WebSocket) => (message: WsMessageData) => {
-  ws.send(JSON.stringify(message));
+
+const validatedJWTData = async (data: any) => {
+  if (!data.jwt) throw new Error(`jwt missing`);
+  const { decoded, error } = await validateAndDecodeJwt<JWTToken>(data.jwt);
+  // console.log({ decoded, error });
+  if (error) throw new Error('invalid jwt');
+  return decoded.data;
 };
+
+const onWssMessage = async (
+  message: string,
+  ws: WebSocket,
+  db: Database,
+  emitter: Emittery<any>
+) => {
+  // console.log('=================wss message===================\n', data);
+  const sendMessage = (message: WsMessageData) =>
+    ws.send(JSON.stringify(message));
+  try {
+    const data = JSON.parse(message);
+    const jwtData = await validatedJWTData(data);
+
+    // add a param isPerson or isApp
+    // will this ever be app?
+    const person = await findPersonByID(db, jwtData.personID);
+    const app = await findAppByID(db, jwtData.appID);
+    // console.log({ person, app });
+    if (!(person || app)) throw new Error('could not find person/app');
+    let client = await newClientDB();
+
+    const { handleTokenRequest, challengeResponse } = await messageHandlers({
+      sendMessage,
+      data,
+      client,
+      emitter,
+    });
+
+    switch (data.type) {
+      case 'token-request': {
+        await handleTokenRequest();
+        break;
+      }
+      /** Waiting for a response from the client to the challenge above.
+       * result will get sent back to resolve on the line: emitter.on('challenge', (signature) => {
+       */
+      case 'challenge-response': {
+        await challengeResponse();
+        break;
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    sendMessage({
+      type: 'error',
+      error: error.message,
+    });
+  }
+};
+
 export const startWss = async (
   server: http.Server | https.Server,
   db: Database
 ) => {
   const wss = new WebSocket.Server({ server, path: '/api/ws' });
   const emitter = new Emittery();
-
   wss.on('connection', (ws: WebSocket) => {
-    //connection is up, let's add a simple simple event
     ws.on('message', async (message: string) => {
-      const sendMessage = makeSendMessage(ws);
-      try {
-        const data = JSON.parse(message);
-        // console.log('=================wss message===================\n', data);
-        if (!data.jwt) return ws.send(`jwt missing`);
-
-        const { handleTokenRequest, challengeResponse } =
-          await tokenChallengeMessageHandlers({
-            sendMessage,
-            data,
-            ws,
-            db,
-            emitter,
-          });
-
-        switch (data.type) {
-          case 'token-request': {
-            await handleTokenRequest();
-            break;
-          }
-          /** Waiting for a response from the client to the challenge above.
-           * result will get sent back to resolve on the line: emitter.on('challenge', (signature) => {
-           */
-          case 'challenge-response': {
-            await challengeResponse();
-            break;
-          }
-        }
-      } catch (error) {
-        console.log(error);
-        sendMessage({
-          type: 'error',
-          error: error.message,
-        });
-      }
+      onWssMessage(message, ws, db, emitter);
     });
   });
 };
