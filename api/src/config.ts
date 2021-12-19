@@ -38,8 +38,12 @@ export const SSL_KEY = useHttps ? fs.readFileSync(SSLKeyPath) : null;
 
 export const SSL_CERT = useHttps ? fs.readFileSync(SSLCertPath) : null;
 
-export const TEXTILE_USER_API_KEY = env.TEXTILE_USER_API_KEY;
-export const TEXTILE_USER_API_SECRET = env.TEXTILE_USER_API_SECRET;
+export const TEXTILE_USER_API_KEY = dev
+  ? env.TEXTILE_INSECURE_USER_API_KEY
+  : env.TEXTILE_USER_API_KEY;
+export const TEXTILE_USER_API_SECRET = dev
+  ? env.TEXTILE_INSECURE_USER_API_SECRET
+  : env.TEXTILE_USER_API_SECRET;
 
 export const SESSION_OPTIONS: session.SessionOptions = {
   secret: APP_SECRET,
