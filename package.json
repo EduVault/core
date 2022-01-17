@@ -11,7 +11,7 @@
     "test:app:watch": "cd ./app && npm run test:watch",
     "test": "run-p test:api test:app",
     "---------e2e-test-------------": "-------------------",
-    "e2e:open": "cypress open",
+    "e2e:open": "npx cypress open",
     "e2e": "cypress run",
     "---------dev-run--------------": "-------------------",
     "dev:api": "cd ./api && npm run dev",
