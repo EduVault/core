@@ -37,22 +37,27 @@ export async function compareLoginToken(
   token: string,
   appID: string
 ): Promise<string | LoginToken> {
-  const { error, decoded } = await validateAndDecodeJwt<LoginToken>(token);
+  try {
+    const { error, decoded } = await validateAndDecodeJwt<LoginToken>(token);
+    if (error) throw error;
+    if (!decoded.data) return 'token could not be decoded';
+    const now = new Date().getTime();
 
-  if (!decoded.data) return 'token could not be decoded';
-  const now = new Date().getTime();
+    // in production, code valid for 2 minutes 1000 * 60 * 2
+    const expiryDuration = prod ? 1000 * 60 * 2 : 1000 * 60 * 60 * 24 * 2; // while testing, setting to 2 days
 
-  // in production, code valid for 2 minutes 1000 * 60 * 2
-  const expiryDuration = prod ? 1000 * 60 * 2 : 1000 * 60 * 60 * 24 * 2; // while testing, setting to 2 days
+    const difference = now - decoded.iat * 1000; // iat is in seconds
+    const expired = difference > expiryDuration;
 
-  const difference = now - decoded.iat * 1000; // iat is in seconds
-  const expired = difference > expiryDuration;
-
-  if (expired)
-    return `token issued ${difference} ms ago. longest valid time is: ${expiryDuration}`;
-  const IDMatches = decoded.data.appID === appID;
-  if (IDMatches) return decoded as LoginToken;
-  else return 'token ID does not match';
+    if (expired)
+      return `token issued ${difference} ms ago. longest valid time is: ${expiryDuration}`;
+    const IDMatches = decoded.data.appID === appID;
+    if (IDMatches) return decoded as LoginToken;
+    else return 'token ID does not match';
+  } catch (error: any) {
+    if (error.message) return error.message;
+    else return JSON.stringify(error);
+  }
 }
 
 const appStrat = (db: Database) =>
