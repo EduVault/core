@@ -1,9 +1,13 @@
-import { Client } from '@textile/hub';
+import { Client, KeyInfo, privateKeyFromString } from '@textile/hub';
 import {
   ADMIN_USERNAME,
   APP_SECRET,
+  EDUV_ACCOUNT_PRIV_KEY,
+  EDUV_THREAD_ID,
   HOST,
   prod,
+  TEXTILE_ACCOUNT_API_KEY,
+  TEXTILE_ACCOUNT_API_SECRET,
   TEXTILE_USER_API_KEY,
   TEXTILE_USER_API_SECRET,
 } from '../config';
@@ -13,7 +17,7 @@ import { ulid } from 'ulid';
 
 import { appSchema, personSchema } from '../models';
 import { IApp, IPerson } from '../types';
-import { encrypt, hash, hashPassword } from '../helpers';
+import { encrypt, generatePrivateKey, hash, hashPassword } from '../helpers';
 import { appID, password, personID, username } from '../helpers/testUtil';
 import { findAppByID, findPersonByID, saveApp, savePerson } from './methods';
 import { findPersonByUsername } from '../db';
@@ -41,14 +45,63 @@ export const newLocalDB = (dbName = 'eduvault-api') => {
   }
 };
 
-export const newClientDB = async () => {
+export const startRemoteDB = async (
+  db: Database,
+  threadID: ThreadID,
+  keyInfo: KeyInfo
+) => {
+  const remote = await db.remote.setKeyInfo(keyInfo);
+  try {
+    remote.id = threadID.toString();
+    const DBInfo = await remote.info();
+    console.log({ DBInfo });
+  } catch (error) {
+    try {
+      console.log({ error });
+      await remote.initialize(threadID.toString());
+    } catch (error) {
+      remote.id = threadID.toString();
+      console.log({ initializeError: error });
+    }
+  } // console.log({ remote, token });
+  remote.config.metadata?.set('x-textile-thread-name', db.dexie.name);
+  remote.config.metadata?.set('x-textile-thread', db.id || '');
+};
+
+export const startRemoteDBAccount = async (db: Database) => {
+  let threadIDstr = EDUV_THREAD_ID;
+  if (!threadIDstr) {
+    threadIDstr = ThreadID.fromRandom().toString();
+    console.log('new ThreadID', { threadIDstr });
+  }
+  const threadID = ThreadID.fromString(threadIDstr);
+  const keyInfo = {
+    key: TEXTILE_ACCOUNT_API_KEY,
+    secret: TEXTILE_ACCOUNT_API_SECRET,
+  };
+  return await startRemoteDB(db, threadID, keyInfo);
+};
+
+export const newDBClient = async (keyInfo: { key: string; secret: string }) => {
+  const db = await Client.withKeyInfo(keyInfo);
+  return db;
+};
+export const newDBClientAccount = async () => {
+  const keyInfo = {
+    key: TEXTILE_ACCOUNT_API_KEY,
+    secret: TEXTILE_ACCOUNT_API_SECRET,
+  };
+  return await newDBClient(keyInfo);
+};
+
+export const newDBClientUser = async () => {
   const keyInfo = {
     key: TEXTILE_USER_API_KEY,
     secret: TEXTILE_USER_API_SECRET,
   };
-  // console.log({ keyInfo });
-  const db = await Client.withKeyInfo(keyInfo);
-  return db;
+  console.log({ keyInfo });
+
+  return await newDBClient(keyInfo);
 };
 
 export const clearCollections = async (db: Database) => {
@@ -78,7 +131,7 @@ export const formatNewPerson = async (options: {
 }): Promise<IPerson> => {
   const privateKey = await PrivateKey.fromRandom();
   const pubKey = await privateKey.public.toString();
-  const newThreadID = await ThreadID.fromRandom();
+  const newThreadID = ThreadID.fromRandom();
   const threadIDStr = newThreadID.toString();
   const hashed = hash(options.password);
   // console.log({ hashed, doubleHashed: hashPassword(hashed) });
@@ -184,4 +237,59 @@ export const dbReady = async (db: Database) => {
   if (defaultApp && defaultApp._id && defaultPerson && defaultPerson._id)
     return true;
   return false;
+};
+
+export const openOrCreateRemoteDB = async () => {
+  const client = await newDBClientUser();
+  let accountPrivKey = EDUV_ACCOUNT_PRIV_KEY;
+  if (!accountPrivKey) {
+    accountPrivKey = (await generatePrivateKey()).toString();
+    console.log('generated new account private key \n', accountPrivKey);
+  }
+
+  const token = await client.getToken(
+    new PrivateKey(privateKeyFromString(accountPrivKey))
+  );
+  console.log({ token });
+
+  const dbs = await client.listDBs();
+  let accountThreadIDStr = EDUV_THREAD_ID;
+  if (!accountThreadIDStr) {
+    accountThreadIDStr = ThreadID.fromRandom().toString();
+    console.log('generated new account private key \n', accountPrivKey);
+  }
+
+  console.dir(dbs);
+  if (dbs.length === 0) {
+    await client.newDB(
+      ThreadID.fromString(accountThreadIDStr),
+      'eduvault-server'
+    );
+  }
+  return client;
+};
+
+export const deleteAllThreads = async () => {
+  const client = await openOrCreateRemoteDB();
+  const dbs = await client.listDBs();
+  console.log('dbs');
+
+  console.dir(dbs);
+  await dbs.forEach(async (db) => {
+    db.name;
+    await client.deleteDB(ThreadID.fromString(db.id));
+  });
+  const dbsafter = await client.listDBs();
+  console.log('dbsafter');
+  console.dir(dbsafter);
+  const threads = await client.listThreads();
+  console.log('threads');
+
+  console.dir(threads);
+
+  threads.forEach((thread) => {
+    console.log({ thread });
+
+    ThreadID.fromString(thread.id);
+  });
 };

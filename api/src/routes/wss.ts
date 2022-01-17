@@ -6,7 +6,7 @@ import WebSocket from 'ws';
 
 import { validateAndDecodeJwt } from '../helpers';
 import * as config from '../config';
-import { findAppByID, findPersonByID, newClientDB, getAPISig } from '../db';
+import { findAppByID, findPersonByID, newDBClientUser, getAPISig } from '../db';
 import { JWTToken, WsMessageData } from './types';
 import { Client, Database } from '@textile/threaddb';
 
@@ -51,7 +51,7 @@ const messageHandlers = async ({
     } catch (error) {
       console.log(error);
       if (JSON.stringify(error).includes('Auth expired')) {
-        client = await newClientDB();
+        client = await newDBClientUser();
         token = await client.getTokenChallenge(data.pubKey, sendTokenChallenge);
       }
     }
@@ -104,7 +104,7 @@ const onWssMessage = async (
     const app = await findAppByID(db, jwtData.appID);
     // console.log({ person, app });
     if (!(person || app)) throw new Error('could not find person/app');
-    let client = await newClientDB();
+    let client = await newDBClientUser();
 
     const { handleTokenRequest, challengeResponse } = await messageHandlers({
       sendMessage,

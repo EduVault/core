@@ -45,6 +45,19 @@ export const TEXTILE_USER_API_SECRET = dev
   ? env.TEXTILE_INSECURE_USER_API_SECRET
   : env.TEXTILE_USER_API_SECRET;
 
+export const TEXTILE_ACCOUNT_API_KEY = dev
+  ? env.TEXTILE_DEV_ACCOUNT_API_KEY
+  : env.TEXTILE_ACCOUNT_API_KEY;
+
+export const TEXTILE_ACCOUNT_API_SECRET = dev
+  ? env.TEXTILE_DEV_ACCOUNT_API_SECRET
+  : env.TEXTILE_ACCOUNT_API_SECRET;
+
+export const EDUV_THREAD_ID = dev ? env.EDUV_DEV_THREAD_ID : env.EDUV_THREAD_ID;
+export const EDUV_ACCOUNT_PRIV_KEY = dev
+  ? env.EDUV_DEV_ACCOUNT_PRIV_KEY
+  : env.EDUV_ACCOUNT_PRIV_KEY;
+
 export const SESSION_OPTIONS: session.SessionOptions = {
   secret: APP_SECRET,
   name: 'eduvault.session',
@@ -124,4 +137,6 @@ console.log({
   // PORT_API_HTTP,
   // PORT_API_HTTPS,
   // SESSION_OPTIONS,
+  EDUV_THREAD_ID,
+  EDUV_ACCOUNT_PRIV_KEY,
 });
