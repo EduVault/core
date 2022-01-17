@@ -25,7 +25,8 @@ import {
   EduVaultSync,
   EduVaultPush,
   noteKey,
-} from '@eduvault/sdk-js/dist/main';
+  EduvaultDB,
+} from '@eduvault/sdk-js';
 import {
   createNote,
   deleteNote,
@@ -41,6 +42,7 @@ export interface NotesState {
   saveNewNote: (noteText: string) => Promise<void>;
   removeNote: (noteID: string) => Promise<void>;
   editNote: (note: INote) => Promise<void>;
+  db?: EduvaultDB;
 }
 
 const initialState: NotesState = {
@@ -49,6 +51,7 @@ const initialState: NotesState = {
   saveNewNote: async (noteText: string) => undefined,
   removeNote: async (noteID: string) => undefined,
   editNote: async (note: INote) => undefined,
+  db: undefined,
 };
 
 export const NotesContext = createContext(initialState);
@@ -56,12 +59,11 @@ export const NotesContext = createContext(initialState);
 export const NotesProvider: FC<NotesProps> = ({
   Note,
   children,
-  dbPush,
-  dbSync,
+  push,
+  sync,
+  db,
 }) => {
   const [notes, setNotes] = useState<INote[]>([]);
-  type SyncingState = 'init' | 'syncing' | 'error' | 'complete';
-  const [syncingStatus, setSyncingStatus] = useState<SyncingState>('init');
 
   const remoteReady = useSelector(selectRemoteReady);
   console.log({ remoteReady });
@@ -69,24 +71,23 @@ export const NotesProvider: FC<NotesProps> = ({
   useEffect(() => {
     const startingSync = async () => {
       try {
-        setSyncingStatus('syncing');
-        const { result, error } = await dbSync([noteKey]);
+        // setSyncingStatus('syncing');
+        const { result, error } = await sync([noteKey]);
         if (error) throw error;
-        setSyncingStatus('complete');
+        // setSyncingStatus('complete');
 
-        console.log({ syncResult: result });
         const refreshedNotes = await fetchNotes(Note);
         console.log({ refreshedNotes });
         await setNotes(refreshedNotes);
-        await dbPush([noteKey]);
+        await push([noteKey]);
       } catch (error) {
         console.log({ syncError: error });
-        setSyncingStatus('error');
+        // setSyncingStatus('error');
       }
     };
 
     if (remoteReady) startingSync();
-  }, [dbSync, dbPush, Note, remoteReady]);
+  }, [sync, push, Note, remoteReady]);
 
   useEffect(() => {
     const refresh = async () => {
@@ -95,14 +96,14 @@ export const NotesProvider: FC<NotesProps> = ({
     };
 
     refresh();
-  }, [Note, dbPush]);
+  }, [Note, push]);
 
   const refreshNotes = async () => {
-    console.log({ syncingStatus });
+    // console.log({ syncingStatus });
 
     const refreshedNotes = await fetchNotes(Note);
     setNotes(refreshedNotes);
-    if (remoteReady) dbPush([noteKey]);
+    if (remoteReady) push([noteKey]);
   };
 
   const saveNewNote = (noteText: string) =>
@@ -117,6 +118,7 @@ export const NotesProvider: FC<NotesProps> = ({
     saveNewNote,
     removeNote,
     editNote,
+    db,
   };
   return (
     <NotesContext.Provider value={state}>{children}</NotesContext.Provider>
@@ -124,9 +126,10 @@ export const NotesProvider: FC<NotesProps> = ({
 };
 
 export interface NotesProps {
-  dbSync: EduVaultSync;
-  dbPush: EduVaultPush;
+  sync: EduVaultSync;
+  push: EduVaultPush;
   Note: NoteCollection;
+  db: EduvaultDB;
 }
 
 export const Notes = (props: NotesProps) => (
@@ -150,7 +153,7 @@ export const NotesDashboard = () => {
   };
 
   const handleClose = () => setEditorOpen(false);
-  const { notes, removeNote } = useContext(NotesContext);
+  const { notes, removeNote, db } = useContext(NotesContext);
 
   const editorProps: EditorProps = {
     editorOpen,

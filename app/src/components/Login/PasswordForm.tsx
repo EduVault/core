@@ -68,7 +68,6 @@ export const PasswordForm = ({ submit }: Props) => {
   const handleEnterKeyPassword: React.KeyboardEventHandler<HTMLDivElement> = (
     e
   ) => {
-    console.log(e.key);
     if (e.key === 'Enter') buttonRef?.current?.focus();
   };
 

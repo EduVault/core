@@ -1,30 +1,27 @@
-import React, { useContext } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { FC } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import './App.css';
 import { Login, NavBar, HomePage, AppHome } from './components/';
-import { GuardedRoute } from './components/Library/GuardedRoute';
-import { EduVaultContext } from './EduVaultContext';
+import { RequireAuth } from './components/Library/GuardedRoute';
 
-const App: React.FC = (props) => {
-  const {
-    api: { checkAuth },
-  } = useContext(EduVaultContext);
-
+const App: FC = (props) => {
   return (
     <>
       <NavBar />
       <Router>
-        <Switch>
-          <Route path={'/app/login'} component={Login} />
-          <GuardedRoute
-            auth={checkAuth}
-            path={['/app/']}
-            redirectTo={'app/login'}
-            component={AppHome}
+        <Routes>
+          <Route path="/" element={<HomePage />}></Route>
+          <Route
+            path="/app"
+            element={
+              <RequireAuth>
+                <AppHome />
+              </RequireAuth>
+            }
           />
-          <Route path={['/*', '/home']} component={HomePage} />
-        </Switch>
+          <Route path={'/login'} element={<Login />} />
+        </Routes>
       </Router>
       {props.children}
     </>

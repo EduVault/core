@@ -6,15 +6,13 @@ import {
   Typography,
   Link,
   makeStyles,
-  Button,
 } from '@material-ui/core';
-import { useContext, useEffect } from 'react';
 // import { useState } from 'react';
 import { EduVaultLogoFull } from '../../assets';
-import { EduVaultContext } from '../../EduVaultContext';
 import { useDispatch } from '../../model';
 import { pwLogin } from '../../model/auth';
 import { PasswordForm } from './PasswordForm';
+import LoginButton from './LoginButton';
 
 interface Props {}
 const useStyles = makeStyles((theme) => ({
@@ -65,17 +63,6 @@ export const Login = (props: Props) => {
   // if all three are present
   if (!loginButtonQueriesSearch.includes(false)) hasLoginButtonQueries = true;
 
-  const { setupLoginButton } = useContext(EduVaultContext);
-  useEffect(() => {
-    if (!hasLoginButtonQueries)
-      setupLoginButton({
-        redirectURL: window.origin + '/app', //use origin not href to avoid including query params
-        buttonID: 'eduvault-button',
-        URL_APP: window.origin + '/app/login',
-        log: true,
-      });
-  }, [setupLoginButton, hasLoginButtonQueries]);
-
   return (
     <Container maxWidth="sm">
       <Paper>
@@ -89,24 +76,7 @@ export const Login = (props: Props) => {
           {hasLoginButtonQueries && (
             <PasswordForm submit={handlePasswordSubmit} />
           )}
-          {!hasLoginButtonQueries && (
-            <Button
-              color="secondary"
-              className={classes.button}
-              variant="contained"
-            >
-              {
-                <Link
-                  color="inherit"
-                  underline="none"
-                  href="/"
-                  id="eduvault-button"
-                >
-                  Login with EduVault
-                </Link>
-              }
-            </Button>
-          )}
+          {!hasLoginButtonQueries && <LoginButton />}
         </Box>
       </Paper>
     </Container>

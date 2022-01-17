@@ -1,15 +1,13 @@
-import { authReducer, setState, initialState, setLoggedIn } from './authSlice';
+import { authReducer, setLoggedIn } from './authSlice';
 import { AuthState } from './types';
 describe('authReducer', () => {
   const initialTestState: AuthState = {
-    loggedIn: true,
+    loggedIn: false,
     loggingIn: false,
     error: '',
   };
   it('should handle initial state', () => {
-    expect(authReducer(undefined, { type: 'unknown' })).toEqual(initialState);
-
-    expect(authReducer(undefined, setState(initialTestState))).toEqual(
+    expect(authReducer(undefined, { type: 'unknown' })).toEqual(
       initialTestState
     );
   });

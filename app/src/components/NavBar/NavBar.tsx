@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export const links = [
-  { text: 'Login', location: '/app/login' },
+  { text: 'Login', location: '/login' },
   { text: 'App', location: '/app' },
   { text: 'About Eduvault', location: '/home' },
 ];

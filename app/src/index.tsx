@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider, CssBaseline } from '@material-ui/core';
-import { startWorker } from '@eduvault/sdk-js/dist/main';
+import { startWorker } from '@eduvault/sdk-js';
 
 import './index.css';
 import App from './App';

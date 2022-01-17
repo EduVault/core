@@ -1,13 +1,15 @@
-import { NoteCollection, INote } from '@eduvault/sdk-js/dist/main';
+import { NoteCollection, INote } from '@eduvault/sdk-js';
 import { ulid } from 'ulid';
 
 export const fetchNotes = async (Note: NoteCollection) => {
+  // console.log({ Note });
   const noteInstances = await Note.find({});
   const parsed: INote[] = [];
-  await noteInstances.each((note) => {
-    // console.log(note.toJSON());
-    parsed.push(note.toJSON() as any);
-  });
+  if (noteInstances && Object.keys(noteInstances).length > 0)
+    await noteInstances.each((note) => {
+      // console.log('note to json', note.toJSON());
+      parsed.push(note.toJSON() as any);
+    });
   // console.log({ parsed });
   return parsed;
 };

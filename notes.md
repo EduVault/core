@@ -159,3 +159,46 @@ Ctrl a d
 - [express http to https](https://stackoverflow.com/a/65551891/12662244)
 - [Digital Ocean deploy with github actions CI](https://codememoirs.com/automatic-deployment-digitalocean-github-actions/)
 - [Cypress Dashboard](https://dashboard.cypress.io/projects/obyc2w/)
+
+To support multiple databases, Might need a mapping between threadIds and databases
+Multiple databases might be the easiest way to solve access control.
+You could have a database for basic account info, personal profile, and one for each app. Also a database that just lists the others?
+
+```js
+const dbs = {
+  flashCards: {threadID: 'threadID1', key: 'keyEncrypted by main privkey'}
+  profile: {threadID: 'threadID1', key: 'keyEncrypted by main privkey'}
+
+};
+
+const dbEncryptions ={
+  flashCards: {  }
+
+}
+
+```
+
+On the eduvault landing page, it asks if this app can have access to these parts of your database.
+
+The private keys for each of these are stored in ‘account’
+when you are redirected to the apps page, you can see the private keys for each db with access.
+
+main privKey decrypt key only gets sent if it's the eduvault home page. it uses that to get the list of decrypt keys for each db.
+
+We won't send the main private key anymore. We will open as many dbs as we get access for.
+
+first issue to resolve is the textile accounts thing.
+
+This multiple databases thing is an upgrade for later.
+
+After solving textile, I need to solve the syncing/overwriting issue, to make the db nice to use in an app.
+
+then i need to write enough to make it let it signup third party apps. Host the mini flashcard app on netlify and see if the https stuff works.
+
+finally I can start integrating into IPFC.
+
+only then should I start beefing out eduvault with more features. The features that we need will become evident as I use it in IPFC.
+Actually I'll need to do a second app, like maybe the browser extension and see how they need to share data.
+
+Then I'll try making eduvault be a homepage for your notes, cards, reminders, progress bars etc.
+You should be able to usew eduvault as your homepage, but still use each app independently of eduvault.
