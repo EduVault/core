@@ -35,6 +35,7 @@
     "build": "react-scripts build",
     "test:watch": "react-scripts test --env=./jest-env.js --watchAll",
     "test": "CI=true react-scripts test --coverage --env=./jest-env.js --watchAll=false",
+    "test:clear-cache": "react-scripts test --clearCache",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -57,5 +58,10 @@
   },
   "msw": {
     "workerDirectory": "public"
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "/node_modules/(?!@eduvault/sdk-js)/"
+    ]
   }
 }
