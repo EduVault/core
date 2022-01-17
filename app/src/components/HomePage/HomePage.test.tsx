@@ -8,6 +8,6 @@ test('renders HomePage', () => {
       <HomePage></HomePage>
     </WrapProviders>
   );
-  const homeText = screen.getByText('welcome to eduvault');
+  const homeText = screen.getByText('welcome to eduvault home page');
   expect(homeText).toBeVisible();
 });
