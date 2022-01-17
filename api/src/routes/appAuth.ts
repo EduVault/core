@@ -15,20 +15,27 @@ const appAuth = function (router: Router, passport: passport.PassportStatic) {
   // let response: Response;
   // let storedNext: (...args: any) => any;
   router.post(API_ROUTES.APP_AUTH, restrictToOfficialApp, (req, res, next) => {
-    passport.authenticate(
-      'app-auth',
-      (error: string | undefined, appPerson: AppPerson) => {
-        console.log('app auth route callback', { error, appPerson });
-        if (error) return respondError(res, 'passportError', error);
-
-        const returnData: AppAuthRes = {
-          jwt: req.session.jwt,
-          oldJwt: req.session.oldJwt,
-        };
-        sessionLogin({ req, res, appPerson });
-        respond(res)(returnData);
-      }
-    )(req, res, next);
+    if (req.isAuthenticated()) {
+      const returnData: AppAuthRes = {
+        jwt: req.session.jwt,
+        oldJwt: req.session.oldJwt,
+      };
+      respond(res)(returnData);
+    } else {
+      passport.authenticate(
+        'app-auth',
+        (error: string | undefined, appPerson: AppPerson) => {
+          console.log('app auth route callback', { error, appPerson });
+          if (error) return respondError(res, 'passportError', error);
+          const returnData: AppAuthRes = {
+            jwt: req.session.jwt,
+            oldJwt: req.session.oldJwt,
+          };
+          sessionLogin({ req, res, appPerson });
+          respond(res)(returnData);
+        }
+      )(req, res, next);
+    }
   });
 
   return router;
