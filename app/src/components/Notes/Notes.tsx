@@ -16,6 +16,7 @@ import {
   FC,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import AddIcon from '@material-ui/icons/Add';
@@ -67,12 +68,16 @@ export const NotesProvider: FC<NotesProps> = ({
 
   const remoteReady = useSelector(selectRemoteReady);
   console.log({ remoteReady });
-
+  const mounted = useRef(false);
   useEffect(() => {
     const startingSync = async () => {
+      if (mounted.current === null) return; //can solve unmounted error
       try {
         // setSyncingStatus('syncing');
-        const { result, error } = await sync([noteKey]);
+        const {
+          // result,
+          error,
+        } = await sync([noteKey]);
         if (error) throw error;
         // setSyncingStatus('complete');
 
@@ -153,7 +158,7 @@ export const NotesDashboard = () => {
   };
 
   const handleClose = () => setEditorOpen(false);
-  const { notes, removeNote, db } = useContext(NotesContext);
+  const { notes, removeNote } = useContext(NotesContext);
 
   const editorProps: EditorProps = {
     editorOpen,
