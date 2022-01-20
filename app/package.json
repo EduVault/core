@@ -61,7 +61,7 @@
   },
   "jest": {
     "transformIgnorePatterns": [
-      "/node_modules/(?!@eduvault/sdk-js)/"
+      "node_modules"
     ]
   }
 }

@@ -1,4 +1,4 @@
-import EduVault from '@eduvault/sdk-js/dist/main';
+import EduVault from '@eduvault/sdk-js';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { URL_API, URL_WS_API } from './config';
