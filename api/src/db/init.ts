@@ -64,8 +64,7 @@ export const startRemoteDB = async (
       console.log({ initializeError: error });
     }
   } // console.log({ remote, token });
-  remote.config.metadata?.set('x-textile-thread-name', db.dexie.name);
-  remote.config.metadata?.set('x-textile-thread', db.id || '');
+  // save token to localStorage
 };
 
 export const startRemoteDBAccount = async (db: Database) => {
