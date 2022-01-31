@@ -57,6 +57,15 @@ const initialState: NotesState = {
 
 export const NotesContext = createContext(initialState);
 
+export type DBCoreMutateResponse = {
+  numFailures: number;
+  failures: {
+    [operationNumber: number]: Error;
+  };
+  lastResult: any;
+  results?: any[] | undefined;
+};
+
 export const NotesProvider: FC<NotesProps> = ({
   Note,
   children,
@@ -73,6 +82,7 @@ export const NotesProvider: FC<NotesProps> = ({
     const startingSync = async () => {
       if (mounted.current === null) return; //can solve unmounted error
       try {
+        // console.log('starting startingSync');
         // setSyncingStatus('syncing');
         const {
           // result,
@@ -82,9 +92,9 @@ export const NotesProvider: FC<NotesProps> = ({
         // setSyncingStatus('complete');
 
         const refreshedNotes = await fetchNotes(Note);
-        console.log({ refreshedNotes });
+        // console.log({ refreshedNotes });
         await setNotes(refreshedNotes);
-        await push([noteKey]);
+        push([noteKey]);
       } catch (error) {
         console.log({ syncError: error });
         // setSyncingStatus('error');
@@ -92,7 +102,7 @@ export const NotesProvider: FC<NotesProps> = ({
     };
 
     if (remoteReady) startingSync();
-  }, [sync, push, Note, remoteReady]);
+  }, [sync, push, Note, remoteReady, db]);
 
   useEffect(() => {
     const refresh = async () => {
@@ -101,22 +111,24 @@ export const NotesProvider: FC<NotesProps> = ({
     };
 
     refresh();
-  }, [Note, push]);
+
+    db.registerLocalListener(async (req, res, tableName) => {
+      console.log({ req, res, tableName });
+      const refreshedNotes = await fetchNotes(Note);
+      setNotes(refreshedNotes);
+    });
+  }, [Note, push, db]);
 
   const refreshNotes = async () => {
-    // console.log({ syncingStatus });
-
     const refreshedNotes = await fetchNotes(Note);
     setNotes(refreshedNotes);
     if (remoteReady) push([noteKey]);
   };
 
-  const saveNewNote = (noteText: string) =>
-    createNote(Note, noteText, refreshNotes);
+  const saveNewNote = (noteText: string) => createNote(Note, noteText);
+  const removeNote = (noteID: string) => deleteNote(Note, noteID);
+  const editNote = (note: INote) => updateNote(Note, note);
 
-  const removeNote = (noteID: string) => deleteNote(Note, noteID, refreshNotes);
-
-  const editNote = (note: INote) => updateNote(Note, note, refreshNotes);
   const state: NotesState = {
     notes,
     refreshNotes,
