@@ -34,8 +34,8 @@ import {
   fetchNotes,
   updateNote,
 } from '../../model/note';
-import { useSelector } from 'react-redux';
-import { selectRemoteReady } from '../../model/db';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectRemoteReady, selectSyncing, setSyncing } from '../../model/db';
 
 export interface NotesState {
   refreshNotes: () => Promise<void>;
@@ -103,7 +103,7 @@ export const NotesProvider: FC<NotesProps> = ({
 
     if (remoteReady) startingSync();
   }, [sync, push, Note, remoteReady, db]);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     const refresh = async () => {
       const refreshedNotes = await fetchNotes(Note);
@@ -113,11 +113,14 @@ export const NotesProvider: FC<NotesProps> = ({
     refresh();
 
     db.registerLocalListener(async (req, res, tableName) => {
-      console.log({ req, res, tableName });
+      console.log('table updated', tableName);
       const refreshedNotes = await fetchNotes(Note);
       setNotes(refreshedNotes);
     });
-  }, [Note, push, db]);
+    db.onSyncingChange = () => {
+      dispatch(setSyncing(db.getIsSyncing()));
+    };
+  }, [Note, dispatch, db]);
 
   const refreshNotes = async () => {
     const refreshedNotes = await fetchNotes(Note);
@@ -168,7 +171,7 @@ export const NotesDashboard = () => {
     setSelectedNote(noteID);
     setEditorOpen(true);
   };
-
+  const syncing = useSelector(selectSyncing);
   const handleClose = () => setEditorOpen(false);
   const { notes, removeNote } = useContext(NotesContext);
 
@@ -184,13 +187,20 @@ export const NotesDashboard = () => {
         <Box marginRight={4}>
           <Typography variant="h2">Notes</Typography>
         </Box>
-        <Fab onClick={() => handleClickOpen()} color="primary" aria-label="add">
+        <Fab
+          disabled={syncing}
+          onClick={() => handleClickOpen()}
+          color="primary"
+          aria-label="add"
+        >
           <AddIcon />
         </Fab>
       </Box>
 
       {editorOpen && <NoteEditor {...editorProps}></NoteEditor>}
-
+      <Typography variant="h2">
+        {syncing ? 'syncing' : ' not syncing'}
+      </Typography>
       <Box display="flex" flexWrap="wrap" justifyContent="center">
         {notes &&
           notes.length > 0 &&
@@ -206,10 +216,19 @@ export const NotesDashboard = () => {
                   justifyContent="space-between"
                   padding={1}
                 >
-                  <Button onClick={() => handleClickOpen('edit', note._id)}>
+                  <Button
+                    disabled={syncing}
+                    onClick={() => handleClickOpen('edit', note._id)}
+                  >
                     EDIT
                   </Button>
-                  <Button onClick={() => removeNote(note._id)}> DELETE</Button>
+                  <Button
+                    disabled={syncing}
+                    onClick={() => removeNote(note._id)}
+                  >
+                    {' '}
+                    DELETE
+                  </Button>
                 </Box>
               </Card>
             </Box>

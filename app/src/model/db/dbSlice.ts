@@ -8,6 +8,7 @@ export const initialState: DBState = {
   localReady: false,
   remoteReady: false,
   error: '',
+  syncing: false,
 };
 
 const DBSlice = createSlice({
@@ -29,6 +30,9 @@ const DBSlice = createSlice({
     setDBError: (state, action) => {
       state.error = action.payload;
     },
+    setSyncing: (state, action: PayloadAction<boolean>) => {
+      state.syncing = action.payload;
+    },
   },
 });
 
@@ -38,6 +42,7 @@ export const {
   setStartingLocal,
   setLocalReady,
   setRemoteReady,
+  setSyncing,
 } = DBSlice.actions;
 
 export const selectStartingLocal = (state: RootState) => state.db.startingLocal;
@@ -45,5 +50,6 @@ export const selectLocalReady = (state: RootState) => state.db.localReady;
 export const selectRemoteReady = (state: RootState) => state.db.remoteReady;
 export const selectDBError = (state: RootState) => state.db.error;
 export const selectDBState = (state: RootState) => state.db;
+export const selectSyncing = (state: RootState) => state.db.syncing;
 
 export const dbReducer = DBSlice.reducer;

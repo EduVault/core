@@ -3,4 +3,5 @@ export interface DBState {
   localReady: boolean;
   remoteReady: boolean;
   error: string;
+  syncing: boolean;
 }
