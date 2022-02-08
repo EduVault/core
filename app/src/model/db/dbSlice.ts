@@ -26,6 +26,7 @@ const DBSlice = createSlice({
       state.localReady = action.payload;
     },
     setRemoteReady: (state, action: PayloadAction<boolean>) => {
+      console.log('setRemoteReady', action.payload);
       state.remoteReady = action.payload;
     },
     setClientReady: (state, action: PayloadAction<boolean>) => {
@@ -53,6 +54,7 @@ export const {
 export const selectStartingLocal = (state: RootState) => state.db.startingLocal;
 export const selectLocalReady = (state: RootState) => state.db.localReady;
 export const selectRemoteReady = (state: RootState) => state.db.remoteReady;
+export const selectClientReady = (state: RootState) => state.db.clientReady;
 export const selectDBError = (state: RootState) => state.db.error;
 export const selectDBState = (state: RootState) => state.db;
 export const selectSyncing = (state: RootState) => state.db.syncing;

@@ -14,6 +14,7 @@ import {
   ChangeEvent,
   createContext,
   FC,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -27,6 +28,8 @@ import {
   EduVaultPush,
   noteKey,
   EduvaultDB,
+  Update,
+  ThreadID,
 } from '@eduvault/sdk-js';
 import {
   createNote,
@@ -35,7 +38,12 @@ import {
   updateNote,
 } from '../../model/note';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectRemoteReady, selectSyncing, setSyncing } from '../../model/db';
+import {
+  selectClientReady,
+  selectRemoteReady,
+  selectSyncing,
+  setSyncing,
+} from '../../model/db';
 
 export interface NotesState {
   refreshNotes: () => Promise<void>;
@@ -73,12 +81,17 @@ export const NotesProvider: FC<NotesProps> = ({
   sync,
   db,
 }) => {
+  const dispatch = useDispatch();
+
   const [notes, setNotes] = useState<INote[]>([]);
 
   const remoteReady = useSelector(selectRemoteReady);
+  const clientReady = useSelector(selectClientReady);
+
   const mounted = useRef(false);
   useEffect(() => {
-    const startingSync = async () => {
+    // to be run one time on remote ready
+    const appStartupSync = async () => {
       if (mounted.current === null) return; //can solve unmounted error
       try {
         const {
@@ -94,32 +107,43 @@ export const NotesProvider: FC<NotesProps> = ({
       }
     };
 
-    if (remoteReady) startingSync();
+    if (remoteReady) appStartupSync();
   }, [sync, push, Note, remoteReady, db]);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    const refresh = async () => {
-      const refreshedNotes = await fetchNotes(Note);
-      setNotes(refreshedNotes);
-    };
 
-    refresh();
-
-    db.registerLocalListener(async (req, res, tableName) => {
-      // console.log('table updated', tableName);
-      const refreshedNotes = await fetchNotes(Note);
-      setNotes(refreshedNotes);
-    });
-    db.onSyncingChange = () => {
-      dispatch(setSyncing(db.getIsSyncing()));
-    };
-  }, [Note, dispatch, db]);
-
-  const refreshNotes = async () => {
+  const refreshNotes = useCallback(async () => {
     const refreshedNotes = await fetchNotes(Note);
     setNotes(refreshedNotes);
-    if (remoteReady) push([noteKey]);
+    push([noteKey]);
+  }, [Note, push]);
+
+  db.onSyncingChange = () => {
+    dispatch(setSyncing(db.getIsSyncing()));
   };
+  db.registerLocalListener(async (req, res, tableName) => {
+    refreshNotes();
+  });
+
+  // to be run on startup
+  useEffect(() => {
+    refreshNotes();
+  }, [Note, dispatch, db, refreshNotes]);
+
+  useEffect(() => {
+    const setupListener = async () => {
+      if (clientReady && db.id) {
+        const threads = await db.client.listThreads();
+        console.log({ threads });
+        console.log('setting up client listener');
+        const callback = (update?: Update<INote>) => {
+          if (!update || !update.instance) return;
+          console.log('New update:', update);
+        };
+        // const filters = [{ collectionName: 'note' }];
+        db.client.listen(ThreadID.fromString(db.id), [], callback);
+      }
+    };
+    setupListener();
+  }, [clientReady, db]);
 
   const saveNewNote = (noteText: string) => createNote(Note, noteText);
   const removeNote = (noteID: string) => deleteNote(Note, noteID);
