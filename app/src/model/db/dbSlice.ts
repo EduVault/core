@@ -9,6 +9,7 @@ export const initialState: DBState = {
   remoteReady: false,
   error: '',
   syncing: false,
+  clientReady: false,
 };
 
 const DBSlice = createSlice({
@@ -27,6 +28,9 @@ const DBSlice = createSlice({
     setRemoteReady: (state, action: PayloadAction<boolean>) => {
       state.remoteReady = action.payload;
     },
+    setClientReady: (state, action: PayloadAction<boolean>) => {
+      state.clientReady = action.payload;
+    },
     setDBError: (state, action) => {
       state.error = action.payload;
     },
@@ -42,6 +46,7 @@ export const {
   setStartingLocal,
   setLocalReady,
   setRemoteReady,
+  setClientReady,
   setSyncing,
 } = DBSlice.actions;
 
