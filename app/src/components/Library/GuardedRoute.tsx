@@ -40,13 +40,6 @@ export const RequireAuth: FC<any> = ({ children }) => {
   const loginError = useSelector(selectLoginError);
   const loading = checkingAuth || loggingIn;
   const authenticated = loggedIn || authCheckResult;
-  console.log({
-    loading,
-    authenticated,
-    loggingIn,
-    authCheckResult: authCheckResult,
-    checkingAuth: checkingAuth,
-  });
 
   if (loading) return <LoadingAuthScreen />;
   else if (loginError) return <RedirectToLogin />;

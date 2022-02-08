@@ -19,7 +19,7 @@ export const AppHome = (props: Props) => {
   const Note = db?.coreCollections ? db.coreCollections.Note : null;
   const sync = db?.sync;
   const push = db?.push;
-  console.log({ db, dbError, dbState, localReady, Note, sync, push });
+
   return (
     <Container>
       <Typography variant="h4">Eduvault App</Typography>
