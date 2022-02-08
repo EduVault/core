@@ -76,28 +76,21 @@ export const NotesProvider: FC<NotesProps> = ({
   const [notes, setNotes] = useState<INote[]>([]);
 
   const remoteReady = useSelector(selectRemoteReady);
-  console.log({ remoteReady });
   const mounted = useRef(false);
   useEffect(() => {
     const startingSync = async () => {
       if (mounted.current === null) return; //can solve unmounted error
       try {
-        // console.log('starting startingSync');
-        // setSyncingStatus('syncing');
         const {
           // result,
           error,
         } = await sync([noteKey]);
         if (error) throw error;
-        // setSyncingStatus('complete');
-
         const refreshedNotes = await fetchNotes(Note);
-        // console.log({ refreshedNotes });
         await setNotes(refreshedNotes);
         push([noteKey]);
       } catch (error) {
         console.log({ syncError: error });
-        // setSyncingStatus('error');
       }
     };
 
@@ -113,7 +106,7 @@ export const NotesProvider: FC<NotesProps> = ({
     refresh();
 
     db.registerLocalListener(async (req, res, tableName) => {
-      console.log('table updated', tableName);
+      // console.log('table updated', tableName);
       const refreshedNotes = await fetchNotes(Note);
       setNotes(refreshedNotes);
     });
