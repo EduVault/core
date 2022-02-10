@@ -169,11 +169,11 @@ export const NotesDashboard = () => {
   const syncing = useSelector(selectSyncing);
   const { notes, deleteNote } = useContext(NotesContext);
 
-  const [editorOpen, setEditorOpen] = useState(false);
+  const [isEditorOpen, setEditorOpen] = useState(false);
   const [editorMode, setEditorMode] = useState<'new' | 'edit'>('new');
   const [selectedNote, setSelectedNote] = useState('');
 
-  const handleClickOpen = (
+  const handleOpenEditor = (
     mode: 'new' | 'edit' = 'new',
     noteID: string = ''
   ) => {
@@ -181,7 +181,7 @@ export const NotesDashboard = () => {
     setEditorMode(mode);
     setSelectedNote(noteID);
   };
-  const handleClose = () => setEditorOpen(false);
+  const handleCloseEditor = () => setEditorOpen(false);
 
   return (
     <Box display="flex" flexDirection="column" textAlign="center">
@@ -191,7 +191,7 @@ export const NotesDashboard = () => {
         </Box>
         <Fab
           disabled={syncing}
-          onClick={() => handleClickOpen()}
+          onClick={() => handleOpenEditor()}
           color="primary"
           aria-label="add"
         >
@@ -199,11 +199,11 @@ export const NotesDashboard = () => {
         </Fab>
       </Box>
 
-      {editorOpen && (
+      {isEditorOpen && (
         <NoteEditor
           {...{
-            editorOpen,
-            handleClose,
+            isEditorOpen,
+            handleClose: handleCloseEditor,
             mode: editorMode,
             noteID: selectedNote,
           }}
@@ -214,7 +214,14 @@ export const NotesDashboard = () => {
         {notes &&
           notes.length > 0 &&
           notes.map((note) => (
-            <NoteCard {...{ note, syncing, deleteNote, handleClickOpen }} />
+            <NoteCard
+              {...{
+                note,
+                syncing,
+                deleteNote,
+                handleEditorOpen: handleOpenEditor,
+              }}
+            />
           ))}
       </Box>
     </Box>
@@ -225,13 +232,13 @@ export interface NoteCardProps {
   note: INote;
   syncing: boolean;
   deleteNote: NotesState['deleteNote'];
-  handleClickOpen: (mode?: 'new' | 'edit', noteID?: string) => void;
+  handleEditorOpen: (mode?: 'new' | 'edit', noteID?: string) => void;
 }
 
 export const NoteCard: FC<NoteCardProps> = ({
   note,
   syncing,
-  handleClickOpen,
+  handleEditorOpen,
   deleteNote,
 }) => {
   return (
@@ -243,7 +250,7 @@ export const NoteCard: FC<NoteCardProps> = ({
         <Box display="flex" justifyContent="space-between" padding={1}>
           <Button
             disabled={syncing}
-            onClick={() => handleClickOpen('edit', note._id)}
+            onClick={() => handleEditorOpen('edit', note._id)}
           >
             EDIT
           </Button>
@@ -256,13 +263,13 @@ export const NoteCard: FC<NoteCardProps> = ({
   );
 };
 export interface EditorProps {
-  editorOpen: boolean;
+  isEditorOpen: boolean;
   handleClose: () => void;
   mode: 'edit' | 'new';
   noteID: INote['_id'];
 }
 export const NoteEditor = ({
-  editorOpen,
+  isEditorOpen,
   handleClose,
   mode,
   noteID,
@@ -304,7 +311,7 @@ export const NoteEditor = ({
 
   return (
     <Dialog
-      open={editorOpen}
+      open={isEditorOpen}
       onClose={handleClose}
       aria-labelledby="form-dialog-title"
     >
