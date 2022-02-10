@@ -32,10 +32,10 @@ import {
   ThreadID,
 } from '@eduvault/sdk-js';
 import {
-  createNote,
-  deleteNote,
+  noteCreate,
+  noteDelete,
   fetchNotes,
-  updateNote,
+  noteUpdate,
 } from '../../model/note';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -46,33 +46,24 @@ import {
 } from '../../model/db';
 
 export interface NotesState {
-  refreshNotes: () => Promise<void>;
   notes: INote[];
-  saveNewNote: (noteText: string) => Promise<void>;
-  removeNote: (noteID: string) => Promise<void>;
-  editNote: (note: INote) => Promise<void>;
+  createNote: (noteText: string) => Promise<void>;
+  refreshNotes: () => Promise<void>;
+  updateNote: (note: INote) => Promise<void>;
+  deleteNote: (note: INote) => Promise<void>;
   db?: EduvaultDB;
 }
 
 const initialState: NotesState = {
-  refreshNotes: async () => undefined,
   notes: [],
-  saveNewNote: async (noteText: string) => undefined,
-  removeNote: async (noteID: string) => undefined,
-  editNote: async (note: INote) => undefined,
+  createNote: async (noteText: string) => undefined,
+  refreshNotes: async () => undefined,
+  updateNote: async (note: INote) => undefined,
+  deleteNote: async (note: INote) => undefined,
   db: undefined,
 };
 
 export const NotesContext = createContext(initialState);
-
-export type DBCoreMutateResponse = {
-  numFailures: number;
-  failures: {
-    [operationNumber: number]: Error;
-  };
-  lastResult: any;
-  results?: any[] | undefined;
-};
 
 export const NotesProvider: FC<NotesProps> = ({
   Note,
@@ -109,16 +100,15 @@ export const NotesProvider: FC<NotesProps> = ({
 
     if (remoteReady) appStartupSync();
   }, [sync, push, Note, remoteReady, db]);
+  db.onSyncingChange = () => {
+    dispatch(setSyncing(db.getIsSyncing()));
+  };
 
   const refreshNotes = useCallback(async () => {
     const refreshedNotes = await fetchNotes(Note);
     setNotes(refreshedNotes);
     push([noteKey]);
   }, [Note, push]);
-
-  db.onSyncingChange = () => {
-    dispatch(setSyncing(db.getIsSyncing()));
-  };
   db.registerLocalListener(async (req, res, tableName) => {
     refreshNotes();
   });
@@ -145,16 +135,16 @@ export const NotesProvider: FC<NotesProps> = ({
     setupListener();
   }, [clientReady, db]);
 
-  const saveNewNote = (noteText: string) => createNote(Note, noteText);
-  const removeNote = (noteID: string) => deleteNote(Note, noteID);
-  const editNote = (note: INote) => updateNote(Note, note);
+  const createNote = (noteText: string) => noteCreate(Note, noteText);
+  const updateNote = (note: INote) => noteUpdate(Note, note);
+  const deleteNote = (note: INote) => noteDelete(Note, note);
 
   const state: NotesState = {
     notes,
+    createNote,
     refreshNotes,
-    saveNewNote,
-    removeNote,
-    editNote,
+    updateNote,
+    deleteNote,
     db,
   };
   return (
@@ -176,6 +166,9 @@ export const Notes = (props: NotesProps) => (
 );
 
 export const NotesDashboard = () => {
+  const syncing = useSelector(selectSyncing);
+  const { notes, deleteNote } = useContext(NotesContext);
+
   const [editorOpen, setEditorOpen] = useState(false);
   const [editorMode, setEditorMode] = useState<'new' | 'edit'>('new');
   const [selectedNote, setSelectedNote] = useState('');
@@ -184,20 +177,12 @@ export const NotesDashboard = () => {
     mode: 'new' | 'edit' = 'new',
     noteID: string = ''
   ) => {
+    setEditorOpen(true);
     setEditorMode(mode);
     setSelectedNote(noteID);
-    setEditorOpen(true);
   };
-  const syncing = useSelector(selectSyncing);
   const handleClose = () => setEditorOpen(false);
-  const { notes, removeNote } = useContext(NotesContext);
 
-  const editorProps: EditorProps = {
-    editorOpen,
-    handleClose,
-    mode: editorMode,
-    noteID: selectedNote,
-  };
   return (
     <Box display="flex" flexDirection="column" textAlign="center">
       <Box margin="auto" alignItems="center" display="flex">
@@ -214,47 +199,62 @@ export const NotesDashboard = () => {
         </Fab>
       </Box>
 
-      {editorOpen && <NoteEditor {...editorProps}></NoteEditor>}
-      <Typography variant="h2">
-        {syncing ? 'syncing' : ' not syncing'}
-      </Typography>
+      {editorOpen && (
+        <NoteEditor
+          {...{
+            editorOpen,
+            handleClose,
+            mode: editorMode,
+            noteID: selectedNote,
+          }}
+        ></NoteEditor>
+      )}
+
       <Box display="flex" flexWrap="wrap" justifyContent="center">
         {notes &&
           notes.length > 0 &&
           notes.map((note) => (
-            <Box key={note._id} margin={4} width={200}>
-              <Card>
-                <Box padding={4} width={200} minHeight={200}>
-                  {note.text}
-                </Box>
-                <Box
-                  width="100%"
-                  display="flex"
-                  justifyContent="space-between"
-                  padding={1}
-                >
-                  <Button
-                    disabled={syncing}
-                    onClick={() => handleClickOpen('edit', note._id)}
-                  >
-                    EDIT
-                  </Button>
-                  <Button
-                    disabled={syncing}
-                    onClick={() => removeNote(note._id)}
-                  >
-                    {' '}
-                    DELETE
-                  </Button>
-                </Box>
-              </Card>
-            </Box>
+            <NoteCard {...{ note, syncing, deleteNote, handleClickOpen }} />
           ))}
       </Box>
     </Box>
   );
 };
 
+export interface NoteCardProps {
+  note: INote;
+  syncing: boolean;
+  deleteNote: NotesState['deleteNote'];
+  handleClickOpen: (mode?: 'new' | 'edit', noteID?: string) => void;
+}
+
+export const NoteCard: FC<NoteCardProps> = ({
+  note,
+  syncing,
+  handleClickOpen,
+  deleteNote,
+}) => {
+  return (
+    <Box key={note._id} margin={4} width={200}>
+      <Card>
+        <Box padding={4} width={200} minHeight={200}>
+          {note.text}
+        </Box>
+        <Box display="flex" justifyContent="space-between" padding={1}>
+          <Button
+            disabled={syncing}
+            onClick={() => handleClickOpen('edit', note._id)}
+          >
+            EDIT
+          </Button>
+          <Button disabled={syncing} onClick={() => deleteNote(note)}>
+            DELETE
+          </Button>
+        </Box>
+      </Card>
+    </Box>
+  );
+};
 export interface EditorProps {
   editorOpen: boolean;
   handleClose: () => void;
@@ -267,27 +267,31 @@ export const NoteEditor = ({
   mode,
   noteID,
 }: EditorProps) => {
-  const [noteText, setNoteText] = useState('');
+  const { createNote, updateNote, notes } = useContext(NotesContext);
+
   const [note, setNote] = useState<INote>();
-  const { saveNewNote, editNote, notes } = useContext(NotesContext);
+  const [noteText, setNoteText] = useState('');
+
   const selectedNote: INote | undefined = notes.find(
     (note) => note._id === noteID
   );
+
   useEffect(() => {
     if (selectedNote) {
       setNote(selectedNote);
       setNoteText(selectedNote.text);
     }
   }, [selectedNote]);
-  const editMode = mode === 'edit';
 
   const handleEditConfirm = () => {
     if (!note) return;
-    editNote(note);
+    updateNote(note);
   };
 
+  const editMode = mode === 'edit';
+
   const handleConfirm = () => {
-    if (!editMode) saveNewNote(noteText);
+    if (!editMode) createNote(noteText);
     else if (editMode) handleEditConfirm();
     setNoteText('');
     handleClose();
