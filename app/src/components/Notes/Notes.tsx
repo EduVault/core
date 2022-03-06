@@ -31,6 +31,7 @@ import {
   Update,
   ThreadID,
 } from '@eduvault/sdk-js';
+import { debounce } from 'lodash';
 import {
   noteCreate,
   noteDelete,
@@ -40,7 +41,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectClientReady,
-  selectRemoteReady,
+  // selectRemoteReady,
   selectSyncing,
   setSyncing,
 } from '../../model/db';
@@ -49,7 +50,7 @@ export interface NotesState {
   notes: INote[];
   createNote: (noteText: string) => Promise<void>;
   refreshNotes: () => Promise<void>;
-  updateNote: (note: INote) => Promise<void>;
+  updateNote: (note: INote) => Promise<boolean>;
   deleteNote: (note: INote) => Promise<void>;
   db?: EduvaultDB;
 }
@@ -58,7 +59,7 @@ const initialState: NotesState = {
   notes: [],
   createNote: async (noteText: string) => undefined,
   refreshNotes: async () => undefined,
-  updateNote: async (note: INote) => undefined,
+  updateNote: async (note: INote) => false,
   deleteNote: async (note: INote) => undefined,
   db: undefined,
 };
@@ -75,69 +76,88 @@ export const NotesProvider: FC<NotesProps> = ({
   const dispatch = useDispatch();
 
   const [notes, setNotes] = useState<INote[]>([]);
+  const createNote = (noteText: string) => noteCreate(Note, noteText);
+  const updateNote = useCallback(
+    (note: INote, updateUpdatedAt = true) =>
+      noteUpdate(Note, note, updateUpdatedAt),
+    [Note]
+  );
+  const deleteNote = (note: INote) => noteDelete(Note, note);
 
-  const remoteReady = useSelector(selectRemoteReady);
+  // const remoteReady = useSelector(selectRemoteReady);
   const clientReady = useSelector(selectClientReady);
-
+  // console.log('clientReady', clientReady);
   const mounted = useRef(false);
+
+  const debouncedPush = useRef(
+    debounce(async () => {
+      push([noteKey]);
+    }, 3000)
+  ).current;
+
   useEffect(() => {
     // to be run one time on remote ready
     const appStartupSync = async () => {
       if (mounted.current === null) return; //can solve unmounted error
       try {
-        const {
-          // result,
-          error,
-        } = await sync([noteKey]);
+        const { result, error } = await sync([noteKey]);
+        console.log('appStartupSync', result, error);
         if (error) throw error;
         const refreshedNotes = await fetchNotes(Note);
         await setNotes(refreshedNotes);
+
         push([noteKey]);
       } catch (error) {
         console.log({ syncError: error });
       }
     };
 
-    if (remoteReady) appStartupSync();
-  }, [sync, push, Note, remoteReady, db]);
+    if (clientReady) appStartupSync();
+  }, [sync, push, Note, clientReady, db]);
+
   db.onSyncingChange = () => {
+    // console.log('syncing change', db.getIsSyncing());
     dispatch(setSyncing(db.getIsSyncing()));
   };
 
   const refreshNotes = useCallback(async () => {
     const refreshedNotes = await fetchNotes(Note);
     setNotes(refreshedNotes);
-    push([noteKey]);
-  }, [Note, push]);
-  db.registerLocalListener(async (req, res, tableName) => {
+    console.log('refreshed notes ', clientReady, refreshedNotes);
+    console.log('before debounce, time: ', new Date().getSeconds());
+    debouncedPush();
+  }, [Note, debouncedPush, clientReady]);
+
+  db.registerDexieListener(async (req, res, tableName) => {
     refreshNotes();
   });
 
   // to be run on startup
-  useEffect(() => {
-    refreshNotes();
-  }, [Note, dispatch, db, refreshNotes]);
+  // dont need anymore because register local listener will trigger refresh
+  // useEffect(() => {
+  //   refreshNotes();
+  // }, [refreshNotes]);
 
   useEffect(() => {
-    const setupListener = async () => {
+    const setupClientListener = async () => {
       if (clientReady && db.id) {
-        const threads = await db.client.listThreads();
-        console.log({ threads });
-        console.log('setting up client listener');
-        const callback = (update?: Update<INote>) => {
+        // const threads = await db.client.listThreads();
+        // console.log({ threads });
+        // console.log('setting up client listener');
+        const callback = async (update?: Update<INote>) => {
           if (!update || !update.instance) return;
-          console.log('New update:', update);
+          console.log('New remote update:', update);
+          // Important: pass false here to prevent the _updatedAt from being updated by updateNote.
+          const changed = await updateNote(update.instance, false);
+          console.log({ changed });
+          if (changed) refreshNotes();
         };
         // const filters = [{ collectionName: 'note' }];
         db.client.listen(ThreadID.fromString(db.id), [], callback);
       }
     };
-    setupListener();
-  }, [clientReady, db]);
-
-  const createNote = (noteText: string) => noteCreate(Note, noteText);
-  const updateNote = (note: INote) => noteUpdate(Note, note);
-  const deleteNote = (note: INote) => noteDelete(Note, note);
+    setupClientListener();
+  }, [clientReady, db, refreshNotes, updateNote]);
 
   const state: NotesState = {
     notes,
@@ -213,8 +233,9 @@ export const NotesDashboard = () => {
       <Box display="flex" flexWrap="wrap" justifyContent="center">
         {notes &&
           notes.length > 0 &&
-          notes.map((note) => (
+          notes.map((note, i) => (
             <NoteCard
+              key={i}
               {...{
                 note,
                 syncing,

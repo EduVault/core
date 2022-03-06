@@ -21,7 +21,7 @@ export const eduvault = new EduVault({
 export const EduVaultContext = React.createContext(eduvault);
 export const EduVaultProvider: React.FC = ({ children }) => {
   const dispatch = useDispatch();
-
+  console.log('EduVaultProvider');
   useEffect(() => {
     eduvault.load({
       log: true,

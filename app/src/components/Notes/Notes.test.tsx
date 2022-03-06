@@ -1,6 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { WrapProviders } from '../..';
-import { Notes } from './Notes';
 
 // TODO: mock collections for tests
 test('renders Notes', () => {
