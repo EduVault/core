@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - staging
+      - main
 
 jobs:
   build-and-test-application:
@@ -17,8 +18,8 @@ jobs:
           node-version: '12.x'
           cache: 'npm'
 
-      - name: Make sure local links are gone
-        run: npm run unlink-sdk
+      # - name: Make sure local links are gone
+      #   run: npm run unlink-sdk
 
       - name: Create .env
         uses: weyheyhey/create-dotenv-action@v1
@@ -35,7 +36,7 @@ jobs:
           ^PORT_DOCKER: 8083
 
       - name: Install application
-        run: npm run inst:ci
+        run: npm run inst
 
       - name: Make SSL certs
         run: npm run ssl-certs:ci
@@ -91,8 +92,8 @@ jobs:
         env:
           ^REACT_APP_HOST: 'eduvault.org'
 
-      - name: Make sure local links are gone, get latest version of sdk
-        run: npm run unlink-sdk
+      # - name: Make sure local links are gone, get latest version of sdk
+      #   run: npm run unlink-sdk
 
       - name: Install frontend
         run: npm run inst:app
@@ -126,8 +127,8 @@ jobs:
         env:
           ^REACT_APP_HOST: ${{ secrets.STAGING_HOST }}
 
-      - name: Make sure local links are gone, get latest version of sdk
-        run: npm run unlink-sdk
+      # - name: Make sure local links are gone, get latest version of sdk
+      #   run: npm run unlink-sdk
 
       - name: Install frontend
         run: npm run inst:app
