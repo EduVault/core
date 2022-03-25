@@ -20,7 +20,7 @@ export const noteCreate = async (Note: NoteCollection, noteText: string) => {
     // _updatedAt: new Date().getTime(),
     text: noteText,
   };
-  await Note.create(note).save();
+  await Note.insert(note);
 };
 
 export const checkForChanges = (note: INote, existingNote: INote) => {
@@ -45,6 +45,9 @@ export const checkForChanges = (note: INote, existingNote: INote) => {
   return changed;
 };
 
+/**
+ * returns true if the note has changed
+ */
 export const noteUpdate = async (
   Note: NoteCollection,
   noteRaw: INote,

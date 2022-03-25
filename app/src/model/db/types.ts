@@ -5,4 +5,5 @@ export interface DBState {
   clientReady: boolean;
   error: string;
   syncing: boolean;
+  startupSyncFinished: boolean;
 }
