@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - staging
+      - main
 
 jobs:
   build-and-test-application:
@@ -14,8 +15,11 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14.x'
+          node-version: '12.x'
           cache: 'npm'
+
+      # - name: Make sure local links are gone
+      #   run: npm run unlink-sdk
 
       - name: Create .env
         uses: weyheyhey/create-dotenv-action@v1
@@ -24,15 +28,15 @@ jobs:
         env:
           ^ENV_CHECK: 'working'
           ^HOST: 'localhost'
+          ^REACT_APP_HOST: 'localhost'
           ^TEST_ENV: 'e2e'
           ^NODE_ENV: 'production'
-          ^PORT_API_HTTP: 1080
-          ^PORT_API_HTTPS: 10443
-          ^PORT_EXTERNAL_HTTP: 1080
-          ^PORT_EXTERNAL_HTTPS: 10443
+          ^PORT_API_HTTP: 8081
+          ^PORT_API_HTTPS: 8082
+          ^PORT_DOCKER: 8083
 
       - name: Install application
-        run: npm run inst:ci
+        run: npm run inst
 
       - name: Make SSL certs
         run: npm run ssl-certs:ci
@@ -47,17 +51,56 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           start: npm run start:ci
-          wait-on: 'npx wait-on --timeout 500000 https://localhost:10443'
+          wait-on: 'npx wait-on --timeout 500000 http://localhost:8081'
           browser: chrome
           headless: true
-          record: false
-          env: NODE_TLS_REJECT_UNAUTHORIZED=0
+          record: true
+        env:
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+      - name: store screenshots
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: e2e/screenshots
+      - name: store video
+        uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: cypress-videos
+          path: e2e/videos
 
   build-and-push-production-images:
     if: github.ref == 'refs/heads/main'
     needs: build-and-test-application
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '12.x'
+          cache: 'npm'
+
+      - name: Create .env
+        uses: weyheyhey/create-dotenv-action@v1
+        with:
+          wildecard: '^'
+        env:
+          ^REACT_APP_HOST: 'eduvault.org'
+
+      # - name: Make sure local links are gone, get latest version of sdk
+      #   run: npm run unlink-sdk
+
+      - name: Install frontend
+        run: npm run inst:app
+
+      - name: Build frontend
+        run: npm run build:app
+
       - uses: mr-smithers-excellent/docker-build-push@v5
         name: Build & push production Docker image
         with:
@@ -73,6 +116,26 @@ jobs:
     needs: build-and-test-application
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Create .env
+        uses: weyheyhey/create-dotenv-action@v1
+        with:
+          wildecard: '^'
+          filename: 'app/.env'
+        env:
+          ^REACT_APP_HOST: ${{ secrets.STAGING_HOST }}
+
+      # - name: Make sure local links are gone, get latest version of sdk
+      #   run: npm run unlink-sdk
+
+      - name: Install frontend
+        run: npm run inst:app
+
+      - name: Build frontend
+        run: npm run build:app
+
       - uses: mr-smithers-excellent/docker-build-push@v5
         name: Build & push Docker image
         with:

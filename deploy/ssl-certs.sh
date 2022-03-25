@@ -39,11 +39,11 @@ link_certs() {
 
     elif [ $cert_script == "certbot" ]; then
         cd ./certs && \
-        ln -s /etc/letsencrypt/live/$HOST/privkey.pem key.pem && \
-        ln -s /etc/letsencrypt/live/$HOST/privkey.pem $HOST.key && \
+        cp /etc/letsencrypt/live/$HOST/privkey.pem key.pem && \
+        cp /etc/letsencrypt/live/$HOST/privkey.pem $HOST.key && \
 
-        ln -s /etc/letsencrypt/live/$HOST/fullchain.pem cert.pem && \
-        ln -s /etc/letsencrypt/live/$HOST/fullchain.pem $HOST.crt;
+        cp /etc/letsencrypt/live/$HOST/fullchain.pem cert.pem && \
+        cp /etc/letsencrypt/live/$HOST/fullchain.pem $HOST.crt;
     fi;
 };
 
