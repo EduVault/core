@@ -91,6 +91,9 @@ jobs:
         env:
           ^REACT_APP_HOST: 'eduvault.org'
 
+      - name: Make sure local links are gone, get latest version of sdk
+        run: npm run unlink-sdk
+
       - name: Install frontend
         run: npm run inst:app
 
@@ -122,6 +125,9 @@ jobs:
           filename: 'app/.env'
         env:
           ^REACT_APP_HOST: ${{ secrets.STAGING_HOST }}
+
+      - name: Make sure local links are gone, get latest version of sdk
+        run: npm run unlink-sdk
 
       - name: Install frontend
         run: npm run inst:app

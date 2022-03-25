@@ -42,9 +42,7 @@
     "clean": "rm -rf app/build; rm -rf api/dist;  rm app/package-lock.json; rm api/package-lock.json; rm -rf app/node_modules; rm -rf api/node_modules; rm -rf node_modules; rm package-lock.json",
     "---------Link/unlink SDK---": "--------------------",
     "link-sdk": "dotenv -e dev.env -- bash -c 'cd $SDK_PATH ; pwd ; echo $SDK_PATH $PROJECT_PATH ; npm link ; cd $PROJECT_PATH/app ; npm link @eduvault/sdk-js'",
-    "unlink-sdk": "cd app && npm unlink @eduvault/sdk-js ; rm -rf app/node_modules/@eduvault/sdk-js ; npm install @eduvault/sdk-js",
-    "---------Publish---": "--------------------",
-    "prepare": "is-ci || husky install"
+    "unlink-sdk": "cd app && npm unlink @eduvault/sdk-js ; rm -rf app/node_modules/@eduvault/sdk-js ; npm install @eduvault/sdk-js"
   },
   "repository": {
     "type": "git",

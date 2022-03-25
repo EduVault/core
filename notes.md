@@ -55,7 +55,7 @@ give it a floating ip
 link domain to floating ip
 
 copy over .env file
-change PROD_HOST to host e.g. eduvault.org
+change HOST to host e.g. eduvault.org
 
 TODO: try again using a base ubuntu image and manually installing docker. docker seems to
 
@@ -87,8 +87,9 @@ git checkout origin/main -ft # or staging for staging
 
 ## copy .env file over
 ### edit the following in the .env file
-PORT_DOCKER=80
-PORT_DOCKERS=443
+PORT_API_HTTP=80
+PORT_API_HTTPS=443
+
 # TEST_ENV='e2e' # deactivate
 HOST=is-a-test.xyz
 IMAGE_SUFFIX=production # or staging
