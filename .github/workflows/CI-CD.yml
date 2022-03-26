@@ -91,6 +91,7 @@ jobs:
         uses: weyheyhey/create-dotenv-action@v1
         with:
           wildecard: '^'
+          filename: 'app/.env'
         env:
           ^REACT_APP_HOST: 'eduvault.org'
 
