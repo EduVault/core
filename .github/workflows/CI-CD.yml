@@ -7,6 +7,7 @@ on:
 
 jobs:
   build-and-test-application:
+    environment: e2e
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -54,26 +55,27 @@ jobs:
           wait-on: 'npx wait-on --timeout 500000 http://localhost:8081'
           browser: chrome
           headless: true
-          record: true
+          # record: true
         env:
           NODE_TLS_REJECT_UNAUTHORIZED: 0
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-      - name: store screenshots
-        uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: e2e/screenshots
-      - name: store video
-        uses: actions/upload-artifact@v1
-        if: always()
-        with:
-          name: cypress-videos
-          path: e2e/videos
+          # CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+      # - name: store screenshots
+      #   uses: actions/upload-artifact@v1
+      #   if: failure()
+      #   with:
+      #     name: cypress-screenshots
+      #     path: e2e/screenshots
+      # - name: store video
+      #   uses: actions/upload-artifact@v1
+      #   if: always()
+      #   with:
+      #     name: cypress-videos
+      #     path: e2e/videos
 
   build-and-push-production-images:
     if: github.ref == 'refs/heads/main'
+    environment: production
     needs: build-and-test-application
     runs-on: ubuntu-latest
     steps:
@@ -113,6 +115,7 @@ jobs:
 
   build-and-push-staging-images:
     if: github.ref == 'refs/heads/staging'
+    environment: staging
     needs: build-and-test-application
     runs-on: ubuntu-latest
     steps:
