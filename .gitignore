@@ -19,3 +19,10 @@ e2e/screenshots
 
 # editor
 .vscode
+
+# SQL files from threadDB
+*.sql
+*.sqlite
+
+# local files
+.DS_Store

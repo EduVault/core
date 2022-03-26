@@ -10,7 +10,7 @@ COPY ./api/package*.json ./
 RUN npm ci
 
 WORKDIR /eduvault/app
-COPY ./app/package*.json ./
+COPY ./app/package.json ./
 RUN npm ci
 
 WORKDIR /eduvault/
