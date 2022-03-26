@@ -57,10 +57,6 @@ link domain to floating ip
 copy over .env file
 change HOST to host e.g. eduvault.org
 
-TODO: try again using a base ubuntu image and manually installing docker. docker seems to
-
-wait a minute. might just have been i didn't enable ufw https?
-
 ```bash
 # create user
 ssh root@your_server_ip -i /path/to/keys
@@ -77,6 +73,7 @@ ufw enable
 sudo ufw status verbose
 
 # disconnect and ssh as jacob
+# from /home/jacob/
 ## get the code
 mkdir eduvault
 cd eduvault
@@ -145,8 +142,16 @@ screen
 sudo service docker start
 npm run start:production
 
-# To detach a screen session and return to your normal SSH terminal, type
-Ctrl a d
+
+screen -list # List all the detached (running) screens with their screen IDs.
+
+screen -x [screen id] # Connect / Attach to a specific running screen.
+
+Ctrl + d # while in a screen to Terminate / Stop a screen from running.
+
+Ctrl + a, Then press d # while in a screen to detach from screen without disturbing it.
+
+killall screen # Detach or terminate all screens.
 ```
 
 ## References
