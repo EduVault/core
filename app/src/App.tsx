@@ -1,21 +1,27 @@
+import { FC } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
 import './App.css';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Login, NavBar, HomePage, AppHome } from './components/';
+import { RequireAuth } from './components/Library/GuardedRoute';
 
-import Login from './views/Login';
-import NavBar from './components/NavBar';
-import HomePage from './views/HomePage';
-import AppHome from './views/AppHome';
-
-const App: React.FC = (props) => {
+const App: FC = (props) => {
   return (
     <>
       <NavBar />
       <Router>
-        <Switch>
-          <Route path={['/login', '/app/login']} component={Login} />
-          <Route path="/app/*" component={AppHome} />
-          <Route path={['/*', '/home']} component={HomePage} />
-        </Switch>
+        <Routes>
+          <Route path="/" element={<HomePage />}></Route>
+          <Route
+            path="/app"
+            element={
+              <RequireAuth>
+                <AppHome />
+              </RequireAuth>
+            }
+          />
+          <Route path={'/login'} element={<Login />} />
+        </Routes>
       </Router>
       {props.children}
     </>

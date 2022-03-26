@@ -1,0 +1,41 @@
+version: '3.7'
+services:
+  eduvault-core:
+    image: docker.io/eduvault/core:${IMAGE_SUFFIX}
+    env_file: ./.env
+    expose:
+      - ${PORT_DOCKER}
+    environment:
+      VIRTUAL_HOST: ${HOST}
+      VIRTUAL_PORT: ${PORT_DOCKER}
+      PORT_API_HTTP: ${PORT_DOCKER}
+      USE_HTTPS: 'false'
+
+    cpus: '0.75'
+    mem_limit: 768m
+
+  nginx-proxy:
+    env_file: ./.env
+    image: nginxproxy/nginx-proxy:alpine
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./deploy/certs:/etc/nginx/certs:ro
+    ports:
+      - '${PORT_API_HTTP}:${PORT_API_HTTP}'
+      - '${PORT_API_HTTPS}:${PORT_API_HTTPS}'
+    environment:
+      HTTP_PORT: ${PORT_API_HTTP}
+      HTTPS_PORT: ${PORT_API_HTTPS}
+    depends_on:
+      - eduvault-core
+    cpus: '0.2'
+    mem_limit: 512m
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval ${WATCHTOWER_POLLING_INTERVAL}
+    cpus: '0.1'
+    mem_limit: 256m

@@ -1,7 +1,29 @@
-import express from "express";
+import { Database } from '@textile/threaddb';
+import { PassportStatic } from 'passport';
+import express from 'express';
 
-const router = express.Router()
+import passwordRoute from './password';
+import appAuthRoute from './appAuth';
 
-router.get('/ping', (req, res) => res.send('pong'))
+import authCheck from './authCheck';
+import getJwt from './getJwt';
 
-export default router
+const routerInit = (
+  app: express.Application,
+  passport: PassportStatic,
+  db: Database
+) => {
+  const router = express.Router();
+  router.get('/ping', (req, res) => res.json({ code: 200, content: 'pong' }));
+
+  passwordRoute(router, db);
+  appAuthRoute(router, passport);
+
+  authCheck(router);
+  getJwt(router);
+
+  app.use('/api', router);
+  return router;
+};
+
+export default routerInit;
