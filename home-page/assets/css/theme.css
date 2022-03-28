@@ -1,0 +1,97 @@
+@import './tailwind.css';
+
+.section {
+  @apply p-10;
+  /* font */
+  @apply font-sans;
+}
+
+.section-wrap {
+}
+
+@media screen and (min-width: 768px) {
+  .section-wrap {
+    @apply max-w-3/4;
+    @apply m-auto;
+  }
+}
+.burn {
+  mix-blend-mode: color-burn;
+}
+
+.link {
+  text-decoration: underline;
+  font-family: monospace;
+  @apply text-darkblue;
+}
+
+h1 {
+  @apply font-bold;
+  @apply text-4xl;
+}
+@media screen and (min-width: 768px) {
+  h1 {
+    @apply text-6xl;
+  }
+}
+
+h2 {
+  @apply font-bold;
+  @apply text-2xl;
+}
+
+@media screen and (min-width: 768px) {
+  h2 {
+    @apply text-4xl;
+  }
+}
+
+h3 {
+  @apply font-bold;
+  @apply text-2xl;
+}
+@media screen and (min-width: 768px) {
+  h3 {
+    @apply text-3xl;
+  }
+}
+h4 {
+  @apply font-bold;
+  @apply text-lg;
+}
+@media screen and (min-width: 768px) {
+  h4 {
+    @apply text-xl;
+  }
+}
+
+p {
+  @apply text-base;
+}
+
+@media screen and (min-width: 768px) {
+  h4 {
+    @apply text-lg;
+  }
+}
+
+.spread-hover {
+  position: relative;
+  color: #f5841f;
+  display: inline-block;
+  margin: 0;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.2em;
+}
+.spread-hover:after {
+  display: block;
+  content: '';
+  border-bottom: solid 3px #f5841f;
+  transform: scaleX(0);
+  transition: transform 250ms ease-in-out;
+}
+
+.spread-hover:hover:after {
+  transform: scaleX(1);
+}
