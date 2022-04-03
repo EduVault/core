@@ -36,9 +36,6 @@ const serveFrontend = (app: Express) => {
       res.redirect(`https://localhost:3000${req.url}`);
     });
   } else {
-    app.get('/', (req, res) => {
-      res.redirect(`http://${HOST}/home`);
-    });
     const buildPath = path.normalize(path.join(__dirname, '../../app/build'));
     app.use(express.static(buildPath));
     app.get('(/*)?', (req, res) =>
